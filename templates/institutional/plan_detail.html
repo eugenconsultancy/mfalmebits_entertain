@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{{ breadcrumb_schema|safe }}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumbs -->
+<nav class="container mx-auto px-4 py-4 text-sm" aria-label="Breadcrumb">
+    <ol class="flex items-center space-x-2">
+        <li><a href="/" class="text-gray-500 hover:text-primary">Home</a></li>
+        <li><span class="text-gray-400 mx-2">/</span></li>
+        <li><a href="{% url 'institutional:index' %}" class="text-gray-500 hover:text-primary">Institutional</a></li>
+        <li><span class="text-gray-400 mx-2">/</span></li>
+        <li class="text-primary">{{ plan.name }}</li>
+    </ol>
+</nav>
+
+<!-- Plan Header -->
+<section class="py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <span class="inline-block bg-primary text-white px-4 py-2 rounded-full text-sm mb-4">
+                    {{ plan.get_plan_type_display }}
+                </span>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ plan.name }}</h1>
+                <p class="text-xl text-gray-600 dark:text-gray-300">{{ plan.short_description }}</p>
+            </div>
+            
+            <div class="glass p-8 mb-8">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <div class="text-4xl font-bold text-primary mb-2">{{ plan.get_yearly_price_display }}</div>
+                        <p class="text-gray-500">per year{% if plan.setup_fee > 0 %} + ${{ plan.setup_fee }} setup fee{% endif %}</p>
+                    </div>
+                    <div>
+                        <div class="text-lg mb-1">
+                            <i class="fas fa-users text-primary mr-2"></i>
+                            {{ plan.get_user_range }}
+                        </div>
+                        <div class="text-lg">
+                            <i class="fas fa-clock text-primary mr-2"></i>
+                            {{ plan.get_support_level_display }}
+                        </div>
+                    </div>
+                    <a href="{% url 'institutional:inquiry' %}?plan={{ plan.id }}" 
+                       class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
+                              hover:bg-opacity-90 transition-colors magnetic">
+                        Request Quote
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Plan Details -->
+<section class="py-12 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Features -->
+                <div>
+                    <h2 class="text-2xl font-bold mb-6">What's Included</h2>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">Up to {{ plan.get_user_range }}</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Concurrent users with institutional access</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">{% if plan.max_downloads == -1 %}Unlimited{% else %}{{ plan.max_downloads }}{% endif %} Downloads</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Per month across all users</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">{{ plan.get_support_level_display }}</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ plan.support_hours }} with {{ plan.response_time }} response</p>
+                            </div>
+                        </li>
+                        {% if plan.api_access %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">API Access</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ plan.api_rate_limit }} requests per minute</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if plan.training_included %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">Training Included</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ plan.training_hours }} hours of staff training</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if plan.webinar_access %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">Webinar Access</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Quarterly educational webinars</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if plan.custom_reports %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">Custom Reports</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Tailored usage reports available</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if plan.analytics_dashboard %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">Analytics Dashboard</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Real-time usage analytics</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if plan.usage_statistics %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">Usage Statistics</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Monthly usage reports</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if plan.white_label %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">White Label</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Remove MfalmeBits branding</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if plan.custom_branding %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <div>
+                                <span class="font-semibold">Custom Branding</span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Add your institution's logo</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <!-- Additional features from JSON -->
+                    {% if plan.features.items %}
+                    <h3 class="text-xl font-bold mt-8 mb-4">Additional Features</h3>
+                    <ul class="space-y-2">
+                        {% for feature in plan.get_feature_list %}
+                        <li class="flex items-center">
+                            <i class="fas fa-star text-yellow-400 mr-2"></i>
+                            {{ feature }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                
+                <!-- Description -->
+                <div>
+                    <h2 class="text-2xl font-bold mb-6">Detailed Description</h2>
+                    <div class="prose prose-lg dark:prose-invert">
+                        {{ plan.description|safe }}
+                    </div>
+                    
+                    <!-- Quick Quote Form -->
+                    <div class="mt-8 glass p-6">
+                        <h3 class="text-xl font-bold mb-4">Quick Quote</h3>
+                        <form action="{% url 'institutional:inquiry' %}" method="get">
+                            <input type="hidden" name="plan" value="{{ plan.id }}">
+                            
+                            <div class="mb-4">
+                                <label class="block mb-2">Number of Users</label>
+                                <input type="number" 
+                                       name="users" 
+                                       min="{{ plan.min_users }}" 
+                                       max="{% if plan.max_users == -1 %}10000{% else %}{{ plan.max_users }}{% endif %}"
+                                       value="{{ plan.min_users }}"
+                                       class="w-full px-4 py-2 border rounded-lg dark:bg-gray-800">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block mb-2">Your Email</label>
+                                <input type="email" 
+                                       name="email" 
+                                       placeholder="you@institution.edu"
+                                       class="w-full px-4 py-2 border rounded-lg dark:bg-gray-800"
+                                       required>
+                            </div>
+                            
+                            <button type="submit" 
+                                    class="w-full bg-primary text-white px-6 py-3 rounded-lg 
+                                           hover:bg-opacity-90 transition-colors">
+                                Get Quick Quote
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Similar Plans -->
+{% if similar_plans %}
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Other Plans You Might Consider</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for plan in similar_plans %}
+            <div class="glass p-6">
+                <h3 class="text-xl font-bold mb-2">{{ plan.name }}</h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ plan.short_description }}</p>
+                <div class="text-2xl font-bold text-primary mb-4">{{ plan.get_yearly_price_display }}</div>
+                <a href="{{ plan.get_absolute_url }}" 
+                   class="text-primary hover:underline inline-flex items-center">
+                    View Details
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA -->
+<section class="py-16 bg-primary text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Need a Custom Solution?</h2>
+        <p class="text-xl mb-8">Contact our team for a tailored plan for your institution</p>
+        <a href="{% url 'institutional:inquiry' %}?plan={{ plan.id }}" 
+           class="bg-white text-primary px-8 py-4 rounded-full text-lg font-semibold 
+                  hover:bg-opacity-90 transition-colors inline-block magnetic">
+            Contact Us
+        </a>
+    </div>
+</section>
+{% endblock %}

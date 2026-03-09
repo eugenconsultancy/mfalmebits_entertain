@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Newsletter Archive</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+            Browse our past newsletters featuring African knowledge, culture, and digital resources
+        </p>
+    </div>
+</section>
+
+<!-- Archive Grid -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for issue in issues %}
+            <div class="glass-card group">
+                <a href="{% url 'newsletter:issue' issue.campaign.slug issue.issue_number %}">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm text-primary">Issue #{{ issue.issue_number }}</span>
+                            <span class="text-sm text-gray-500">{{ issue.sent_at|date:"M d, Y" }}</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                            {{ issue.subject }}
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            {{ issue.campaign.preview_text|default:issue.html_content|striptags|truncatechars:100 }}
+                        </p>
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span>
+                                <i class="fas fa-eye mr-1"></i> {{ issue.opens }} opens
+                            </span>
+                            <span>
+                                <i class="fas fa-mouse-pointer mr-1"></i> {{ issue.clicks }} clicks
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center py-12">
+                <p class="text-xl text-gray-500">No newsletters have been sent yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="mt-12 flex justify-center">
+            <div class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                <a href="?page=1" class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    First
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}" 
+                   class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    Previous
+                </a>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="px-4 py-2 bg-primary text-white">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}" 
+                       class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" 
+                   class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    Next
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" 
+                   class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    Last
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Recent Campaigns -->
+{% if recent_campaigns %}
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">Recent Campaigns</h2>
+        <div class="max-w-3xl mx-auto">
+            {% for campaign in recent_campaigns %}
+            <div class="glass p-6 mb-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold">{{ campaign.title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300">{{ campaign.subject }}</p>
+                        <div class="flex items-center mt-2 text-sm text-gray-500">
+                            <span class="mr-4">
+                                <i class="fas fa-users mr-1"></i> {{ campaign.total_recipients }} recipients
+                            </span>
+                            <span class="mr-4">
+                                <i class="fas fa-eye mr-1"></i> {{ campaign.get_open_rate|floatformat:1 }}% open rate
+                            </span>
+                            <span>
+                                <i class="fas fa-clock mr-1"></i> {{ campaign.sent_at|date:"M d, Y" }}
+                            </span>
+                        </div>
+                    </div>
+                    <a href="{% url 'newsletter:archive' %}" class="text-primary hover:underline">
+                        View Issues <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA -->
+<section class="py-16 bg-primary text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Never Miss an Update</h2>
+        <p class="text-xl mb-8">Subscribe to our newsletter and get the latest content delivered to your inbox</p>
+        <a href="{% url 'newsletter:subscribe' %}" 
+           class="bg-white text-primary px-8 py-4 rounded-full text-lg font-semibold 
+                  hover:bg-opacity-90 transition-colors inline-block magnetic">
+            Subscribe Now
+        </a>
+    </div>
+</section>
+{% endblock %}

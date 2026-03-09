@@ -1,0 +1,36 @@
+{% load static %}
+<article class="card h-100 border-0 shadow-sm hover-lift">
+    {% if post.featured_image %}
+    <a href="{{ post.get_absolute_url }}">
+        <img src="{{ post.featured_image.url }}" 
+             class="card-img-top" 
+             alt="{{ post.image_alt|default:post.title }}"
+             style="height: 200px; object-fit: cover;">
+    </a>
+    {% endif %}
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <a href="{{ post.category.get_absolute_url }}" class="badge bg-primary text-decoration-none">
+                {{ post.category.name }}
+            </a>
+            <small class="text-muted">{{ post.published_date|date:"M d, Y" }}</small>
+        </div>
+        <h5 class="card-title">
+            <a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark stretched-link">
+                {{ post.title }}
+            </a>
+        </h5>
+        <p class="card-text text-muted small">{{ post.excerpt|truncatewords:15 }}</p>
+    </div>
+    <div class="card-footer bg-transparent border-0 pt-0">
+        <div class="d-flex justify-content-between align-items-center small text-muted">
+            <span>
+                <i class="far fa-user-circle text-primary me-1"></i>
+                {{ post.author.get_full_name|default:post.author.username }}
+            </span>
+            <span>
+                <i class="far fa-clock me-1"></i> {{ post.reading_time }} min
+            </span>
+        </div>
+    </div>
+</article>

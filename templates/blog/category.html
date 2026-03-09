@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Category Header -->
+<section class="category-header py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                {% if category.image %}
+                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="rounded-circle mb-4" style="width: 100px; height: 100px; object-fit: cover;">
+                {% endif %}
+                <h1 class="display-4 fw-bold mb-3">{{ category.name }}</h1>
+                {% if category.description %}
+                <p class="lead mb-0">{{ category.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Category Content -->
+<section class="category-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Posts Column -->
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'blog:index' %}">Blog</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+                    </ol>
+                </nav>
+
+                {% if posts %}
+                <div class="posts-list">
+                    {% for post in posts %}
+                    <article class="post-item mb-5 pb-4 border-bottom">
+                        <div class="row">
+                            {% if post.featured_image %}
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <a href="{{ post.get_absolute_url }}">
+                                    <img src="{{ post.featured_image.url }}" 
+                                         alt="{{ post.image_alt|default:post.title }}"
+                                         class="img-fluid rounded-3"
+                                         style="height: 150px; width: 100%; object-fit: cover;">
+                                </a>
+                            </div>
+                            <div class="col-md-8">
+                            {% else %}
+                            <div class="col-12">
+                            {% endif %}
+                                <div class="post-meta small text-muted mb-2">
+                                    <span><i class="far fa-calendar-alt me-1"></i> {{ post.published_date|date:"F j, Y" }}</span>
+                                    <span class="ms-3"><i class="far fa-user me-1"></i> {{ post.author.get_full_name|default:post.author.username }}</span>
+                                    <span class="ms-3"><i class="far fa-clock me-1"></i> {{ post.reading_time }} min read</span>
+                                </div>
+                                <h3 class="h5">
+                                    <a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">
+                                        {{ post.title }}
+                                    </a>
+                                </h3>
+                                <p class="text-muted small">{{ post.excerpt|truncatewords:25 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                                        Read More <i class="fas fa-arrow-right ms-2"></i>
+                                    </a>
+                                    <div class="post-stats small text-muted">
+                                        <span><i class="far fa-eye me-1"></i> {{ post.views_count }}</span>
+                                        <span class="ms-3"><i class="far fa-comment me-1"></i> {{ post.comments.count }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+                    <h3>No posts yet</h3>
+                    <p class="text-muted">Check back soon for new posts in this category.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    <!-- Category Info -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">About this Category</h5>
+                            <p class="card-text text-muted">{{ category.description|default:"No description available." }}</p>
+                            <div class="d-flex justify-content-between">
+                                <span>Total Posts:</span>
+                                <span class="fw-bold">{{ posts.paginator.count|default:category.get_post_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Categories -->
+                    {% get_categories as categories %}
+                    {% if categories %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Other Categories</h5>
+                            <ul class="list-unstyled">
+                                {% for cat in categories %}
+                                {% if cat.id != category.id %}
+                                <li class="mb-2">
+                                    <a href="{{ cat.get_absolute_url }}" class="text-decoration-none d-flex justify-content-between">
+                                        <span>{{ cat.name }}</span>
+                                        <span class="badge bg-light text-dark">{{ cat.get_post_count }}</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Popular Tags -->
+                    {% get_popular_tags as tags %}
+                    {% if tags %}
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Popular Tags</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for tag in tags %}
+                                <a href="{% url 'blog:tag' tag.slug %}" class="badge bg-light text-dark text-decoration-none p-2">
+                                    {{ tag.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

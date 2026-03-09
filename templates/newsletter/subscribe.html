@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Subscribe to Our Newsletter</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+            Stay updated with the latest African knowledge, culture, and digital resources
+        </p>
+    </div>
+</section>
+
+<!-- Subscription Form -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <div class="glass p-8">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Email -->
+                    <div>
+                        <label class="block mb-2">Email Address *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Name -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-2">First Name</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="block mb-2">Last Name</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Frequency -->
+                    <div>
+                        <label class="block mb-2">Email Frequency</label>
+                        {{ form.frequency }}
+                        {% if form.frequency.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.frequency.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Interests -->
+                    <div>
+                        <label class="block mb-2">I'm interested in:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            {% for value, label in form.interests.field.choices %}
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="{{ value }}" 
+                                       class="rounded mr-2"
+                                       {% if value in form.interests.value %}checked{% endif %}>
+                                {{ label }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                        {% if form.interests.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.interests.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Submit -->
+                    <div class="text-center pt-4">
+                        <button type="submit" 
+                                class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
+                                       hover:bg-opacity-90 transition-colors magnetic">
+                            Subscribe
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Privacy Notice -->
+            <div class="mt-8 text-center text-gray-500 text-sm">
+                <p>
+                    We respect your privacy. Unsubscribe at any time.
+                    <a href="#" class="text-primary hover:underline">Privacy Policy</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Benefits -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Why Subscribe?</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-newspaper text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Exclusive Content</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Get access to exclusive articles, interviews, and resources not available elsewhere.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-calendar-alt text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Weekly Updates</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Stay informed with the latest additions to our knowledge archive and digital library.
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-gem text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Special Offers</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Be the first to know about special offers, discounts, and new collaborations.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Handle AJAX form submission
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            this.reset();
+            // Optionally redirect
+            // window.location.href = '/newsletter/confirm/';
+        } else {
+            // Display errors
+            let errorMessage = 'Please fix the following errors:\n';
+            for (let field in data.errors) {
+                errorMessage += `- ${field}: ${data.errors[field].join(', ')}\n`;
+            }
+            alert(errorMessage);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+});
+</script>
+{% endblock %}

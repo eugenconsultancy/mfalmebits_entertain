@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title|default:"About MfalmeBits" }}{% endblock %}
+{% block seo_description %}{{ seo_description|default:"Learn about MfalmeBits - African Knowledge, Identity, and Future Thinking" }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords|default:"about, African knowledge, cultural archive, digital library" }}{% endblock %}
+
+{% block extra_css %}
+<!-- Remove the main-enhanced.css reference - using existing CSS files -->
+{% endblock %}
+
+{% block content %}
+<!-- ===== Enhanced About Hero with Parallax ===== -->
+<section class="hero-serenity position-relative overflow-hidden">
+    <div class="hero-background">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+        <div class="particles" id="heroParticles"></div>
+    </div>
+
+    <div class="container-custom position-relative z-index-2">
+        <div class="row align-items-center min-vh-75 py-5">
+            <div class="col-lg-6 animate-slide-in-left">
+                <span class="badge bg-primary text-white mb-4 px-4 py-2 rounded-pill">
+                    <i class="fas fa-address-card me-2"></i>About Us
+                </span>
+                <h1 class="display-3 fw-bold mb-4">
+                    Preserving <span class="text-gradient">African</span><br>Knowledge & Culture
+                </h1>
+                <p class="lead mb-5">
+                    MfalmeBits is a digital sanctuary dedicated to preserving, promoting, and providing access to African knowledge, cultural heritage, and creative works for generations to come.
+                </p>
+
+                <!-- Stats with Cards -->
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="stat-item">
+                        <h3 class="display-4 fw-bold text-primary">10K+</h3>
+                        <p class="text-muted">Archive Entries</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="display-4 fw-bold text-primary">5K+</h3>
+                        <p class="text-muted">Digital Products</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="display-4 fw-bold text-primary">50K+</h3>
+                        <p class="text-muted">Community Members</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 animate-slide-in-right">
+                <div class="hero-image-wrapper">
+                    <!-- Fixed image path with reliable placeholder -->
+                    <img src="{% static 'images/about-hero.svg' %}" 
+                         alt="About MfalmeBits" 
+                         class="img-fluid rounded-4 shadow-lg"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/8B4513/white?text=MfalmeBits';">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== Mission & Vision with Cards ===== -->
+<section class="section">
+    <div class="container-custom">
+        <div class="row g-4">
+            <!-- Mission Card -->
+            <div class="col-md-6">
+                <div class="card-serenity h-100 hover-lift">
+                    <div class="icon-wrapper mb-4">
+                        <div class="icon-circle bg-primary text-white">
+                            <i class="fas fa-bullseye fa-2x"></i>
+                        </div>
+                    </div>
+                    <h2 class="h2 fw-bold mb-4">Our Mission</h2>
+                    <p class="text-muted mb-4 lead">To create a comprehensive digital platform that preserves, promotes, and provides access to African knowledge, cultural heritage, and creative works, ensuring they remain accessible for generations to come.</p>
+
+                    <ul class="list-unstyled mt-4">
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                            <span>Preserve African cultural heritage</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                            <span>Promote African knowledge and wisdom</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                            <span>Provide accessible digital resources</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Vision Card -->
+            <div class="col-md-6">
+                <div class="card-serenity h-100 hover-lift">
+                    <div class="icon-wrapper mb-4">
+                        <div class="icon-circle bg-primary text-white">
+                            <i class="fas fa-eye fa-2x"></i>
+                        </div>
+                    </div>
+                    <h2 class="h2 fw-bold mb-4">Our Vision</h2>
+                    <p class="text-muted mb-4 lead">To become the leading digital destination for African knowledge and culture, connecting people across the globe with the richness and diversity of African heritage and contemporary creativity.</p>
+
+                    <ul class="list-unstyled mt-4">
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                            <span>Global accessibility to African knowledge</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                            <span>Empowering African creators and scholars</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                            <span>Fostering cultural exchange and understanding</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Our Story with Timeline ===== -->
+<section class="section bg-light">
+    <div class="container-custom">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="story-content">
+                    <span class="badge bg-primary text-white mb-4 px-4 py-2 rounded-pill">
+                        <i class="fas fa-history me-2"></i>Our Journey
+                    </span>
+                    <h2 class="display-5 fw-bold mb-4">The <span class="text-gradient">MfalmeBits</span> Story</h2>
+                    <p class="lead mb-4">Founded in 2020, MfalmeBits began as a passion project to digitize and preserve African historical documents and cultural artifacts.</p>
+
+                    <div class="timeline-modern">
+                        <div class="timeline-item mb-4">
+                            <div class="timeline-year bg-primary text-white">2020</div>
+                            <div class="timeline-content">
+                                <h5 class="fw-bold">The Beginning</h5>
+                                <p class="text-muted">Started with a small collection of digitized manuscripts from personal archives.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item mb-4">
+                            <div class="timeline-year bg-primary text-white">2022</div>
+                            <div class="timeline-content">
+                                <h5 class="fw-bold">Growth & Partnerships</h5>
+                                <p class="text-muted">Partnered with cultural institutions and universities across Africa.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item mb-4">
+                            <div class="timeline-year bg-primary text-white">2024</div>
+                            <div class="timeline-content">
+                                <h5 class="fw-bold">Global Recognition</h5>
+                                <p class="text-muted">Serving a global community of researchers, students, and cultural enthusiasts.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-year bg-primary text-white">Future</div>
+                            <div class="timeline-content">
+                                <h5 class="fw-bold">Continuing the Mission</h5>
+                                <p class="text-muted">Expanding our reach and impact for generations to come.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="story-image-wrapper position-relative">
+                    <!-- Fixed image path with reliable placeholder -->
+                    <img src="{% static 'images/our-story.jpg' %}" 
+                         alt="Our Story" 
+                         class="img-fluid rounded-4 shadow-lg"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/8B4513/white?text=Our+Story';">
+                    <div class="floating-card position-absolute bottom-0 end-0 bg-white p-3 rounded-4 shadow-lg">
+                        <i class="fas fa-book-open text-primary me-2"></i>
+                        <span class="fw-bold">10K+ Items</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Team Section ===== -->
+<section class="section">
+    <div class="container-custom">
+        <div class="text-center mb-5">
+            <span class="badge bg-primary text-white mb-3 px-4 py-2 rounded-pill">
+                <i class="fas fa-users me-2"></i>Our Team
+            </span>
+            <h2 class="display-5 fw-bold mb-3">Meet the <span class="text-gradient">Visionaries</span></h2>
+            <p class="lead text-muted">Passionate individuals dedicated to preserving African knowledge</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Team Member 1 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card-serenity text-center p-4 hover-lift">
+                    <div class="team-member-img mb-4">
+                        <!-- Fixed image path with reliable placeholder -->
+                        <img src="{% static 'images/team/team-1.jpg' %}" 
+                             alt="Dr. Kwame Asante" 
+                             class="rounded-circle"
+                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=KA';">
+                    </div>
+                    <h4 class="fw-bold mb-1">Dr. Kwame Asante</h4>
+                    <p class="text-primary mb-3">Founder & Director</p>
+                    <div class="social-links d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card-serenity text-center p-4 hover-lift">
+                    <div class="team-member-img mb-4">
+                        <img src="{% static 'images/team/team-2.jpg' %}" 
+                             alt="Fatima Diallo" 
+                             class="rounded-circle"
+                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=FD';">
+                    </div>
+                    <h4 class="fw-bold mb-1">Fatima Diallo</h4>
+                    <p class="text-primary mb-3">Head of Archive</p>
+                    <div class="social-links d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card-serenity text-center p-4 hover-lift">
+                    <div class="team-member-img mb-4">
+                        <img src="{% static 'images/team/team-3.jpg' %}" 
+                             alt="John Mwangi" 
+                             class="rounded-circle"
+                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=JM';">
+                    </div>
+                    <h4 class="fw-bold mb-1">John Mwangi</h4>
+                    <p class="text-primary mb-3">Technical Lead</p>
+                    <div class="social-links d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-github"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 4 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card-serenity text-center p-4 hover-lift">
+                    <div class="team-member-img mb-4">
+                        <img src="{% static 'images/team/team-4.jpg' %}" 
+                             alt="Amara Okafor" 
+                             class="rounded-circle"
+                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=AO';">
+                    </div>
+                    <h4 class="fw-bold mb-1">Amara Okafor</h4>
+                    <p class="text-primary mb-3">Community Manager</p>
+                    <div class="social-links d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA Section ===== -->
+<section class="section bg-primary text-white">
+    <div class="container-custom text-center">
+        <h2 class="display-5 fw-bold mb-4">Join Our Mission</h2>
+        <p class="lead mb-5">Be part of preserving and sharing African knowledge with the world.</p>
+        <div class="d-flex flex-wrap gap-3 justify-content-center">
+            <a href="{% url 'contact:index' %}" class="btn btn-light btn-lg px-5 py-3">
+                <i class="fas fa-handshake me-2"></i>Partner With Us
+            </a>
+            <a href="{% url 'archive:index' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                <i class="fas fa-archive me-2"></i>Explore Archive
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Custom CSS -->
+<style>
+    /* Icon Circle */
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-brown);
+    }
+
+    /* Timeline Styles */
+    .timeline-item {
+        position: relative;
+        padding-left: 100px;
+        min-height: 80px;
+    }
+
+    .timeline-year {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .timeline-content {
+        padding-bottom: 1.5rem;
+    }
+
+    /* Team Member Image */
+    .team-member-img {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid var(--primary-brown);
+    }
+
+    .team-member-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Floating Card */
+    .floating-card {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .timeline-item {
+            padding-left: 0;
+        }
+
+        .timeline-year {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Remove main-enhanced.js reference - using existing JS files -->
+<script>
+    // Particles background
+    function createParticles() {
+        const container = document.getElementById('heroParticles');
+        if (!container) return;
+
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const duration = Math.random() * 10 + 10;
+
+            particle.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${posX}%;
+                top: ${posY}%;
+                background: rgba(139, 69, 19, 0.2);
+                border-radius: 50%;
+                pointer-events: none;
+                animation: floatParticle ${duration}s linear infinite;
+                animation-delay: -${delay}s;
+            `;
+
+            container.appendChild(particle);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        createParticles();
+    });
+</script>
+
+<style>
+    @keyframes floatParticle {
+        from { transform: translateY(0) rotate(0deg); }
+        to { transform: translateY(-100vh) rotate(360deg); }
+    }
+
+    .particle {
+        position: absolute;
+        background: rgba(139, 69, 19, 0.2);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+</style>
+{% endblock %}

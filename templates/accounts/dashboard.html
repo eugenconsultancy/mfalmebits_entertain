@@ -1,0 +1,626 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+
+{% block title %}Dashboard - {{ user.username }} | MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header with Glassmorphism -->
+<section class="dashboard-header py-5 position-relative overflow-hidden">
+    <div class="animated-gradient"></div>
+    <div class="particles" id="particles"></div>
+    <div class="container position-relative z-index-2">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="welcome-card glass-card-1 p-4 stagger-children">
+                    <h1 class="display-5 fw-bold text-white animate-slide-in-left">
+                        Welcome back, <span class="text-gradient-highlight">{{ user.first_name|default:user.username }}</span>
+                    </h1>
+                    <p class="lead text-white-50 animate-slide-in-right">
+                        Your creative hub for managing content, tracking performance, and exploring new opportunities.
+                    </p>
+                    <div class="quick-stats d-flex gap-4 mt-4">
+                        <div class="stat-item animate-fade-in-up" style="animation-delay: 0.2s;">
+                            <span class="stat-value h3 text-white">{{ stats.saved_items }}</span>
+                            <span class="stat-label text-light-emphasis">Saved Items</span>
+                        </div>
+                        <div class="stat-item animate-fade-in-up" style="animation-delay: 0.3s;">
+                            <span class="stat-value h3 text-white">{{ stats.downloads }}</span>
+                            <span class="stat-label text-light-emphasis">Downloads</span>
+                        </div>
+                        <div class="stat-item animate-fade-in-up" style="animation-delay: 0.4s;">
+                            <span class="stat-value h3 text-white">{{ stats.logins }}</span>
+                            <span class="stat-label text-light-emphasis">Logins</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="profile-quick-card glass-card-2 p-4 text-center animate-float">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="profile-avatar rounded-circle mb-3" width="100" height="100">
+                    {% else %}
+                        <div class="profile-avatar-placeholder rounded-circle bg-primary-gradient text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
+                            <span class="display-5">{{ user.username|first|upper }}</span>
+                        </div>
+                    {% endif %}
+                    <h5 class="text-white mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-white-50 small mb-3">{{ user.email }}</p>
+                    <a href="{% url 'accounts:profile_edit' %}" class="glass-btn-1 w-100">
+                        <i class="fas fa-user-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Dashboard Content -->
+<section class="dashboard-content py-5">
+    <div class="container">
+        <!-- Quick Actions Grid -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
+                    <div class="icon-wrapper bg-primary-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-bookmark fa-2x"></i>
+                    </div>
+                    <h6 class="text-white mb-2">Saved Items</h6>
+                    <p class="text-white-50 small mb-3">{{ stats.saved_items }} items</p>
+                    <a href="{% url 'accounts:saved_items' %}" class="glass-btn-2 w-100">
+                        View All <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
+                    <div class="icon-wrapper bg-success-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-download fa-2x"></i>
+                    </div>
+                    <h6 class="text-white mb-2">Total Downloads</h6>
+                    <p class="text-white-50 small mb-3">{{ stats.downloads }} downloads</p>
+                    <a href="{% url 'accounts:downloads' %}" class="glass-btn-2 w-100">
+                        View History <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
+                    <div class="icon-wrapper bg-warning-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-history fa-2x"></i>
+                    </div>
+                    <h6 class="text-white mb-2">Total Logins</h6>
+                    <p class="text-white-50 small mb-3">{{ stats.logins }} logins</p>
+                    <a href="{% url 'accounts:login_history' %}" class="glass-btn-2 w-100">
+                        View History <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
+                    <div class="icon-wrapper bg-info-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-shopping-cart fa-2x"></i>
+                    </div>
+                    <h6 class="text-white mb-2">Recent Purchases</h6>
+                    <p class="text-white-50 small mb-3">{{ recent_purchases|length }} purchases</p>
+                    <a href="#" class="glass-btn-2 w-100">
+                        View All <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Grid -->
+        <div class="row g-4">
+            <!-- Recently Saved -->
+            <div class="col-lg-6">
+                <div class="glass-card-2 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text-white mb-0">
+                            <i class="fas fa-bookmark me-2 text-primary"></i>Recently Saved
+                        </h5>
+                        <a href="{% url 'accounts:saved_items' %}" class="glass-btn-2">
+                            View All <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                    
+                    {% if recent_saved %}
+                        <div class="saved-items-list">
+                            {% for item in recent_saved %}
+                            <div class="saved-item glass-card-1 mb-3 p-3 d-flex justify-content-between align-items-center reveal-scale">
+                                <div class="d-flex align-items-center">
+                                    <div class="placeholder-icon bg-primary-gradient text-white rounded me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <i class="fas fa-{% if item.item_type == 'archive' %}archive{% elif item.item_type == 'product' %}book{% else %}newspaper{% endif %}"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-white fw-bold mb-1">{{ item.get_item.title|default:'Item'|truncatechars:30 }}</h6>
+                                        <p class="text-light-emphasis small mb-0">
+                                            <i class="fas fa-clock me-1"></i>Saved {{ item.created_at|timesince }} ago
+                                        </p>
+                                    </div>
+                                </div>
+                                <a href="{{ item.get_item.get_absolute_url }}" class="btn-icon text-primary" title="View Item">
+                                    <i class="fas fa-external-link-alt fa-lg"></i>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state text-center py-5">
+                            <div class="empty-icon mb-3">
+                                <i class="fas fa-bookmark fa-4x text-light-emphasis"></i>
+                            </div>
+                            <p class="text-light-emphasis mb-3">No saved items yet</p>
+                            <a href="{% url 'blog:index' %}" class="glass-btn-1">
+                                <i class="fas fa-search me-2"></i>Browse Content
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Downloads -->
+            <div class="col-lg-6">
+                <div class="glass-card-2 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text-white mb-0">
+                            <i class="fas fa-download me-2 text-success"></i>Recent Downloads
+                        </h5>
+                        <a href="{% url 'accounts:downloads' %}" class="glass-btn-2">
+                            View All <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                    
+                    {% if recent_downloads %}
+                        <div class="downloads-list">
+                            {% for download in recent_downloads %}
+                            <div class="download-item glass-card-1 mb-3 p-3 d-flex justify-content-between align-items-center reveal-scale">
+                                <div class="d-flex align-items-center">
+                                    <div class="download-icon bg-success-gradient text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-file-{% if download.item_type == 'archive' %}archive{% else %}pdf{% endif %}"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-white fw-bold mb-1">{{ download.item_title|truncatechars:30 }}</h6>
+                                        <p class="text-light-emphasis small mb-0">
+                                            <i class="fas fa-clock me-1"></i>Downloaded {{ download.last_downloaded|timesince }} ago
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="badge bg-success">{{ download.download_count }}x</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state text-center py-5">
+                            <div class="empty-icon mb-3">
+                                <i class="fas fa-download fa-4x text-light-emphasis"></i>
+                            </div>
+                            <p class="text-light-emphasis mb-3">No downloads yet</p>
+                            <a href="{% url 'library:index' %}" class="glass-btn-1">
+                                <i class="fas fa-shopping-cart me-2"></i>Explore Library
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Purchases -->
+            <div class="col-lg-6">
+                <div class="glass-card-2 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text-white mb-0">
+                            <i class="fas fa-shopping-cart me-2 text-warning"></i>Recent Purchases
+                        </h5>
+                        <a href="#" class="glass-btn-2">
+                            View All <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                    
+                    {% if recent_purchases %}
+                        <div class="purchases-list">
+                            {% for purchase in recent_purchases %}
+                            <div class="purchase-item glass-card-1 mb-3 p-3 reveal-scale">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="placeholder-icon bg-warning-gradient text-white rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white fw-bold mb-1">{{ purchase.product.title|truncatechars:30 }}</h6>
+                                            <p class="text-light-emphasis small mb-1">
+                                                <i class="fas fa-clock me-1"></i>{{ purchase.purchase_date|timesince }} ago
+                                            </p>
+                                            <span class="badge bg-warning text-dark fw-bold">${{ purchase.amount }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-success mb-2">{{ purchase.status|title }}</span>
+                                        <a href="#" class="btn btn-sm glass-btn-2 d-block">
+                                            <i class="fas fa-download me-1"></i>Download
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state text-center py-5">
+                            <div class="empty-icon mb-3">
+                                <i class="fas fa-shopping-cart fa-4x text-light-emphasis"></i>
+                            </div>
+                            <p class="text-light-emphasis mb-3">No purchases yet</p>
+                            <a href="{% url 'library:index' %}" class="glass-btn-1">
+                                <i class="fas fa-store me-2"></i>Visit Store
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Login Activity -->
+            <div class="col-lg-6">
+                <div class="glass-card-2 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="text-white mb-0">
+                            <i class="fas fa-history me-2 text-info"></i>Recent Login Activity
+                        </h5>
+                        <a href="{% url 'accounts:login_history' %}" class="glass-btn-2">
+                            View Full History <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                    
+                    {% if recent_logins %}
+                        <div class="activity-timeline">
+                            {% for login in recent_logins %}
+                            <div class="timeline-item glass-card-1 mb-3 p-3 position-relative reveal-left">
+                                <div class="d-flex">
+                                    <div class="timeline-icon bg-info-gradient text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-{% if login.device_type == 'mobile' %}mobile-alt{% else %}desktop{% endif %}"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">{{ login.browser|default:'Browser' }} on {{ login.os|default:'OS' }}</h6>
+                                                <p class="text-light-emphasis small mb-1">
+                                                    <i class="fas fa-clock me-1"></i>{{ login.login_time|timesince }} ago
+                                                </p>
+                                                <p class="text-light-emphasis small mb-0">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>{{ login.ip_address }}
+                                                </p>
+                                            </div>
+                                            <span class="badge bg-{% if login.login_successful %}success{% else %}danger{% endif %}">
+                                                {% if login.login_successful %}Success{% else %}Failed{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-light-emphasis mb-0">No login activity recorded</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    :root {
+        --primary-accent: #ff6b4a;
+        --secondary-accent: #ff8a6f;
+        --success-accent: #10b981;
+        --warning-accent: #f59e0b;
+        --info-accent: #3b82f6;
+        --deep-charcoal: #0a0c0f;
+        --medium-charcoal: #1a1e24;
+        --light-charcoal: #2a2f36;
+        --text-primary: #ffffff;
+        --text-secondary: #e0e0e0;
+        --text-emphasis: #b0b0b0;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+        background: linear-gradient(135deg, var(--deep-charcoal) 0%, var(--medium-charcoal) 100%);
+        min-height: 300px;
+        position: relative;
+    }
+    
+    .animated-gradient {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(-45deg, var(--primary-accent), var(--secondary-accent), #8B4513, #c97c5d);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        opacity: 0.1;
+    }
+    
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    .text-gradient-highlight {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    .text-light-emphasis {
+        color: var(--text-secondary) !important;
+    }
+    
+    /* Welcome Card */
+    .welcome-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+    }
+    
+    .stat-label {
+        color: var(--text-secondary) !important;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Quick Action Cards */
+    .glass-card-1 {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .glass-card-1:hover {
+        border-color: var(--primary-accent);
+        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.2);
+    }
+    
+    .icon-wrapper {
+        transition: all 0.3s ease;
+    }
+    
+    .glass-card-1:hover .icon-wrapper {
+        transform: scale(1.1);
+    }
+    
+    .bg-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    }
+    
+    .bg-success-gradient {
+        background: linear-gradient(135deg, var(--success-accent), #059669);
+    }
+    
+    .bg-warning-gradient {
+        background: linear-gradient(135deg, var(--warning-accent), #d97706);
+    }
+    
+    .bg-info-gradient {
+        background: linear-gradient(135deg, var(--info-accent), #2563eb);
+    }
+    
+    /* Glass Buttons */
+    .glass-btn-1 {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        border: none;
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .glass-btn-1:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 107, 74, 0.3);
+        color: white;
+    }
+    
+    .glass-btn-2 {
+        background: transparent;
+        border: 2px solid var(--primary-accent);
+        color: var(--primary-accent);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .glass-btn-2:hover {
+        background: var(--primary-accent);
+        color: white;
+    }
+    
+    /* Activity Cards */
+    .glass-card-2 {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+    }
+    
+    .saved-item, .download-item, .purchase-item, .timeline-item {
+        background: var(--light-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.1);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .saved-item:hover, .download-item:hover, .purchase-item:hover, .timeline-item:hover {
+        border-color: var(--primary-accent);
+        background: rgba(255, 107, 74, 0.05);
+        transform: translateX(5px);
+    }
+    
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: rgba(255, 107, 74, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-accent);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-icon:hover {
+        background: var(--primary-accent);
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    /* Badges */
+    .badge.bg-success {
+        background: var(--success-accent) !important;
+        color: white;
+        font-weight: 500;
+        padding: 0.35rem 0.65rem;
+    }
+    
+    .badge.bg-warning {
+        background: var(--warning-accent) !important;
+        color: var(--deep-charcoal) !important;
+        font-weight: 600;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        background: var(--light-charcoal);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+    
+    .empty-icon i {
+        color: var(--primary-accent);
+        opacity: 0.5;
+    }
+    
+    /* Timeline */
+    .timeline-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    /* Particles */
+    .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+    
+    .particle {
+        position: absolute;
+        background: rgba(255, 107, 74, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: floatParticle linear infinite;
+    }
+    
+    @keyframes floatParticle {
+        from { transform: translateY(100vh) rotate(0deg); }
+        to { transform: translateY(-100vh) rotate(360deg); }
+    }
+    
+    .z-index-2 {
+        z-index: 2;
+        position: relative;
+    }
+    
+    .profile-avatar-placeholder {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .quick-stats {
+            flex-direction: column;
+            gap: 1rem !important;
+        }
+        
+        .welcome-card {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .glass-btn-2 {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+</style>
+
+<script>
+    // Particle background
+    function createParticles() {
+        const particles = document.getElementById('particles');
+        if (!particles) return;
+        
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const duration = Math.random() * 10 + 10;
+            
+            particle.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${posX}%;
+                bottom: -20px;
+                animation-delay: ${delay}s;
+                animation-duration: ${duration}s;
+                opacity: ${Math.random() * 0.2 + 0.1};
+                background: rgba(255, 107, 74, ${Math.random() * 0.3});
+                box-shadow: 0 0 ${size * 2}px rgba(255, 107, 74, 0.3);
+            `;
+            
+            particles.appendChild(particle);
+        }
+    }
+    
+    createParticles();
+</script>
+{% endblock %}

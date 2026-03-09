@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}Submit Collaboration Idea | MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Submission Hero -->
+<section class="submission-hero py-5 position-relative overflow-hidden">
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas fa-pen-fancy me-2"></i>Get Started
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-4">Share Your <span class="text-gradient">Idea</span></h1>
+                <p class="lead text-white-50">Tell us about your collaboration concept. Our team will review and reach out within 5-7 business days.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Submission Form -->
+<section class="submission-form py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card-2 p-5">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            <!-- Personal Information -->
+                            <div class="col-12">
+                                <h3 class="h5 fw-bold mb-3">Personal Information</h3>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">First Name *</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name *</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Creator Type *</label>
+                                {{ form.creator_type }}
+                                {% if form.creator_type.errors %}
+                                <div class="text-danger small mt-1">{{ form.creator_type.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Project Details -->
+                            <div class="col-12 mt-4">
+                                <h3 class="h5 fw-bold mb-3">Project Details</h3>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Portfolio Link *</label>
+                                {{ form.portfolio_link }}
+                                {% if form.portfolio_link.errors %}
+                                <div class="text-danger small mt-1">{{ form.portfolio_link.errors }}</div>
+                                {% endif %}
+                                <div class="form-text text-muted">Link to your portfolio, website, or work samples</div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Project Idea *</label>
+                                {{ form.project_idea }}
+                                {% if form.project_idea.errors %}
+                                <div class="text-danger small mt-1">{{ form.project_idea.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- File Upload -->
+                            <div class="col-12">
+                                <label class="form-label">Work Samples *</label>
+                                <div class="file-upload-area">
+                                    {{ form.samples }}
+                                    {% if form.samples.errors %}
+                                    <div class="text-danger small mt-1">{{ form.samples.errors }}</div>
+                                    {% endif %}
+                                    <div class="upload-hint text-center">
+                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                                        <p class="small text-muted mb-0">Drag & drop or click to upload</p>
+                                        <p class="small text-muted">Accepted formats: PDF, DOC, DOCX, JPG, PNG, ZIP (max 10MB)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Terms -->
+                            <div class="col-12">
+                                <div class="form-check">
+                                    {{ form.terms_accepted }}
+                                    <label class="form-check-label" for="{{ form.terms_accepted.id_for_label }}">
+                                        I agree to the <a href="{% url 'home:terms_of_service' %}" target="_blank">Terms of Service</a> and <a href="{% url 'home:privacy_policy' %}" target="_blank">Privacy Policy</a> *
+                                    </label>
+                                </div>
+                                {% if form.terms_accepted.errors %}
+                                <div class="text-danger small mt-1">{{ form.terms_accepted.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Submit -->
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-gradient btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Idea
+                                </button>
+                            </div>
+                            
+                            <div class="col-12 text-center">
+                                <p class="small text-muted">
+                                    <i class="fas fa-lock me-1"></i>Your information is secure and will only be used for collaboration purposes.
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .submission-hero {
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        min-height: 300px;
+    }
+
+    .form-label {
+        color: var(--text-light);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        background: var(--dark-soft);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: var(--dark-soft);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+        outline: none;
+        color: white;
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted);
+    }
+
+    .file-upload-area {
+        position: relative;
+        padding: 2rem;
+        border: 2px dashed rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        background: var(--dark-soft);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--primary);
+        background: rgba(139, 69, 19, 0.1);
+    }
+
+    .file-upload-area input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .upload-hint {
+        color: var(--text-muted);
+    }
+
+    .form-check-input {
+        background: var(--dark-soft);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .form-check-label {
+        color: var(--text-muted);
+    }
+
+    .form-check-label a {
+        color: var(--primary-light);
+        text-decoration: none;
+    }
+
+    .form-check-label a:hover {
+        text-decoration: underline;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+    }
+</style>
+{% endblock %}

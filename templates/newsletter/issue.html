@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-12 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="inline-block glass-dark text-white px-4 py-2 rounded-full text-sm mb-4">
+                Issue #{{ issue.issue_number }}
+            </span>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ issue.subject }}</h1>
+            <p class="text-xl opacity-90">{{ issue.sent_at|date:"F d, Y" }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Content -->
+<section class="py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto">
+            <div class="glass p-8">
+                <!-- Newsletter HTML Content -->
+                <div class="prose prose-lg dark:prose-invert max-w-none">
+                    {{ issue.html_content|safe }}
+                </div>
+                
+                <!-- View Online Link (for email clients) -->
+                <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500">
+                    <p>
+                        You're viewing this newsletter online.
+                        <a href="{% url 'newsletter:archive' %}" class="text-primary hover:underline">
+                            Browse our archive
+                        </a>
+                        for more issues.
+                    </p>
+                </div>
+                
+                <!-- Share Buttons -->
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-bold mb-4">Share this issue:</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ issue.subject }}" 
+                           target="_blank"
+                           class="w-10 h-10 bg-blue-400 text-white rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                           target="_blank"
+                           class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ issue.subject }}" 
+                           target="_blank"
+                           class="w-10 h-10 bg-blue-700 text-white rounded-full flex items-center justify-center hover:bg-blue-800 transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="mailto:?subject={{ issue.subject }}&body={{ request.build_absolute_uri }}" 
+                           class="w-10 h-10 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Newsletter Stats -->
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-primary">{{ issue.recipient_count }}</div>
+                            <div class="text-sm text-gray-500">Recipients</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-primary">{{ issue.opens }}</div>
+                            <div class="text-sm text-gray-500">Opens</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-primary">{{ issue.clicks }}</div>
+                            <div class="text-sm text-gray-500">Clicks</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Links in this issue -->
+                {% if issue.links.all %}
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-bold mb-4">Links in this issue:</h3>
+                    <ul class="space-y-2">
+                        {% for link in issue.links.all %}
+                        <li class="flex items-center justify-between">
+                            <a href="{{ link.url }}" target="_blank" class="text-primary hover:underline truncate">
+                                {{ link.text|default:link.url }}
+                            </a>
+                            <span class="text-sm text-gray-500">{{ link.click_count }} clicks</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- More Issues -->
+<section class="py-12 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">More Issues</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% with prev_issue=issue.get_previous_by_sent_at %}
+                {% if prev_issue %}
+                <div class="glass p-6">
+                    <span class="text-sm text-primary">Previous Issue</span>
+                    <h3 class="text-xl font-bold mb-2">{{ prev_issue.subject|truncatechars:50 }}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ prev_issue.sent_at|date:"M d, Y" }}</p>
+                    <a href="{% url 'newsletter:issue' prev_issue.campaign.slug prev_issue.issue_number %}" 
+                       class="text-primary hover:underline">
+                        Read More <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                {% endif %}
+            {% endwith %}
+            
+            <div class="glass p-6 text-center">
+                 <i class="fas fa-archive text-4xl text-primary mb-3"></i>
+                <h3 class="text-xl font-bold mb-2">Browse Archive</h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">View all past newsletter issues</p>
+                <a href="{% url 'newsletter:archive' %}" class="text-primary hover:underline">
+                    View Archive <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            {% with next_issue=issue.get_next_by_sent_at %}
+                {% if next_issue %}
+                <div class="glass p-6">
+                    <span class="text-sm text-primary">Next Issue</span>
+                    <h3 class="text-xl font-bold mb-2">{{ next_issue.subject|truncatechars:50 }}</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ next_issue.sent_at|date:"M d, Y" }}</p>
+                    <a href="{% url 'newsletter:issue' next_issue.campaign.slug next_issue.issue_number %}" 
+                       class="text-primary hover:underline">
+                        Read More <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-12 bg-primary text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Never Miss an Issue</h2>
+        <p class="text-xl mb-8">Subscribe to our newsletter and get future issues delivered to your inbox</p>
+        <a href="{% url 'newsletter:subscribe' %}" 
+           class="bg-white text-primary px-8 py-4 rounded-full text-lg font-semibold 
+                  hover:bg-opacity-90 transition-colors inline-block magnetic">
+            Subscribe Now
+        </a>
+    </div>
+</section>
+{% endblock %}
+                

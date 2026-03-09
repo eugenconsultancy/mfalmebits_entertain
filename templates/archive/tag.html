@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entries tagged with '{{ tag.name }}' - MfalmeBits Archive{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-dark text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold">#{{ tag.name }}</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a href="/" class="text-white-50">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'archive:index' %}" class="text-white-50">Archive</a></li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">Tag: {{ tag.name }}</li>
+                    </ol>
+                </nav>
+                <p class="lead">{{ page_obj.paginator.count }} entries tagged with "{{ tag.name }}"</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Entries Listing -->
+<section class="archive-listing py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for entry in entries %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    {% if entry.featured_image %}
+                    <img src="{{ entry.featured_image.url }}" class="card-img-top" alt="{{ entry.image_alt|default:entry.title }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-secondary mb-2">{{ entry.theme.name }}</span>
+                        <h5 class="card-title">{{ entry.title }}</h5>
+                        <p class="card-text text-muted small">
+                            <i class="fas fa-user me-1"></i> {{ entry.author }} |
+                            <i class="fas fa-calendar me-1"></i> {{ entry.published_date|date:"M d, Y" }}
+                        </p>
+                        <p class="card-text">{{ entry.excerpt|truncatewords:25 }}</p>
+                        <a href="{% url 'archive:detail' entry.theme.slug entry.slug %}" class="btn btn-outline-primary btn-sm">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-tag fa-4x text-muted mb-3"></i>
+                <h3>No Entries Found</h3>
+                <p class="text-muted">No entries with this tag yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="First">&laquo;&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">&laquo;</a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">&raquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">&raquo;&raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+    }
+    .page-header {
+        background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+    }
+</style>
+{% endblock %}

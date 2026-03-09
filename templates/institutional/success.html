@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+
+{% block content %}
+<!-- Success Message -->
+<section class="min-h-screen flex items-center justify-center py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="mb-8">
+                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                </div>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Thank You!</h1>
+            
+            <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                Your institutional inquiry has been received. Our team will review your request and contact you within 24 hours.
+            </p>
+            
+            <div class="glass p-6 mb-8 text-left">
+                <h3 class="font-bold mb-4">What happens next?</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 mr-3 text-sm">1</span>
+                        <span>Our institutional specialist will review your requirements</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 mr-3 text-sm">2</span>
+                        <span>We'll contact you within 24 hours to discuss your needs</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 mr-3 text-sm">3</span>
+                        <span>We'll provide a customized proposal based on your requirements</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="{% url 'institutional:index' %}" 
+                   class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
+                          hover:bg-opacity-90 transition-colors magnetic">
+                    Back to Institutional
+                </a>
+                <a href="{% url 'home:index' %}" 
+                   class="glass border border-primary text-primary px-8 py-4 rounded-full text-lg font-semibold 
+                          hover:bg-primary hover:text-white transition-colors magnetic">
+                    Go to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

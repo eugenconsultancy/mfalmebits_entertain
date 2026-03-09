@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ series.title }} - MfalmeBits Blog{% endblock %}
+{% block description %}{{ series.description|striptags|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+<!-- Series Header -->
+<section class="series-header py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                {% if series.image %}
+                <img src="{{ series.image.url }}" alt="{{ series.title }}" class="img-fluid rounded-3 shadow mb-4" style="max-height: 200px;">
+                {% endif %}
+                <h1 class="display-4 fw-bold mb-3">{{ series.title }}</h1>
+                <div class="lead mb-3">{{ series.description|safe }}</div>
+                <div class="series-meta">
+                    <span class="badge bg-light text-dark">
+                        <i class="fas fa-layer-group me-2"></i>{{ posts.count }} part{{ posts.count|pluralize }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Series Content -->
+<section class="series-content py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                {% if posts %}
+                <div class="series-timeline">
+                    {% for post in posts %}
+                    <div class="series-item mb-4 {% if forloop.first %}first{% endif %}">
+                        <div class="d-flex">
+                            <div class="series-number me-4">
+                                <div class="number-circle bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 50px; height: 50px;">
+                                    <span class="h4 mb-0">{{ forloop.counter }}</span>
+                                </div>
+                                {% if not forloop.last %}
+                                <div class="series-line" style="width: 2px; height: 50px; background-color: #0d6efd; margin: 0 auto;"></div>
+                                {% endif %}
+                            </div>
+                            <div class="series-content flex-grow-1 pb-4">
+                                <article class="card border-0 shadow-sm hover-lift">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <span class="badge bg-primary">Part {{ forloop.counter }}</span>
+                                            <small class="text-muted">{{ post.published_date|date:"M d, Y" }}</small>
+                                        </div>
+                                        <h3 class="h5 mb-2">
+                                            <a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">
+                                                {{ post.title }}
+                                            </a>
+                                        </h3>
+                                        <p class="text-muted small mb-3">{{ post.excerpt|truncatewords:20 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                                                Read Part {{ forloop.counter }}
+                                            </a>
+                                            <div class="post-meta small text-muted">
+                                                <span><i class="far fa-clock me-1"></i> {{ post.reading_time }} min</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-layer-group fa-4x text-muted mb-3"></i>
+                    <h3>No posts in this series yet</h3>
+                    <p class="text-muted">Check back soon for new additions to this series.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Series -->
+<section class="related-series py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="h4 mb-4">Other Series You Might Like</h3>
+            </div>
+            {% get_series as all_series %}
+            {% for other_series in all_series %}
+            {% if other_series.id != series.id %}
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{{ other_series.get_absolute_url }}" class="text-decoration-none text-dark">
+                                {{ other_series.title }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small">{{ other_series.description|striptags|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">{{ other_series.posts.count }} parts</span>
+                            <a href="{{ other_series.get_absolute_url }}" class="btn btn-sm btn-link text-primary">
+                                View Series <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 2rem rgba(0,0,0,.1) !important;
+    }
+    .series-line {
+        transition: height 0.3s ease;
+    }
+</style>
+{% endblock %}

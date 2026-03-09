@@ -1,0 +1,480 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }} | MfalmeBits Library{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Category Hero -->
+<section class="category-hero position-relative overflow-hidden">
+    <div class="hero-bg">
+        {% if category.image %}
+            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="hero-bg-img">
+        {% endif %}
+        <div class="overlay"></div>
+        <div class="particles" id="categoryParticles"></div>
+    </div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row min-vh-50 align-items-center py-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas {{ category.icon|default:'fa-book' }} me-2"></i>{{ category.name }}
+                </span>
+                <h1 class="display-3 fw-bold text-white mb-4">
+                    {{ category.name }} <span class="text-gradient">Collection</span>
+                </h1>
+                <p class="lead text-white-50 mb-4">{{ category.description }}</p>
+                <div class="stats-badge">
+                    <span class="stat-badge-item">
+                        <i class="fas fa-book me-2"></i>{{ category.get_product_count }} Products
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Category Products -->
+<section class="category-products py-5">
+    <div class="container">
+        <!-- Filters & Sort -->
+        <div class="filters-bar glass-card-2 p-4 mb-5">
+            <div class="row align-items-center g-3">
+                <div class="col-lg-4">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="productSearch" class="form-control glass-input" placeholder="Search in {{ category.name }}..." value="{{ request.GET.q }}">
+                    </div>
+                </div>
+                
+                <div class="col-lg-3">
+                    <select id="formatFilter" class="form-select glass-input">
+                        <option value="">All Formats</option>
+                        {% for format_code, format_name in format_choices %}
+                            <option value="{{ format_code }}" {% if request.GET.format == format_code %}selected{% endif %}>{{ format_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-lg-3">
+                    <select id="sortFilter" class="form-select glass-input">
+                        <option value="-created_at" {% if request.GET.sort == '-created_at' %}selected{% endif %}>Newest First</option>
+                        <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                        <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>Title A-Z</option>
+                        <option value="-title" {% if request.GET.sort == '-title' %}selected{% endif %}>Title Z-A</option>
+                        <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="-purchase_count" {% if request.GET.sort == '-purchase_count' %}selected{% endif %}>Most Popular</option>
+                    </select>
+                </div>
+                
+                <div class="col-lg-2">
+                    <button id="applyFilters" class="btn btn-gradient w-100">
+                        <i class="fas fa-filter me-2"></i>Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        {% if products %}
+            <div class="row g-4" id="productsGrid">
+                {% for product in products %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 product-item" 
+                         data-title="{{ product.title|lower }}"
+                         data-price="{{ product.get_current_price }}"
+                         data-format="{{ product.format }}">
+                        <div class="product-card glass-card-2 hover-lift" data-tilt>
+                            <div class="product-badge">
+                                {% if product.is_free %}
+                                    <span class="badge free">FREE</span>
+                                {% elif product.is_on_sale %}
+                                    <span class="badge sale">-{{ product.get_discount_percentage }}%</span>
+                                {% endif %}
+                                {% if product.is_featured %}
+                                    <span class="badge featured">FEATURED</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="product-image">
+                                <img src="{{ product.cover_image.url }}" alt="{{ product.image_alt|default:product.title }}" class="img-fluid">
+                                <div class="product-overlay">
+                                    <a href="{{ product.get_absolute_url }}" class="btn btn-gradient btn-sm">
+                                        <i class="fas fa-eye me-2"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="product-content p-4">
+                                <div class="product-meta d-flex justify-content-between align-items-center mb-2">
+                                    <span class="product-format">
+                                        <i class="fas fa-{% if product.format == 'pdf' %}file-pdf{% elif product.format == 'epub' %}book{% elif product.format == 'mp3' %}music{% else %}file{% endif %} me-1"></i>
+                                        {{ product.get_format_display }}
+                                    </span>
+                                    <span class="product-category">
+                                        <i class="fas {{ product.category.icon|default:'fa-tag' }} me-1"></i>
+                                        <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a>
+                                    </span>
+                                </div>
+                                
+                                <h5 class="product-title">
+                                    <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-white">
+                                        {{ product.title|truncatechars:40 }}
+                                    </a>
+                                </h5>
+                                
+                                <p class="product-author text-muted small">
+                                    <i class="fas fa-user me-1"></i>{{ product.author }}
+                                </p>
+                                
+                                <div class="product-rating mb-3">
+                                    {% with avg_rating=product.reviews.aggregate.rating__avg %}
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= avg_rating|default:0 %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="text-muted ms-2">({{ product.reviews.count }})</span>
+                                    {% endwith %}
+                                </div>
+                                
+                                <div class="product-footer d-flex justify-content-between align-items-center">
+                                    <div class="product-price">
+                                        {% if product.is_on_sale %}
+                                            <span class="old-price">${{ product.price }}</span>
+                                            <span class="current-price">${{ product.sale_price }}</span>
+                                        {% elif product.is_free %}
+                                            <span class="current-price text-success">FREE</span>
+                                        {% else %}
+                                            <span class="current-price">${{ product.price }}</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <button class="btn-add-to-cart" data-product-id="{{ product.id }}" title="Add to Cart">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if is_paginated %}
+                <nav class="pagination-wrapper mt-5">
+                    <ul class="pagination glass-card-2 p-3 justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="empty-state text-center py-5">
+                <div class="empty-icon mb-4">
+                    <i class="fas fa-book-open fa-4x text-muted"></i>
+                </div>
+                <h3 class="mb-3">No Products Found</h3>
+                <p class="text-muted mb-4">We couldn't find any products in this category.</p>
+                <a href="{% url 'library:index' %}" class="btn btn-gradient">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Library
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Schema Markup -->
+<script type="application/ld+json">
+{{ breadcrumb_schema|safe }}
+</script>
+
+<!-- Category CSS -->
+<style>
+    .category-hero {
+        position: relative;
+        min-height: 400px;
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+    }
+
+    .hero-bg-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.2;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(10,12,15,0.9) 0%, rgba(26,30,36,0.8) 100%);
+    }
+
+    .stats-badge {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .stat-badge-item {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .filters-bar {
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .product-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .product-badge .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .badge.free { background: #10b981; color: white; }
+    .badge.sale { background: #ef4444; color: white; }
+    .badge.featured { background: #f59e0b; color: white; }
+
+    .product-image {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 1 / 1.4;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.1);
+    }
+
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+
+    .product-meta {
+        font-size: 0.85rem;
+    }
+
+    .product-format {
+        color: var(--primary-light);
+    }
+
+    .product-category a {
+        color: var(--text-muted);
+        text-decoration: none;
+    }
+
+    .product-category a:hover {
+        color: var(--primary);
+    }
+
+    .product-title a {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    .product-title a:hover {
+        color: var(--primary-light);
+    }
+
+    .product-price {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .old-price {
+        color: var(--text-muted);
+        text-decoration: line-through;
+        font-size: 0.9rem;
+    }
+
+    .current-price {
+        color: white;
+        font-weight: 700;
+        font-size: 1.25rem;
+    }
+
+    .btn-add-to-cart {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gradient-1);
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add-to-cart:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(139, 69, 19, 0.3);
+    }
+
+    .pagination .page-link {
+        background: transparent;
+        border: none;
+        color: white;
+        margin: 0 0.25rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .pagination .page-link:hover {
+        background: var(--gradient-1);
+        color: white;
+    }
+
+    .pagination .active .page-link {
+        background: var(--gradient-1);
+        color: white;
+    }
+</style>
+
+<!-- Category JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
+        const searchInput = document.getElementById('productSearch');
+        const formatFilter = document.getElementById('formatFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const applyBtn = document.getElementById('applyFilters');
+
+        function applyFilters() {
+            const params = new URLSearchParams(window.location.search);
+            
+            if (searchInput.value) params.set('q', searchInput.value);
+            else params.delete('q');
+            
+            if (formatFilter.value) params.set('format', formatFilter.value);
+            else params.delete('format');
+            
+            if (sortFilter.value) params.set('sort', sortFilter.value);
+            else params.delete('sort');
+            
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        }
+
+        applyBtn.addEventListener('click', applyFilters);
+        
+        // Enter key in search
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') applyFilters();
+        });
+
+        // Add to cart functionality
+        document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const productId = this.dataset.productId;
+                
+                // Show toast notification
+                showToast('Product added to cart!', 'success');
+            });
+        });
+    });
+
+    function showToast(message, type = 'success') {
+        // Simple toast implementation
+        const toast = document.createElement('div');
+        toast.className = `toast-notification toast-${type}`;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+            ${message}
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>
+{% endblock %}

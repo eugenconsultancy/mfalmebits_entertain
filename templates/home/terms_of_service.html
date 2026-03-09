@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+{% block keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block content %}
+<!-- Terms of Service Hero -->
+<section class="terms-hero py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-4">Terms of Service</h1>
+                <p class="lead mb-4">Last Updated: {{ last_updated|default:"January 1, 2025" }}</p>
+                <p>Please read these terms carefully before using our services.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Terms Content -->
+<section class="terms-content py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <!-- Table of Contents -->
+                <div class="terms-toc sticky-top" style="top: 2rem;">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Contents</h5>
+                            <nav class="nav flex-column">
+                                <a class="nav-link text-primary py-2" href="#agreement">1. Agreement to Terms</a>
+                                <a class="nav-link text-primary py-2" href="#intellectual-property">2. Intellectual Property Rights</a>
+                                <a class="nav-link text-primary py-2" href="#user-representations">3. User Representations</a>
+                                <a class="nav-link text-primary py-2" href="#prohibited-activities">4. Prohibited Activities</a>
+                                <a class="nav-link text-primary py-2" href="#user-content">5. User Content</a>
+                                <a class="nav-link text-primary py-2" href="#purchases">6. Purchases and Payments</a>
+                                <a class="nav-link text-primary py-2" href="#subscriptions">7. Subscriptions</a>
+                                <a class="nav-link text-primary py-2" href="#third-party">8. Third-Party Links</a>
+                                <a class="nav-link text-primary py-2" href="#termination">9. Termination</a>
+                                <a class="nav-link text-primary py-2" href="#limitation-liability">10. Limitation of Liability</a>
+                                <a class="nav-link text-primary py-2" href="#indemnification">11. Indemnification</a>
+                                <a class="nav-link text-primary py-2" href="#governing-law">12. Governing Law</a>
+                                <a class="nav-link text-primary py-2" href="#changes">13. Changes to Terms</a>
+                                <a class="nav-link text-primary py-2" href="#contact">14. Contact Us</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-9">
+                <div class="terms-text">
+                    <!-- Agreement to Terms -->
+                    <section id="agreement" class="mb-5">
+                        <h2 class="h3 mb-4">1. Agreement to Terms</h2>
+                        <p class="text-muted">By accessing or using the MfalmeBits website and services, you agree to be bound by these Terms of Service and our Privacy Policy. If you disagree with any part of the terms, you may not access the service.</p>
+                        <p class="text-muted">These terms constitute a legally binding agreement between you and MfalmeBits regarding your use of our website and services.</p>
+                    </section>
+
+                    <!-- Intellectual Property Rights -->
+                    <section id="intellectual-property" class="mb-5">
+                        <h2 class="h3 mb-4">2. Intellectual Property Rights</h2>
+                        
+                        <h5 class="mb-3">2.1 Our Content</h5>
+                        <p class="text-muted">Unless otherwise indicated, the website and all content and materials on it, including but not limited to text, graphics, logos, images, audio clips, digital downloads, and software, are the property of MfalmeBits or its content suppliers and are protected by copyright, trademark, and other intellectual property laws.</p>
+                        
+                        <h5 class="mb-3 mt-4">2.2 Limited License</h5>
+                        <p class="text-muted">We grant you a limited, non-exclusive, non-transferable, revocable license to access and use our website and services for personal, non-commercial purposes, subject to these Terms.</p>
+                        
+                        <h5 class="mb-3 mt-4">2.3 User Content</h5>
+                        <p class="text-muted">By submitting content to our website (such as comments, reviews, or contributions), you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, modify, publish, and distribute such content in connection with our services.</p>
+                    </section>
+
+                    <!-- User Representations -->
+                    <section id="user-representations" class="mb-5">
+                        <h2 class="h3 mb-4">3. User Representations</h2>
+                        <p class="text-muted">By using our services, you represent and warrant that:</p>
+                        <ul class="text-muted">
+                            <li>You have the legal capacity and agree to comply with these Terms</li>
+                            <li>You are at least 13 years of age (or older if required by your jurisdiction)</li>
+                            <li>You will not use our services for any illegal or unauthorized purpose</li>
+                            <li>All information you provide is accurate, current, and complete</li>
+                            <li>You will maintain the security of your account and password</li>
+                        </ul>
+                    </section>
+
+                    <!-- Prohibited Activities -->
+                    <section id="prohibited-activities" class="mb-5">
+                        <h2 class="h3 mb-4">4. Prohibited Activities</h2>
+                        <p class="text-muted">You may not access or use the website for any purpose other than that for which we make it available. Prohibited activities include:</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="text-muted">
+                                    <li>Violating any applicable laws or regulations</li>
+                                    <li>Infringing on intellectual property rights</li>
+                                    <li>Harassing, abusing, or harming others</li>
+                                    <li>Impersonating another person or entity</li>
+                                    <li>Interfering with security features</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="text-muted">
+                                    <li>Attempting to gain unauthorized access</li>
+                                    <li>Uploading viruses or malicious code</li>
+                                    <li>Scraping or data mining</li>
+                                    <li>Engaging in unauthorized commercial activities</li>
+                                    <li>Circumventing access restrictions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- User Content -->
+                    <section id="user-content" class="mb-5">
+                        <h2 class="h3 mb-4">5. User Content</h2>
+                        
+                        <h5 class="mb-3">5.1 Content Standards</h5>
+                        <p class="text-muted">User content must not:</p>
+                        <ul class="text-muted">
+                            <li>Be defamatory, obscene, or offensive</li>
+                            <li>Promote discrimination or hatred</li>
+                            <li>Infringe on others' rights</li>
+                            <li>Contain malicious code or malware</li>
+                            <li>Violate any applicable laws</li>
+                        </ul>
+                        
+                        <h5 class="mb-3 mt-4">5.2 Content Monitoring</h5>
+                        <p class="text-muted">We have the right, but not the obligation, to monitor all user content. We may remove or refuse to post any content for any reason or no reason, including content that violates these Terms.</p>
+                    </section>
+
+                    <!-- Purchases and Payments -->
+                    <section id="purchases" class="mb-5">
+                        <h2 class="h3 mb-4">6. Purchases and Payments</h2>
+                        
+                        <h5 class="mb-3">6.1 Pricing and Availability</h5>
+                        <p class="text-muted">All prices are subject to change without notice. We reserve the right to modify or discontinue products at any time. We are not liable for any such modifications.</p>
+                        
+                        <h5 class="mb-3 mt-4">6.2 Payment Processing</h5>
+                        <p class="text-muted">Payments are processed through secure third-party payment processors. By making a purchase, you agree to the terms of these processors. We do not store your payment information.</p>
+                        
+                        <h5 class="mb-3 mt-4">6.3 Refund Policy</h5>
+                        <p class="text-muted">Due to the digital nature of our products, all sales are final unless otherwise required by applicable law. Please review product descriptions carefully before purchasing.</p>
+                    </section>
+
+                    <!-- Subscriptions -->
+                    <section id="subscriptions" class="mb-5">
+                        <h2 class="h3 mb-4">7. Subscriptions</h2>
+                        
+                        <h5 class="mb-3">7.1 Billing</h5>
+                        <p class="text-muted">Subscription fees are billed in advance on a recurring basis. You authorize us to charge your payment method for the subscription fee at the then-current rate.</p>
+                        
+                        <h5 class="mb-3 mt-4">7.2 Cancellation</h5>
+                        <p class="text-muted">You may cancel your subscription at any time through your account settings. Cancellation will take effect at the end of the current billing period.</p>
+                        
+                        <h5 class="mb-3 mt-4">7.3 Changes to Subscriptions</h5>
+                        <p class="text-muted">We may change subscription fees with reasonable notice. Continued use after the fee change constitutes acceptance of the new fees.</p>
+                    </section>
+
+                    <!-- Third-Party Links -->
+                    <section id="third-party" class="mb-5">
+                        <h2 class="h3 mb-4">8. Third-Party Links and Services</h2>
+                        <p class="text-muted">Our website may contain links to third-party websites or services that are not owned or controlled by MfalmeBits. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party websites. You acknowledge and agree that we shall not be liable for any damage or loss caused by or in connection with such third-party services.</p>
+                    </section>
+
+                    <!-- Termination -->
+                    <section id="termination" class="mb-5">
+                        <h2 class="h3 mb-4">9. Termination</h2>
+                        <p class="text-muted">We may terminate or suspend your account and bar access to the service immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever, including without limitation a breach of the Terms.</p>
+                        <p class="text-muted">Upon termination, your right to use the service will immediately cease. All provisions of the Terms which by their nature should survive termination shall survive, including ownership provisions, warranty disclaimers, indemnity, and limitations of liability.</p>
+                    </section>
+
+                    <!-- Limitation of Liability -->
+                    <section id="limitation-liability" class="mb-5">
+                        <h2 class="h3 mb-4">10. Limitation of Liability</h2>
+                        <p class="text-muted">To the maximum extent permitted by law, in no event shall MfalmeBits, its directors, employees, partners, or licensors be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:</p>
+                        <ul class="text-muted">
+                            <li>Your use or inability to use the service</li>
+                            <li>Any conduct or content of any third party on the service</li>
+                            <li>Any content obtained from the service</li>
+                            <li>Unauthorized access, use, or alteration of your transmissions or content</li>
+                        </ul>
+                    </section>
+
+                    <!-- Indemnification -->
+                    <section id="indemnification" class="mb-5">
+                        <h2 class="h3 mb-4">11. Indemnification</h2>
+                        <p class="text-muted">You agree to defend, indemnify, and hold harmless MfalmeBits, its contractors, licensors, and their respective directors, officers, employees, and agents from and against any and all claims, damages, obligations, losses, liabilities, costs, or debt, and expenses arising from:</p>
+                        <ul class="text-muted">
+                            <li>Your use of and access to the service</li>
+                            <li>Your violation of any term of these Terms</li>
+                            <li>Your violation of any third-party right, including without limitation any copyright, property, or privacy right</li>
+                            <li>Any claim that your content caused damage to a third party</li>
+                        </ul>
+                    </section>
+
+                    <!-- Governing Law -->
+                    <section id="governing-law" class="mb-5">
+                        <h2 class="h3 mb-4">12. Governing Law</h2>
+                        <p class="text-muted">These Terms shall be governed and construed in accordance with the laws of Kenya, without regard to its conflict of law provisions. Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.</p>
+                    </section>
+
+                    <!-- Changes to Terms -->
+                    <section id="changes" class="mb-5">
+                        <h2 class="h3 mb-4">13. Changes to Terms</h2>
+                        <p class="text-muted">We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
+                        <p class="text-muted">By continuing to access or use our service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the service.</p>
+                    </section>
+
+                    <!-- Contact Us -->
+                    <section id="contact" class="mb-5">
+                        <h2 class="h3 mb-4">14. Contact Us</h2>
+                        <p class="text-muted">If you have any questions about these Terms, please contact us:</p>
+                        
+                        <div class="contact-details bg-light p-4 rounded-3">
+                            <p class="mb-2"><strong>MfalmeBits</strong></p>
+                            <p class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> legal@mfalmebits.com</p>
+                            <p class="mb-2"><i class="fas fa-phone me-2 text-primary"></i> +254 700 000 000</p>
+                            <p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> Nairobi, Kenya</p>
+                            <p class="mb-0"><i class="fas fa-globe me-2 text-primary"></i> www.mfalmebits.com/contact</p>
+                        </div>
+                        
+                        <p class="text-muted mt-4">Or use our <a href="{% url 'home:contact' %}" class="text-primary">contact form</a> to send us a message directly.</p>
+                    </section>
+
+                    <!-- Acceptance -->
+                    <div class="acceptance-box bg-light p-4 rounded-3 text-center mt-5">
+                        <p class="mb-3">By using MfalmeBits, you acknowledge that you have read these Terms of Service and agree to be bound by them.</p>
+                        <a href="{% url 'home:contact' %}" class="btn btn-primary">Contact Us with Questions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .terms-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    }
+    .terms-toc {
+        position: sticky;
+        top: 2rem;
+    }
+    .terms-toc .nav-link {
+        padding: 0.5rem 1rem;
+        color: #6c757d;
+        border-left: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    .terms-toc .nav-link:hover {
+        color: #0d6efd;
+        border-left-color: #0d6efd;
+        background-color: #f8f9fa;
+    }
+    .terms-text section {
+        scroll-margin-top: 2rem;
+    }
+    .terms-text h2 {
+        color: #333;
+        border-bottom: 2px solid #0d6efd;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .terms-text h5 {
+        color: #495057;
+        margin-top: 1.5rem;
+    }
+    .terms-text ul {
+        padding-left: 1.5rem;
+    }
+    .terms-text ul li {
+        margin-bottom: 0.5rem;
+    }
+    .acceptance-box {
+        border: 1px solid #dee2e6;
+    }
+    @media (max-width: 992px) {
+        .terms-toc {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}

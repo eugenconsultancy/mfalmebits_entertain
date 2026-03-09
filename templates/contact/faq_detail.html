@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- FAQ Detail -->
+<section class="faq-detail py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'contact:faq' %}">FAQs</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ faq.question|truncatechars:50 }}</li>
+                    </ol>
+                </nav>
+
+                <!-- FAQ Content -->
+                <article class="faq-content">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header bg-primary text-white py-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-light text-dark">{{ faq.get_category_display }}</span>
+                                <small><i class="far fa-eye me-2"></i>{{ faq.views_count }} views</small>
+                            </div>
+                            <h1 class="h3 mt-3">{{ faq.question }}</h1>
+                        </div>
+                        <div class="card-body p-5">
+                            <div class="faq-answer">
+                                {{ faq.answer|safe }}
+                            </div>
+
+                            <!-- Was this helpful? -->
+                            <div class="helpful-section mt-5 pt-4 border-top text-center">
+                                <h5 class="h6 mb-3">Was this answer helpful?</h5>
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button class="btn btn-outline-success btn-sm" onclick="markHelpful(true)">
+                                        <i class="fas fa-thumbs-up me-2"></i>Yes
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="markHelpful(false)">
+                                        <i class="fas fa-thumbs-down me-2"></i>No
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Related FAQs -->
+                {% if related_faqs %}
+                <div class="related-faqs mt-5">
+                    <h3 class="h5 mb-4">Related Questions</h3>
+                    <div class="list-group">
+                        {% for related in related_faqs %}
+                        <a href="{% url 'contact:faq_detail' related.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-question-circle text-primary me-2"></i>{{ related.question }}</span>
+                            <small class="text-muted"><i class="far fa-eye me-1"></i>{{ related.views_count }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Still Need Help -->
+                <div class="still-need-help mt-5 text-center bg-light p-5 rounded-3">
+                    <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                    <h4 class="h5 mb-3">Still Need Help?</h4>
+                    <p class="text-muted mb-4">Can't find the answer you're looking for? Our support team is ready to assist.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'contact:support' %}" class="btn btn-primary">
+                            <i class="fas fa-ticket-alt me-2"></i>Open Support Ticket
+                        </a>
+                        <a href="{% url 'contact:index' %}#contact-form" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>Contact Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function markHelpful(helpful) {
+        // Send feedback to server
+        fetch('{% url "contact:faq_detail" faq.pk %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ helpful: helpful })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show thank you message
+                const message = helpful ? 'Thank you for your feedback!' : 'We\'ll work on improving this answer.';
+                alert(message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock %}

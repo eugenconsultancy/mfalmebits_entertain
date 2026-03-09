@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Logout | MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header py-5 position-relative overflow-hidden">
+    <div class="animated-bg"></div>
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas fa-sign-out-alt me-2"></i>Account
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-4">Sign <span class="text-gradient-highlight">Out</span></h1>
+                <p class="lead text-light-emphasis">Are you sure you want to logout?</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Logout Confirmation -->
+<section class="logout-content py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <!-- Logout Card -->
+                <div class="glass-card-2 p-5 text-center">
+                    <div class="logout-icon mb-4">
+                        <div class="icon-circle mx-auto">
+                            <i class="fas fa-sign-out-alt fa-3x"></i>
+                        </div>
+                    </div>
+                    
+                    <h3 class="h4 text-white fw-bold mb-3">Ready to Leave?</h3>
+                    <p class="text-light-emphasis mb-4">
+                        You're about to sign out of your account. Any unsaved changes will be lost.
+                    </p>
+                    
+                    <!-- Session Info -->
+                    <div class="session-info glass-card-1 p-3 mb-4 text-start">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-user-circle text-primary-accent me-2 fa-lg"></i>
+                            <span class="text-white">{{ user.get_full_name|default:user.username }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-envelope text-primary-accent me-2"></i>
+                            <span class="text-light-emphasis small">{{ user.email }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-clock text-primary-accent me-2"></i>
+                            <span class="text-light-emphasis small">Last login: {{ user.last_login|date:"M d, Y H:i" }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <form method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <div class="d-flex gap-3">
+                            <a href="{% url 'home:home' %}" class="btn btn-outline-gradient flex-grow-1">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger-gradient flex-grow-1">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="quick-links text-center mt-4">
+                    <p class="text-light-emphasis small mb-2">Quick links while you're here:</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'home:home' %}" class="text-primary-accent text-decoration-none small">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                        <span class="text-light-emphasis">|</span>
+                        <a href="{% url 'archive:index' %}" class="text-primary-accent text-decoration-none small">
+                            <i class="fas fa-archive me-1"></i>Archive
+                        </a>
+                        <span class="text-light-emphasis">|</span>
+                        <a href="{% url 'library:index' %}" class="text-primary-accent text-decoration-none small">
+                            <i class="fas fa-book me-1"></i>Library
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    :root {
+        --primary-accent: #ff6b4a;
+        --secondary-accent: #ff8a6f;
+        --danger-accent: #dc3545;
+        --deep-charcoal: #0a0c0f;
+        --medium-charcoal: #1a1e24;
+        --light-charcoal: #2a2f36;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--deep-charcoal) 0%, var(--medium-charcoal) 100%);
+        min-height: 300px;
+    }
+
+    .animated-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(-45deg, var(--primary-accent), var(--secondary-accent), #8B4513, #c97c5d);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        opacity: 0.1;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .glass-badge {
+        background: rgba(255, 107, 74, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 107, 74, 0.3);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    .text-gradient-highlight {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .text-light-emphasis {
+        color: #e0e0e0 !important;
+    }
+
+    .text-primary-accent {
+        color: var(--primary-accent) !important;
+    }
+
+    /* Logout Card */
+    .glass-card-2 {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 30px;
+        padding: 3rem !important;
+    }
+
+    .icon-circle {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(255, 107, 74, 0.4);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px 10px rgba(255, 107, 74, 0.2);
+        }
+    }
+
+    /* Session Info */
+    .glass-card-1 {
+        background: var(--light-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.1);
+        border-radius: 15px;
+    }
+
+    /* Buttons */
+    .btn-outline-gradient {
+        background: transparent;
+        border: 2px solid var(--primary-accent);
+        color: var(--primary-accent);
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-outline-gradient:hover {
+        background: var(--primary-accent);
+        color: white;
+    }
+
+    .btn-danger-gradient {
+        background: linear-gradient(135deg, var(--danger-accent), #c82333);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+    }
+
+    /* Quick Links */
+    .quick-links a:hover {
+        text-decoration: underline !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .glass-card-2 {
+            padding: 2rem !important;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+        }
+
+        .icon-circle i {
+            font-size: 2rem;
+        }
+
+        .btn-outline-gradient,
+        .btn-danger-gradient {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}Preferences Updated - MfalmeBits Newsletter{% endblock %}
+
+{% block content %}
+<section class="min-h-screen flex items-center justify-center py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="mb-8">
+                <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fas fa-check-circle text-5xl text-green-500"></i>
+                </div>
+            </div>
+            
+            <h1 class="text-4xl font-bold mb-6">Preferences Updated!</h1>
+            
+            <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                Your newsletter preferences have been successfully updated.
+            </p>
+            
+            <div class="glass p-6 mb-8">
+                <p class="mb-4">
+                    You'll now receive newsletters according to your updated preferences.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="{% url 'newsletter:archive' %}" 
+                       class="bg-primary text-white px-6 py-3 rounded-lg font-semibold 
+                              hover:bg-opacity-90 transition-colors inline-block">
+                        Browse Archive
+                    </a>
+                    <a href="{% url 'home:index' %}" 
+                       class="glass border border-primary text-primary px-6 py-3 rounded-lg font-semibold 
+                              hover:bg-primary hover:text-white transition-colors inline-block">
+                        Return Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

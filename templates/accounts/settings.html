@@ -1,0 +1,588 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Account Settings | {{ user.username }} | MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header py-5 position-relative overflow-hidden">
+    <div class="animated-bg"></div>
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas fa-cog me-2"></i>Preferences
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-4">Account <span class="text-gradient-highlight">Settings</span></h1>
+                <p class="lead text-light-emphasis">Customize your experience and manage your preferences</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Settings Content -->
+<section class="settings-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Settings Navigation -->
+            <div class="col-lg-3 mb-4">
+                <div class="settings-nav glass-card-2 p-4 sticky-sidebar">
+                    <div class="nav flex-column nav-pills" id="settingsTabs" role="tablist">
+                        <button class="nav-link active" id="preferences-tab" data-bs-toggle="pill" data-bs-target="#preferences" type="button" role="tab">
+                            <i class="fas fa-sliders-h me-2"></i>Preferences
+                        </button>
+                        <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" type="button" role="tab">
+                            <i class="fas fa-shield-alt me-2"></i>Privacy
+                        </button>
+                        <button class="nav-link" id="notifications-tab" data-bs-toggle="pill" data-bs-target="#notifications" type="button" role="tab">
+                            <i class="fas fa-bell me-2"></i>Notifications
+                        </button>
+                        <button class="nav-link" id="appearance-tab" data-bs-toggle="pill" data-bs-target="#appearance" type="button" role="tab">
+                            <i class="fas fa-palette me-2"></i>Appearance
+                        </button>
+                        <hr class="nav-divider">
+                        <a href="{% url 'accounts:change_password' %}" class="nav-link">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </a>
+                        <a href="{% url 'accounts:delete_account' %}" class="nav-link text-danger">
+                            <i class="fas fa-trash-alt me-2"></i>Delete Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Forms -->
+            <div class="col-lg-9">
+                <div class="tab-content" id="settingsTabContent">
+                    <!-- Preferences Tab -->
+                    <div class="tab-pane fade show active" id="preferences" role="tabpanel">
+                        <div class="glass-card-2 p-5">
+                            <h3 class="h4 text-white fw-bold mb-4">Display Preferences</h3>
+                            
+                            <form method="post" action="{% url 'accounts:settings' %}" class="settings-form">
+                                {% csrf_token %}
+                                
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-white">Theme</label>
+                                        {{ form.theme }}
+                                        {% if form.theme.errors %}
+                                            <div class="text-danger small mt-1">{{ form.theme.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label text-white">Items Per Page</label>
+                                        {{ form.items_per_page }}
+                                        {% if form.items_per_page.errors %}
+                                            <div class="text-danger small mt-1">{{ form.items_per_page.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label text-white">Language</label>
+                                        <select name="language" class="form-control glass-input">
+                                            <option value="en" {% if user.profile.language == 'en' %}selected{% endif %}>English</option>
+                                            <option value="sw" {% if user.profile.language == 'sw' %}selected{% endif %}>Swahili</option>
+                                            <option value="fr" {% if user.profile.language == 'fr' %}selected{% endif %}>French</option>
+                                            <option value="pt" {% if user.profile.language == 'pt' %}selected{% endif %}>Portuguese</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-5">
+                                    <button type="submit" name="preferences_submit" class="btn btn-primary-gradient px-5">
+                                        <i class="fas fa-save me-2"></i>Save Preferences
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Tab -->
+                    <div class="tab-pane fade" id="privacy" role="tabpanel">
+                        <div class="glass-card-2 p-5">
+                            <h3 class="h4 text-white fw-bold mb-4">Privacy Settings</h3>
+                            
+                            <form method="post" action="{% url 'accounts:settings' %}" class="settings-form">
+                                {% csrf_token %}
+                                
+                                <div class="privacy-settings">
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Profile Visibility</h6>
+                                                <p class="text-light-emphasis small">Control who can see your profile</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <select name="profile_visibility" class="form-control glass-input">
+                                                    <option value="public" {% if user.preferences.profile_visibility == 'public' %}selected{% endif %}>Public</option>
+                                                    <option value="private" {% if user.preferences.profile_visibility == 'private' %}selected{% endif %}>Private</option>
+                                                    <option value="followers" {% if user.preferences.profile_visibility == 'followers' %}selected{% endif %}>Followers Only</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Show Email</h6>
+                                                <p class="text-light-emphasis small">Display your email on your public profile</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="show_email" id="showEmail" {% if user.preferences.show_email %}checked{% endif %}>
+                                                    <label class="form-check-label text-white" for="showEmail"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Show Saved Items</h6>
+                                                <p class="text-light-emphasis small">Display your saved items on your public profile</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="show_saved_items" id="showSavedItems" {% if user.preferences.show_saved_items %}checked{% endif %}>
+                                                    <label class="form-check-label text-white" for="showSavedItems"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-5">
+                                    <button type="submit" name="privacy_submit" class="btn btn-primary-gradient px-5">
+                                        <i class="fas fa-save me-2"></i>Save Privacy Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Tab -->
+                    <div class="tab-pane fade" id="notifications" role="tabpanel">
+                        <div class="glass-card-2 p-5">
+                            <h3 class="h4 text-white fw-bold mb-4">Notification Preferences</h3>
+                            
+                            <form method="post" action="{% url 'accounts:settings' %}" class="settings-form">
+                                {% csrf_token %}
+                                
+                                <div class="notification-settings">
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Email Notifications</h6>
+                                                <p class="text-light-emphasis small">Receive email notifications about your account</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="email_notifications" id="emailNotifications" {% if user.profile.email_notifications %}checked{% endif %}>
+                                                    <label class="form-check-label text-white" for="emailNotifications"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Newsletter</h6>
+                                                <p class="text-light-emphasis small">Subscribe to our newsletter for updates</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="newsletter_subscribed" id="newsletterSubscribed" {% if user.profile.newsletter_subscribed %}checked{% endif %}>
+                                                    <label class="form-check-label text-white" for="newsletterSubscribed"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Comment Notifications</h6>
+                                                <p class="text-light-emphasis small">Receive emails when someone comments on your content</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="email_on_comment" id="emailOnComment" {% if user.preferences.email_on_comment %}checked{% endif %}>
+                                                    <label class="form-check-label text-white" for="emailOnComment"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Reply Notifications</h6>
+                                                <p class="text-light-emphasis small">Receive emails when someone replies to your comments</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="email_on_reply" id="emailOnReply" {% if user.preferences.email_on_reply %}checked{% endif %}>
+                                                    <label class="form-check-label text-white" for="emailOnReply"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="setting-item mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-1">Purchase Notifications</h6>
+                                                <p class="text-light-emphasis small">Receive emails about your purchases</p>
+                                            </div>
+                                            <div class="setting-control">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" name="email_on_purchase" id="emailOnPurchase" {% if user.preferences.email_on_purchase %}checked{% endif %}>
+                                                    <label class="form-check-label text-white" for="emailOnPurchase"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-5">
+                                    <button type="submit" name="notifications_submit" class="btn btn-primary-gradient px-5">
+                                        <i class="fas fa-save me-2"></i>Save Notification Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Tab -->
+                    <div class="tab-pane fade" id="appearance" role="tabpanel">
+                        <div class="glass-card-2 p-5">
+                            <h3 class="h4 text-white fw-bold mb-4">Appearance Settings</h3>
+                            
+                            <form method="post" action="{% url 'accounts:settings' %}" class="settings-form">
+                                {% csrf_token %}
+                                
+                                <div class="appearance-settings">
+                                    <div class="setting-item mb-4">
+                                        <label class="form-label text-white">Theme Preference</label>
+                                        <div class="theme-options d-flex gap-3 mt-2">
+                                            <div class="theme-option {% if user.preferences.theme == 'light' %}active{% endif %}" onclick="selectTheme('light')">
+                                                <div class="theme-preview light-theme"></div>
+                                                <span class="text-white mt-2 d-block">Light</span>
+                                            </div>
+                                            <div class="theme-option {% if user.preferences.theme == 'dark' %}active{% endif %}" onclick="selectTheme('dark')">
+                                                <div class="theme-preview dark-theme"></div>
+                                                <span class="text-white mt-2 d-block">Dark</span>
+                                            </div>
+                                            <div class="theme-option {% if user.preferences.theme == 'system' %}active{% endif %}" onclick="selectTheme('system')">
+                                                <div class="theme-preview system-theme"></div>
+                                                <span class="text-white mt-2 d-block">System</span>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="theme" id="selectedTheme" value="{{ user.preferences.theme|default:'dark' }}">
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-5">
+                                    <button type="submit" name="appearance_submit" class="btn btn-primary-gradient px-5">
+                                        <i class="fas fa-save me-2"></i>Save Appearance
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    :root {
+        --primary-accent: #ff6b4a;
+        --secondary-accent: #ff8a6f;
+        --success-accent: #10b981;
+        --deep-charcoal: #0a0c0f;
+        --medium-charcoal: #1a1e24;
+        --light-charcoal: #2a2f36;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--deep-charcoal) 0%, var(--medium-charcoal) 100%);
+        min-height: 300px;
+    }
+
+    .animated-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(-45deg, var(--primary-accent), var(--secondary-accent), #8B4513, #c97c5d);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        opacity: 0.1;
+    }
+
+    .glass-badge {
+        background: rgba(255, 107, 74, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 107, 74, 0.3);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    .text-gradient-highlight {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .text-light-emphasis {
+        color: #e0e0e0 !important;
+    }
+
+    /* Settings Navigation */
+    .settings-nav {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+        padding: 1.5rem;
+    }
+
+    .nav-pills .nav-link {
+        color: #e0e0e0;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        text-align: left;
+        background: transparent;
+    }
+
+    .nav-pills .nav-link:hover {
+        background: rgba(255, 107, 74, 0.1);
+        color: white;
+    }
+
+    .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        color: white;
+    }
+
+    .nav-pills .nav-link.text-danger:hover {
+        background: rgba(220, 53, 69, 0.2);
+        color: #ff6b6b !important;
+    }
+
+    .nav-divider {
+        margin: 1.5rem 0;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Settings Cards */
+    .glass-card-2 {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+    }
+
+    /* Form Elements */
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .glass-input {
+        background: var(--light-charcoal);
+        border: 2px solid rgba(255, 107, 74, 0.2);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .glass-input:focus {
+        border-color: var(--primary-accent);
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
+        outline: none;
+    }
+
+    .glass-input option {
+        background: var(--medium-charcoal);
+    }
+
+    /* Toggle Switches */
+    .form-switch {
+        padding-left: 3rem;
+    }
+
+    .form-check-input {
+        width: 3rem;
+        height: 1.5rem;
+        background-color: var(--light-charcoal);
+        border: 2px solid rgba(255, 107, 74, 0.3);
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-accent);
+        border-color: var(--primary-accent);
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
+        border-color: var(--primary-accent);
+    }
+
+    /* Theme Options */
+    .theme-options {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .theme-option {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+        cursor: pointer;
+        padding: 1rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .theme-option:hover {
+        background: rgba(255, 107, 74, 0.1);
+    }
+
+    .theme-option.active {
+        border-color: var(--primary-accent);
+        background: rgba(255, 107, 74, 0.1);
+    }
+
+    .theme-preview {
+        width: 100%;
+        height: 80px;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .light-theme {
+        background: linear-gradient(135deg, #ffffff, #f0f0f0);
+    }
+
+    .dark-theme {
+        background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    }
+
+    .system-theme {
+        background: linear-gradient(135deg, #ffffff 50%, #1a1a1a 50%);
+    }
+
+    /* Setting Items */
+    .setting-item {
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .setting-item:hover {
+        background: rgba(255, 107, 74, 0.05);
+    }
+
+    /* Buttons */
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 107, 74, 0.3);
+    }
+
+    /* Sticky Sidebar */
+    .sticky-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sticky-sidebar {
+            position: static;
+            margin-bottom: 2rem;
+        }
+
+        .theme-options {
+            flex-direction: column;
+        }
+
+        .setting-item {
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .setting-control {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .form-switch {
+            padding-left: 2.5rem;
+        }
+    }
+</style>
+
+<script>
+    function selectTheme(theme) {
+        // Update hidden input
+        document.getElementById('selectedTheme').value = theme;
+        
+        // Update active state
+        document.querySelectorAll('.theme-option').forEach(option => {
+            option.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+    }
+
+    // Tab persistence
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for saved tab in localStorage
+        const savedTab = localStorage.getItem('settingsTab');
+        if (savedTab) {
+            const tab = document.querySelector(`[data-bs-target="${savedTab}"]`);
+            if (tab) {
+                const tabInstance = new bootstrap.Tab(tab);
+                tabInstance.show();
+            }
+        }
+
+        // Save active tab to localStorage
+        const tabs = document.querySelectorAll('[data-bs-toggle="pill"]');
+        tabs.forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function(event) {
+                localStorage.setItem('settingsTab', event.target.dataset.bsTarget);
+            });
+        });
+    });
+</script>
+{% endblock %}

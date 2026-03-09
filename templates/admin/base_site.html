@@ -1,0 +1,95 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {% trans 'MfalmeBits Admin' %}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'images/logo.png' %}" alt="MfalmeBits" height="40">
+        {% trans 'MfalmeBits Administration' %}
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    :root {
+        --primary: #ff6b4a;
+        --secondary: #8B4513;
+        --accent: #2ECC71;
+        --primary-fg: #fff;
+        --body-fg: #333;
+        --body-bg: #fff;
+        --body-quiet-color: #666;
+        --body-loud-color: #000;
+        --header-color: #ff6b4a;
+        --header-branding-color: #fff;
+        --breadcrumbs-fg: #ff6b4a;
+        --breadcrumbs-link-fg: #fff;
+        --breadcrumbs-bg: #8B4513;
+        --link-fg: #ff6b4a;
+        --link-hover-color: #ff8a6f;
+        --link-selected-fg: #2ECC71;
+        --hairline-color: #e8e8e8;
+        --border-color: #ccc;
+        --error-fg: #E74C3C;
+        --message-success-bg: #2ECC71;
+        --message-warning-bg: #F1C40F;
+        --message-error-bg: #E74C3C;
+        --darkened-bg: #f8f8f8;
+        --selected-bg: #ff6b4a;
+        --selected-row: #ff6b4a33;
+        --button-fg: #fff;
+        --button-bg: #ff6b4a;
+        --button-hover-bg: #ff8a6f;
+        --default-button-bg: #2ECC71;
+        --default-button-hover-bg: #27AE60;
+        --close-button-bg: #E74C3C;
+        --close-button-hover-bg: #C0392B;
+        --delete-button-bg: #E74C3C;
+        --delete-button-hover-bg: #C0392B;
+    }
+    
+    #header {
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+        color: #fff;
+    }
+    
+    #header a:link, #header a:visited {
+        color: #fff;
+    }
+    
+    .module h2, .module caption, .inline-group h2 {
+        background: #8B4513;
+        color: #fff;
+    }
+    
+    div.breadcrumbs {
+        background: #8B4513;
+        color: #fff;
+    }
+    
+    div.breadcrumbs a {
+        color: #ff6b4a;
+    }
+    
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: #ff6b4a;
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: #ff8a6f;
+    }
+    
+    .button.default, input[type=submit].default {
+        background: #2ECC71;
+    }
+    
+    .button.default:hover {
+        background: #27AE60;
+    }
+</style>
+{% endblock %}

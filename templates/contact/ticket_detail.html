@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ticket {{ ticket.ticket_id }} - MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Ticket Header -->
+<section class="ticket-header py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'contact:support' %}">Support</a></li>
+                        <li class="breadcrumb-item active">Ticket {{ ticket.ticket_id }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Ticket Content -->
+<section class="ticket-content py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Ticket Status -->
+                <div class="ticket-status mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h1 class="h5 mb-2">Ticket #{{ ticket.ticket_id }}</h1>
+                                    <p class="text-muted small mb-0">
+                                        <i class="fas fa-clock me-2"></i>Created: {{ ticket.created_at|date:"F j, Y \a\t g:i A" }}
+                                    </p>
+                                </div>
+                                <div class="status-badge">
+                                    <span class="badge {% if ticket.status == 'open' %}bg-success{% elif ticket.status == 'in_progress' %}bg-info{% elif ticket.status == 'waiting' %}bg-warning{% elif ticket.status == 'resolved' %}bg-primary{% else %}bg-secondary{% endif %} p-2">
+                                        {{ ticket.get_status_display }}
+                                    </span>
+                                    <span class="badge {% if ticket.priority == 'urgent' %}bg-danger{% elif ticket.priority == 'high' %}bg-warning{% elif ticket.priority == 'medium' %}bg-info{% else %}bg-success{% endif %} ms-2 p-2">
+                                        {{ ticket.get_priority_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Original Ticket -->
+                <div class="original-ticket mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-user me-2"></i>{{ ticket.name }}</span>
+                                <span class="small">{{ ticket.created_at|date:"g:i A" }}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="h6 text-primary mb-3">{{ ticket.get_category_display }}: {{ ticket.subject }}</h5>
+                            <p class="mb-3">{{ ticket.description|linebreaksbr }}</p>
+                            
+                            {% if ticket.attachment %}
+                            <div class="attachment mt-3">
+                                <a href="{{ ticket.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="fas fa-paperclip me-2"></i>View Attachment
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Replies -->
+                {% if ticket.replies.all %}
+                <div class="replies-section mb-4">
+                    <h3 class="h6 mb-3">Replies</h3>
+                    {% for reply in ticket.replies.all %}
+                        {% if not reply.is_internal %}
+                        <div class="reply mb-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header {% if reply.user %}bg-info text-white{% else %}bg-secondary text-white{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fas {% if reply.user %}fa-user{% else %}fa-robot{% endif %} me-2"></i>
+                                            {% if reply.user %}{{ reply.user.get_full_name|default:reply.user.username }}{% else %}MfalmeBits Support{% endif %}
+                                        </span>
+                                        <span class="small">{{ reply.created_at|date:"g:i A" }}</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-0">{{ reply.message|linebreaksbr }}</p>
+                                    {% if reply.attachment %}
+                                    <div class="attachment mt-3">
+                                        <a href="{{ reply.attachment.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="fas fa-paperclip me-2"></i>View Attachment
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Reply Form -->
+                {% if ticket.status != 'resolved' and ticket.status != 'closed' %}
+                <div class="reply-form mt-5">
+                    <h3 class="h6 mb-3">Add Reply</h3>
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <form method="post" action="{% url 'contact:ticket_reply' ticket.ticket_id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+                                <div class="mb-3">
+                                    <label for="{{ reply_form.message.id_for_label }}" class="form-label">Your Message</label>
+                                    {{ reply_form.message }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ reply_form.attachment.id_for_label }}" class="form-label">Attachment (optional)</label>
+                                    {{ reply_form.attachment }}
+                                    <div class="form-text">Max 20MB. Allowed: PDF, DOC, DOCX, JPG, PNG, ZIP</div>
+                                </div>
+                                
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Send Reply
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Close Ticket -->
+                {% if ticket.status != 'resolved' and ticket.status != 'closed' %}
+                <div class="close-ticket text-center mt-4">
+                    <button class="btn btn-link text-danger" onclick="closeTicket()">
+                        <i class="fas fa-times-circle me-2"></i>Close this ticket
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .status-badge .badge {
+        font-size: 0.875rem;
+    }
+    .card-header {
+        border-bottom: none;
+    }
+    .reply-form textarea {
+        min-height: 100px;
+    }
+</style>
+
+<script>
+    function closeTicket() {
+        if (confirm('Are you sure you want to close this ticket?')) {
+            fetch('{% url "contact:ticket_detail" ticket.ticket_id %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'close' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    }
+</script>
+{% endblock %}

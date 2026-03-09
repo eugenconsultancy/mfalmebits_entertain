@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block content %}
+<!-- Offices Header -->
+<section class="offices-header py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-4">Our Offices</h1>
+                <p class="lead mb-4">Visit us at any of our locations around the world.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section py-5">
+    <div class="container-fluid px-0">
+        <div class="map-container">
+            <iframe src="https://www.google.com/maps/d/embed?mid=1YOUR_MAP_ID" 
+                    width="100%" 
+                    height="400" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy"></iframe>
+        </div>
+    </div>
+</section>
+
+<!-- Offices Grid -->
+<section class="offices-grid py-5">
+    <div class="container">
+        <!-- Headquarters -->
+        {% if headquarters %}
+        <div class="headquarters-section mb-5">
+            <h2 class="h4 mb-4 text-primary">Headquarters</h2>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card border-0 shadow-lg hover-lift">
+                        <div class="card-body p-5">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h3 class="h5 mb-3">{{ headquarters.name }}</h3>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                        {{ headquarters.address }}<br>
+                                        {{ headquarters.city }}, {{ headquarters.country }} {{ headquarters.postal_code }}
+                                    </p>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-phone text-primary me-2"></i>
+                                        <a href="tel:{{ headquarters.phone }}" class="text-decoration-none text-muted">{{ headquarters.phone }}</a>
+                                    </p>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-envelope text-primary me-2"></i>
+                                        <a href="mailto:{{ headquarters.email }}" class="text-decoration-none text-muted">{{ headquarters.email }}</a>
+                                    </p>
+                                    {% if headquarters.hours %}
+                                    <p class="text-muted mb-0">
+                                        <i class="fas fa-clock text-primary me-2"></i>
+                                        {{ headquarters.hours|linebreaksbr }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    {% if headquarters.latitude and headquarters.longitude %}
+                                    <div class="static-map">
+                                        <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ headquarters.latitude }},{{ headquarters.longitude }}&zoom=14&size=400x200&markers=color:red%7C{{ headquarters.latitude }},{{ headquarters.longitude }}" 
+                                             alt="Map of {{ headquarters.name }}" 
+                                             class="img-fluid rounded-3">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Regional Offices -->
+        <div class="regional-offices">
+            <h2 class="h4 mb-4 text-primary">Regional Offices</h2>
+            <div class="row g-4">
+                {% for office in offices %}
+                {% if not office.is_headquarters %}
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm hover-lift">
+                        <div class="card-body p-4">
+                            <h3 class="h6 mb-3">{{ office.name }}</h3>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                {{ office.address }}<br>
+                                {{ office.city }}, {{ office.country }}
+                            </p>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-phone text-primary me-2"></i>
+                                <a href="tel:{{ office.phone }}" class="text-decoration-none text-muted">{{ office.phone }}</a>
+                            </p>
+                            <p class="text-muted small mb-3">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                <a href="mailto:{{ office.email }}" class="text-decoration-none text-muted">{{ office.email }}</a>
+                            </p>
+                            {% if office.hours %}
+                            <p class="text-muted small mb-0">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                {{ office.hours }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Visit Info -->
+        <div class="visit-info mt-5 p-5 bg-light rounded-3">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3 class="h5 mb-3">Planning a Visit?</h3>
+                    <p class="text-muted mb-0">
+                        We recommend contacting us before visiting to ensure the right person is available to assist you. 
+                        Our offices are open Monday through Friday, 9:00 AM - 6:00 PM local time.
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{% url 'contact:index' %}" class="btn btn-primary">
+                        <i class="fas fa-calendar-alt me-2"></i>Schedule a Visit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="contact-cta py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="h4 mb-3">Can't make it to an office?</h2>
+        <p class="mb-4">We're always available online. Get in touch through our contact form or support system.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'contact:index' %}#contact-form" class="btn btn-light btn-lg me-2">
+                <i class="fas fa-envelope me-2"></i>Contact Us
+            </a>
+            <a href="{% url 'contact:support' %}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-ticket-alt me-2"></i>Open Support Ticket
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 2rem rgba(0,0,0,.1) !important;
+    }
+    .offices-header {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    }
+    .map-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+    }
+    .static-map img {
+        width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        transition: transform 0.3s ease;
+    }
+    .static-map img:hover {
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}

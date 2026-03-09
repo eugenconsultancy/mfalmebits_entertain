@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Category Hero -->
+<section class="category-hero position-relative overflow-hidden">
+    <div class="hero-background">
+        {% if category.image %}
+        <img src="{{ category.image.url }}" alt="{{ category.name }}" class="hero-bg-img">
+        {% endif %}
+        <div class="overlay-gradient"></div>
+    </div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row min-vh-50 align-items-center py-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas {{ category.icon|default:'fa-paint-brush' }} me-2"></i>{{ category.name }}
+                </span>
+                <h1 class="display-3 fw-bold text-white mb-4">
+                    {{ category.name }} <span class="text-gradient">Collaborations</span>
+                </h1>
+                <p class="lead text-white-50">{{ category.description }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Grid -->
+<section class="projects-grid py-6">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="h3 fw-bold mb-1">{{ category.name }} Projects</h2>
+                <p class="text-muted">{{ projects.count }} collaboration{{ projects.count|pluralize }}</p>
+            </div>
+            
+            <div class="sort-dropdown">
+                <select class="form-select sort-select" onchange="applySort(this.value)">
+                    <option value="-created_at">Newest First</option>
+                    <option value="created_at">Oldest First</option>
+                    <option value="title">Title A-Z</option>
+                    <option value="-title">Title Z-A</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for project in projects %}
+            <div class="col-lg-4 col-md-6">
+                <div class="project-card glass-card-2">
+                    <a href="{{ project.get_absolute_url }}" class="text-decoration-none">
+                        <div class="project-image">
+                            {% if project.featured_image %}
+                            <img src="{{ project.featured_image.url }}" alt="{{ project.title }}">
+                            {% else %}
+                            <div class="placeholder-image">
+                                <i class="fas fa-handshake fa-3x"></i>
+                            </div>
+                            {% endif %}
+                            <div class="project-status status-{{ project.status }}">
+                                {{ project.get_status_display }}
+                            </div>
+                        </div>
+                        <div class="project-info p-4">
+                            <h3 class="project-title h5 fw-bold mb-2">{{ project.title|truncatechars:50 }}</h3>
+                            <p class="project-creator small mb-2">by {{ project.creator_name }}</p>
+                            <p class="project-excerpt small text-muted mb-3">{{ project.short_description|truncatechars:80 }}</p>
+                            <div class="project-meta d-flex justify-content-between">
+                                <span class="text-muted small">
+                                    <i class="fas fa-calendar me-1"></i>{{ project.created_at|date:"M Y" }}
+                                </span>
+                                <span class="text-muted small">
+                                    <i class="fas fa-eye me-1"></i>{{ project.views_count }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state text-center py-5">
+                    <div class="empty-icon mb-4">
+                        <i class="fas fa-handshake fa-4x text-muted"></i>
+                    </div>
+                    <h3 class="h4 mb-3">No Projects Yet</h3>
+                    <p class="text-muted mb-4">Be the first to collaborate in this category.</p>
+                    <a href="{% url 'collaboration:submit' %}" class="btn btn-gradient">
+                        <i class="fas fa-pen-fancy me-2"></i>Submit Your Idea
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav class="pagination-wrapper mt-5">
+            <ul class="pagination-modern">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&lsaquo;</a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">&rsaquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

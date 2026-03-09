@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}Proposal Submitted | MfalmeBits{% endblock %}
+
+{% block content %}
+<section class="proposal-success py-6">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="success-card glass-card-2 p-5">
+                    <div class="success-icon mb-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    
+                    <h1 class="display-5 fw-bold mb-3">Proposal Submitted!</h1>
+                    <p class="lead mb-4">Thank you for your detailed project proposal.</p>
+                    
+                    <div class="success-message glass-card-1 p-4 mb-4">
+                        <p class="mb-3">Our collaboration team will review your proposal carefully and contact you within 7-10 business days to discuss next steps.</p>
+                        <p class="small text-muted mb-0">
+                            <i class="fas fa-envelope me-2"></i>Confirmation sent to {{ form.creator_email.value }}
+                        </p>
+                    </div>
+                    
+                    <div class="next-steps mb-5">
+                        <h3 class="h5 fw-bold mb-3">What Happens Next?</h3>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Initial review by our collaboration team (3-5 days)
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Detailed evaluation of your proposal
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Follow-up email or call to discuss potential collaboration
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="success-actions d-flex flex-wrap gap-3 justify-content-center">
+                        <a href="{% url 'collaboration:index' %}" class="btn btn-outline-gradient">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Collaboration
+                        </a>
+                        <a href="{% url 'collaboration:collaborators' %}" class="btn btn-gradient">
+                            <i class="fas fa-users me-2"></i>Meet Collaborators
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

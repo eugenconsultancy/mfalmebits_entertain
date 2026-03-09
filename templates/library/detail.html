@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords }}{% endblock %}
+{% block og_image %}{{ og_image }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{{ product_schema|safe }}
+</script>
+<script type="application/ld+json">
+{{ breadcrumb_schema|safe }}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumbs -->
+<nav class="container mx-auto px-4 py-4 text-sm" aria-label="Breadcrumb">
+    <ol class="flex items-center space-x-2">
+        <li><a href="/" class="text-gray-500 hover:text-primary">Home</a></li>
+        <li><span class="text-gray-400 mx-2">/</span></li>
+        <li><a href="{% url 'library:index' %}" class="text-gray-500 hover:text-primary">Library</a></li>
+        <li><span class="text-gray-400 mx-2">/</span></li>
+        <li><a href="{{ product.category.get_absolute_url }}" class="text-gray-500 hover:text-primary">{{ product.category.name }}</a></li>
+        <li><span class="text-gray-400 mx-2">/</span></li>
+        <li class="text-primary truncate">{{ product.title }}</li>
+    </ol>
+</nav>
+
+<!-- Product Main -->
+<section class="container mx-auto px-4 py-8">
+    <div class="flex flex-wrap -mx-4">
+        <!-- Product Image -->
+        <div class="w-full lg:w-1/2 px-4 mb-8 lg:mb-0">
+            <div class="glass p-4">
+                <img src="{{ product.cover_image.url }}" 
+                     alt="{{ product.image_alt }}"
+                     class="w-full h-auto rounded-lg">
+            </div>
+            
+            {% if product.preview_file %}
+            <div class="mt-4 text-center">
+                <a href="{{ product.preview_file.url }}" 
+                   target="_blank"
+                   class="text-primary hover:underline">
+                    <i class="fas fa-eye mr-2"></i>Preview Sample
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Product Info -->
+        <div class="w-full lg:w-1/2 px-4">
+            <div class="mb-4">
+                <span class="inline-block glass-dark text-white px-3 py-1 rounded-full text-sm">
+                    {{ product.category.name }}
+                </span>
+            </div>
+            
+            <h1 class="text-4xl font-bold mb-4">{{ product.title }}</h1>
+            
+            <p class="text-xl text-gray-600 dark:text-gray-300 mb-6">
+                {{ product.short_description }}
+            </p>
+            
+            <!-- Author & Publisher -->
+            <div class="flex items-center mb-6">
+                <div class="mr-6">
+                    <span class="text-gray-500 text-sm">Author</span>
+                    <p class="font-semibold">{{ product.author }}</p>
+                </div>
+                {% if product.publisher %}
+                <div>
+                    <span class="text-gray-500 text-sm">Publisher</span>
+                    <p class="font-semibold">{{ product.publisher }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Product Details -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="glass p-3 text-center">
+                    <span class="text-gray-500 text-sm">Format</span>
+                    <p class="font-semibold">{{ product.get_format_display }}</p>
+                </div>
+                {% if product.pages %}
+                <div class="glass p-3 text-center">
+                    <span class="text-gray-500 text-sm">Pages</span>
+                    <p class="font-semibold">{{ product.pages }}</p>
+                </div>
+                {% endif %}
+                {% if product.duration %}
+                <div class="glass p-3 text-center">
+                    <span class="text-gray-500 text-sm">Duration</span>
+                    <p class="font-semibold">{{ product.duration }}</p>
+                </div>
+                {% endif %}
+                <div class="glass p-3 text-center">
+                    <span class="text-gray-500 text-sm">Published</span>
+                    <p class="font-semibold">{{ product.published_date|date:"Y" }}</p>
+                </div>
+            </div>
+            
+            <!-- Price -->
+            <div class="mb-8">
+                {% if product.is_free %}
+                <span class="text-4xl font-bold text-green-500">FREE</span>
+                {% elif product.is_on_sale %}
+                <span class="text-gray-400 line-through text-2xl mr-4">${{ product.price }}</span>
+                <span class="text-4xl font-bold text-primary">${{ product.sale_price }}</span>
+                <span class="ml-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm">
+                    Save ${{ product.price|add:product.sale_price|floatformat:2 }}
+                </span>
+                {% else %}
+                <span class="text-4xl font-bold">${{ product.price }}</span>
+                {% endif %}
+            </div>
+            
+            <!-- Purchase Actions -->
+            <div class="space-y-4">
+                {% if user.is_authenticated %}
+                    {% if has_purchased %}
+                        <div class="bg-green-100 dark:bg-green-900 p-4 rounded-lg text-center">
+                            <p class="text-green-700 dark:text-green-300 mb-4">
+                                <i class="fas fa-check-circle mr-2"></i>You own this product
+                            </p>
+                            <a href="{% url 'library:download' product.id %}" 
+                               class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
+                                      hover:bg-opacity-90 transition-colors inline-block">
+                                <i class="fas fa-download mr-2"></i>Download
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="flex gap-4">
+                            <button onclick="addToCart({{ product.id }})" 
+                                    class="flex-1 bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
+                                           hover:bg-opacity-90 transition-colors magnetic">
+                                <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                            </button>
+                            
+                            <button onclick="toggleWishlist({{ product.id }})" 
+                                    class="w-16 glass hover:bg-primary hover:text-white transition-colors 
+                                           rounded-full flex items-center justify-center">
+                                <i class="fas fa-heart {% if in_wishlist %}text-red-500{% endif %}"></i>
+                            </button>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'account_login' %}?next={{ request.path }}" 
+                       class="block bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
+                              text-center hover:bg-opacity-90 transition-colors">
+                        Login to Purchase
+                    </a>
+                {% endif %}
+            </div>
+            
+            <!-- Product Stats -->
+            <div class="flex items-center mt-8 text-gray-500">
+                <span class="mr-6">
+                    <i class="fas fa-eye mr-2"></i>{{ product.views_count }} views
+                </span>
+                <span class="mr-6">
+                    <i class="fas fa-shopping-bag mr-2"></i>{{ product.purchase_count }} purchases
+                </span>
+                {% if average_rating > 0 %}
+                <span>
+                    <i class="fas fa-star mr-2 text-yellow-400"></i>{{ average_rating|floatformat:1 }} ({{ reviews.count }} reviews)
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Product Description -->
+<section class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Description</h2>
+        <div class="prose prose-lg dark:prose-invert">
+            {{ product.description|safe }}
+        </div>
+    </div>
+</section>
+
+<!-- Product Files -->
+{% if product.files.exists %}
+<section class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4">What's Included</h2>
+        <div class="glass p-6">
+            {% for file in product.files.all %}
+            <div class="flex items-center justify-between py-3 {% if not forloop.last %}border-b border-gray-200 dark:border-gray-700{% endif %}">
+                <div>
+                    <i class="fas fa-file-{{ file.file_type }} mr-3 text-primary"></i>
+                    <span>{{ file.title }}</span>
+                </div>
+                <span class="text-sm text-gray-500">{{ file.file_size }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Reviews -->
+<section class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Customer Reviews</h2>
+        
+        {% if user.is_authenticated and has_purchased and not user_review %}
+        <div class="glass p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">Write a Review</h3>
+            <form method="post" action="{% url 'library:add_review' product.slug %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block mb-2">Rating</label>
+                    <div class="flex space-x-2 rating-stars">
+                        {% for i in "12345"|make_list %}
+                        <button type="button" 
+                                onclick="setRating({{ forloop.counter }})"
+                                class="text-3xl text-gray-400 hover:text-yellow-400 focus:outline-none">
+                            ★
+                        </button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="rating" id="rating" value="5">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block mb-2">Review Title</label>
+                    <input type="text" 
+                           name="title" 
+                           class="w-full px-4 py-2 border rounded-lg dark:bg-gray-800"
+                           maxlength="200">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block mb-2">Your Review</label>
+                    <textarea name="comment" 
+                              rows="4"
+                              class="w-full px-4 py-2 border rounded-lg dark:bg-gray-800"
+                              required></textarea>
+                </div>
+                
+                <button type="submit" 
+                        class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-opacity-90">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        
+        {% if reviews %}
+        <div class="space-y-6">
+            {% for review in reviews %}
+            <div class="glass p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-bold">{{ review.user.get_full_name|default:review.user.email }}</h3>
+                        <div class="flex text-yellow-400">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ review.created_at|date:"M d, Y" }}</span>
+                </div>
+                
+                {% if review.title %}
+                <h4 class="font-semibold mb-2">{{ review.title }}</h4>
+                {% endif %}
+                
+                <p class="text-gray-600 dark:text-gray-300">{{ review.comment }}</p>
+                
+                {% if review.verified_purchase %}
+                <p class="text-sm text-green-500 mt-4">
+                    <i class="fas fa-check-circle mr-1"></i>Verified Purchase
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-center py-8">No reviews yet. Be the first to review this product!</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Related Products -->
+{% if related_products %}
+<section class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold mb-8 text-center">You Might Also Like</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for related in related_products %}
+        <div class="glass-card group">
+            <a href="{{ related.get_absolute_url }}">
+                <div class="relative h-48 overflow-hidden">
+                    <img src="{{ related.cover_image.url }}" 
+                         alt="{{ related.image_alt }}"
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         loading="lazy">
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold mb-2 group-hover:text-primary transition-colors">
+                        {{ related.title }}
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">{{ related.short_description|truncatechars:60 }}</p>
+                    <div class="flex items-center justify-between">
+                        {% if related.is_on_sale %}
+                        <span class="text-primary font-bold">${{ related.sale_price }}</span>
+                        {% elif related.is_free %}
+                        <span class="text-green-500 font-bold">FREE</span>
+                        {% else %}
+                        <span class="font-bold">${{ related.price }}</span>
+                        {% endif %}
+                        <span class="text-xs text-gray-500">{{ related.get_format_display }}</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Cart JavaScript -->
+<script>
+let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+
+function addToCart(productId) {
+    cart[productId] = (cart[productId] || 0) + 1;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Show notification
+    showNotification('Product added to cart!');
+    
+    // Update cart count
+    updateCartCount();
+}
+
+function toggleWishlist(productId) {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: new URLSearchParams({
+            'action': {% if in_wishlist %}'remove_from_wishlist'{% else %}'add_to_wishlist'{% endif %}
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const heartIcon = document.querySelector('.fa-heart');
+            if (data.in_wishlist) {
+                heartIcon.classList.add('text-red-500');
+                showNotification('Added to wishlist!');
+            } else {
+                heartIcon.classList.remove('text-red-500');
+                showNotification('Removed from wishlist!');
+            }
+        }
+    });
+}
+
+function setRating(rating) {
+    document.getElementById('rating').value = rating;
+    
+    // Update star colors
+    document.querySelectorAll('.rating-stars button').forEach((star, index) => {
+        if (index < rating) {
+            star.classList.add('text-yellow-400');
+            star.classList.remove('text-gray-400');
+        } else {
+            star.classList.remove('text-yellow-400');
+            star.classList.add('text-gray-400');
+        }
+    });
+}
+
+function showNotification(message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-24 right-4 bg-primary text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-up';
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+function updateCartCount() {
+    const count = Object.values(cart).reduce((a, b) => a + b, 0);
+    const cartCountElements = document.querySelectorAll('.cart-count');
+    cartCountElements.forEach(el => {
+        el.textContent = count;
+        el.style.display = count > 0 ? 'inline' : 'none';
+    });
+}
+
+// Initialize
+updateCartCount();
+</script>
+{% endblock %}

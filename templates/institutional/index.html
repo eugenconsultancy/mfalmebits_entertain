@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{{ breadcrumb_schema|safe }}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative py-32 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-white overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-0 w-96 h-96 bg-yellow-300 rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-pink-400 rounded-full filter blur-3xl"></div>
+    </div>
+    
+    <div class="container mx-auto px-6 text-center relative z-10">
+        <h1 class="text-6xl md:text-8xl font-black mb-8 text-white drop-shadow-2xl tracking-tight">
+            Institutional Licensing
+        </h1>
+        <p class="text-2xl md:text-4xl max-w-4xl mx-auto mb-12 font-bold text-white leading-relaxed drop-shadow-lg">
+            Bring African knowledge to your institution with comprehensive licensing plans for schools, universities, libraries, and organizations
+        </p>
+        <div class="flex flex-wrap gap-6 justify-center">
+            <a href="#plans" 
+               class="bg-white text-gray-900 px-12 py-6 rounded-2xl text-2xl font-black 
+                      hover:bg-gray-100 transition-all shadow-2xl hover:shadow-3xl transform hover:scale-105">
+                View Plans
+            </a>
+            <a href="{% url 'institutional:inquiry' %}" 
+               class="bg-transparent border-4 border-white text-white px-12 py-6 rounded-2xl text-2xl font-black 
+                      hover:bg-white hover:text-gray-900 transition-all shadow-2xl">
+                Request Information
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics -->
+<section class="py-24 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+            <div class="text-center">
+                <div class="text-6xl md:text-7xl font-black text-indigo-600 mb-4">{{ statistics.institutions }}+</div>
+                <div class="text-xl md:text-2xl font-bold text-gray-900">Institutions Served</div>
+            </div>
+            <div class="text-center">
+                <div class="text-6xl md:text-7xl font-black text-purple-600 mb-4">{{ statistics.users }}+</div>
+                <div class="text-xl md:text-2xl font-bold text-gray-900">Active Users</div>
+            </div>
+            <div class="text-center">
+                <div class="text-6xl md:text-7xl font-black text-blue-600 mb-4">{{ statistics.resources }}+</div>
+                <div class="text-xl md:text-2xl font-bold text-gray-900">Resources</div>
+            </div>
+            <div class="text-center">
+                <div class="text-6xl md:text-7xl font-black text-pink-600 mb-4">{{ statistics.countries }}</div>
+                <div class="text-xl md:text-2xl font-bold text-gray-900">Countries</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Plans -->
+<section id="plans" class="py-28 bg-gray-50">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl md:text-7xl font-black mb-6 text-gray-900">Featured Plans</h2>
+            <p class="text-2xl md:text-3xl font-bold text-gray-700 max-w-3xl mx-auto">
+                Choose the perfect plan for your institution's needs
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {% for plan in featured_plans %}
+            <div class="bg-white rounded-3xl shadow-2xl group hover:shadow-3xl transition-all duration-300 overflow-hidden {% if forloop.counter == 2 %}ring-8 ring-indigo-600 transform scale-105{% endif %}">
+                {% if forloop.counter == 2 %}
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-center py-4">
+                    <span class="text-xl font-black">MOST POPULAR</span>
+                </div>
+                {% endif %}
+                <div class="p-10">
+                    <div class="text-indigo-600 text-lg font-black mb-3 uppercase tracking-wide">{{ plan.get_plan_type_display }}</div>
+                    <h3 class="text-3xl md:text-4xl font-black mb-6 text-gray-900">{{ plan.name }}</h3>
+                    <p class="text-xl font-semibold text-gray-700 mb-8 leading-relaxed">{{ plan.short_description }}</p>
+                    
+                    <div class="mb-8">
+                        <span class="text-5xl md:text-6xl font-black text-gray-900">{{ plan.get_yearly_price_display }}</span>
+                    </div>
+                    
+                    <div class="mb-8 space-y-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-users text-3xl text-indigo-600 mr-4"></i>
+                            <span class="text-xl font-bold text-gray-900">{{ plan.get_user_range }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-download text-3xl text-indigo-600 mr-4"></i>
+                            <span class="text-xl font-bold text-gray-900">{% if plan.max_downloads == -1 %}Unlimited{% else %}{{ plan.max_downloads }}{% endif %} downloads</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-headset text-3xl text-indigo-600 mr-4"></i>
+                            <span class="text-xl font-bold text-gray-900">{{ plan.get_support_level_display }}</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'institutional:plan_detail' plan.slug %}" 
+                       class="block text-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-5 rounded-2xl text-xl font-black
+                              hover:from-indigo-700 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl transform hover:scale-105">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- All Plans by Type -->
+<section class="py-28 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl md:text-7xl font-black mb-6 text-gray-900">All Licensing Plans</h2>
+            <p class="text-2xl md:text-3xl font-bold text-gray-700 max-w-3xl mx-auto">
+                Find the right plan for your institution type
+            </p>
+        </div>
+        
+        {% for plan_type, plans in grouped_plans.items %}
+        <div class="mb-20 last:mb-0">
+            <h3 class="text-4xl md:text-5xl font-black mb-10 pb-6 border-b-4 border-indigo-600 text-gray-900">
+                {{ plans.0.get_plan_type_display }} Plans
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for plan in plans %}
+                <div class="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all border-2 border-gray-200 hover:border-indigo-600">
+                    <h4 class="text-2xl md:text-3xl font-black mb-4 text-gray-900">{{ plan.name }}</h4>
+                    <p class="text-lg font-semibold text-gray-700 mb-6">{{ plan.short_description }}</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-black text-gray-900">{{ plan.get_yearly_price_display }}</span>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-2xl text-green-600 mt-1 mr-3"></i>
+                            <span class="text-lg font-bold text-gray-900">{{ plan.get_user_range }}</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-2xl text-green-600 mt-1 mr-3"></i>
+                            <span class="text-lg font-bold text-gray-900">{{ plan.get_support_level_display }}</span>
+                        </li>
+                        {% if plan.api_access %}
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-2xl text-green-600 mt-1 mr-3"></i>
+                            <span class="text-lg font-bold text-gray-900">API Access</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <a href="{% url 'institutional:plan_detail' plan.slug %}" 
+                       class="text-indigo-600 hover:text-indigo-800 inline-flex items-center text-xl font-black">
+                        View Details
+                        <i class="fas fa-arrow-right ml-3 text-2xl"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-28 bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl md:text-7xl font-black mb-6 text-gray-900">Trusted by Institutions Worldwide</h2>
+            <p class="text-2xl md:text-3xl font-bold text-gray-700 max-w-3xl mx-auto">
+                See what our institutional partners are saying
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {% for testimonial in testimonials %}
+            <div class="bg-white rounded-2xl shadow-2xl p-10 border-t-8 border-indigo-600">
+                <div class="mb-6">
+                    <i class="fas fa-quote-left text-6xl text-indigo-600 opacity-30"></i>
+                </div>
+                <p class="text-xl font-semibold text-gray-800 mb-8 leading-relaxed italic">
+                    "{{ testimonial.quote }}"
+                </p>
+                <div>
+                    <div class="text-2xl font-black text-gray-900">{{ testimonial.author }}</div>
+                    <div class="text-lg font-bold text-gray-600 mt-2">{{ testimonial.position }}</div>
+                    <div class="text-lg font-black text-indigo-600 mt-1">{{ testimonial.institution }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-5xl md:text-7xl font-black mb-8 drop-shadow-2xl">Ready to Get Started?</h2>
+        <p class="text-2xl md:text-3xl max-w-3xl mx-auto mb-12 font-bold leading-relaxed">
+            Contact our institutional team for a customized quote or to schedule a demo
+        </p>
+        <div class="flex flex-wrap gap-6 justify-center">
+            <a href="{% url 'institutional:inquiry' %}" 
+               class="bg-white text-gray-900 px-12 py-6 rounded-2xl text-2xl font-black 
+                      hover:bg-gray-100 transition-all shadow-2xl transform hover:scale-105">
+                Request Information
+            </a>
+            <a href="{% url 'institutional:calculator' %}" 
+               class="bg-transparent border-4 border-white text-white px-12 py-6 rounded-2xl text-2xl font-black 
+                      hover:bg-white hover:text-gray-900 transition-all shadow-2xl">
+                Try Pricing Calculator
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Brochures -->
+{% if brochures %}
+<section class="py-24 bg-white">
+    <div class="container mx-auto px-6">
+        <h2 class="text-5xl md:text-6xl font-black text-center mb-16 text-gray-900">Download Brochures</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for brochure in brochures %}
+            <div class="bg-white rounded-2xl shadow-xl p-8 text-center border-2 border-gray-200 hover:border-indigo-600 hover:shadow-2xl transition-all">
+                {% if brochure.cover_image %}
+                <img src="{{ brochure.cover_image.url }}" 
+                     alt="{{ brochure.title }}"
+                     class="w-full h-64 object-cover rounded-xl mb-6 shadow-lg">
+                {% endif %}
+                <h3 class="text-2xl md:text-3xl font-black mb-4 text-gray-900">{{ brochure.title }}</h3>
+                <p class="text-lg font-semibold text-gray-700 mb-6">{{ brochure.description|truncatechars:100 }}</p>
+                <a href="{% url 'institutional:brochure_download' brochure.id %}" 
+                   class="inline-flex items-center text-indigo-600 hover:text-indigo-800 text-xl font-black">
+                    <i class="fas fa-download mr-3 text-2xl"></i>
+                    Download ({{ brochure.file.size|filesizeformat }})
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

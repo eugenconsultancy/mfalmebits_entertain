@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Collaborators Hero -->
+<section class="collaborators-hero py-5 position-relative overflow-hidden">
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas fa-users me-2"></i>Our Community
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-4">Meet Our <span class="text-gradient">Collaborators</span></h1>
+                <p class="lead text-white-50">Talented artists, designers, writers, and cultural creators shaping the future of African knowledge.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Collaborators Grid -->
+<section class="collaborators-grid py-6">
+    <div class="container">
+        <div class="row g-4">
+            {% for collaborator in collaborators %}
+            <div class="col-lg-4 col-md-6">
+                <div class="collaborator-card glass-card-2 p-4 text-center hover-lift">
+                    <div class="collaborator-avatar mb-4">
+                        <i class="fas fa-user-circle fa-4x text-primary"></i>
+                    </div>
+                    <h3 class="h5 fw-bold mb-1">{{ collaborator.creator_name }}</h3>
+                    {% if collaborator.creator_location %}
+                    <p class="small text-muted mb-2">
+                        <i class="fas fa-map-marker-alt me-1"></i>{{ collaborator.creator_location }}
+                    </p>
+                    {% endif %}
+                    {% if collaborator.creator_bio %}
+                    <p class="small text-muted mb-3">{{ collaborator.creator_bio|truncatechars:100 }}</p>
+                    {% endif %}
+                    <div class="collaborator-stats d-flex justify-content-around mb-3">
+                        <div class="stat">
+                            <span class="fw-bold">{{ collaborator.projects_count|default:'1' }}</span>
+                            <span class="d-block small text-muted">Projects</span>
+                        </div>
+                        <div class="stat">
+                            <span class="fw-bold">{% if collaborator.creator_website %}✓{% else %}—{% endif %}</span>
+                            <span class="d-block small text-muted">Website</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'collaboration:category' 'all' %}?creator={{ collaborator.creator_name }}" class="btn btn-outline-gradient btn-sm w-100">
+                        View Projects
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state text-center py-5">
+                    <div class="empty-icon mb-4">
+                        <i class="fas fa-users fa-4x text-muted"></i>
+                    </div>
+                    <h3 class="h4 mb-3">No Collaborators Yet</h3>
+                    <p class="text-muted mb-4">Be the first to join our community of creators.</p>
+                    <a href="{% url 'collaboration:submit' %}" class="btn btn-gradient">
+                        <i class="fas fa-pen-fancy me-2"></i>Submit Your Idea
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

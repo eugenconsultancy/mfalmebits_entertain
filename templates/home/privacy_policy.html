@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+{% block keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block content %}
+<!-- Privacy Policy Hero -->
+<section class="privacy-hero py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-4">Privacy Policy</h1>
+                <p class="lead mb-4">Last Updated: {{ last_updated|default:"January 1, 2025" }}</p>
+                <p>Your privacy is important to us. This policy explains how we collect, use, and protect your personal information.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Policy Content -->
+<section class="policy-content py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <!-- Table of Contents -->
+                <div class="policy-toc sticky-top" style="top: 2rem;">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Contents</h5>
+                            <nav class="nav flex-column">
+                                <a class="nav-link text-primary py-2" href="#introduction">1. Introduction</a>
+                                <a class="nav-link text-primary py-2" href="#information-we-collect">2. Information We Collect</a>
+                                <a class="nav-link text-primary py-2" href="#how-we-use">3. How We Use Your Information</a>
+                                <a class="nav-link text-primary py-2" href="#cookies">4. Cookies & Tracking</a>
+                                <a class="nav-link text-primary py-2" href="#data-sharing">5. Data Sharing & Disclosure</a>
+                                <a class="nav-link text-primary py-2" href="#data-security">6. Data Security</a>
+                                <a class="nav-link text-primary py-2" href="#your-rights">7. Your Rights</a>
+                                <a class="nav-link text-primary py-2" href="#children">8. Children's Privacy</a>
+                                <a class="nav-link text-primary py-2" href="#changes">9. Changes to This Policy</a>
+                                <a class="nav-link text-primary py-2" href="#contact">10. Contact Us</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-9">
+                <div class="policy-text">
+                    <!-- Introduction -->
+                    <section id="introduction" class="mb-5">
+                        <h2 class="h3 mb-4">1. Introduction</h2>
+                        <p class="text-muted">Welcome to MfalmeBits ("we," "our," or "us"). We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.</p>
+                        <p class="text-muted">Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.</p>
+                    </section>
+
+                    <!-- Information We Collect -->
+                    <section id="information-we-collect" class="mb-5">
+                        <h2 class="h3 mb-4">2. Information We Collect</h2>
+                        
+                        <h5 class="mb-3">2.1 Personal Information You Provide</h5>
+                        <p class="text-muted">We collect personal information that you voluntarily provide to us when you:</p>
+                        <ul class="text-muted mb-4">
+                            <li>Register for an account</li>
+                            <li>Subscribe to our newsletter</li>
+                            <li>Make a purchase</li>
+                            <li>Contact us for support</li>
+                            <li>Participate in surveys or promotions</li>
+                        </ul>
+                        <p class="text-muted">This information may include:</p>
+                        <ul class="text-muted">
+                            <li>Name and contact information (email, phone number)</li>
+                            <li>Billing and payment information</li>
+                            <li>Account credentials</li>
+                            <li>Profile information</li>
+                        </ul>
+
+                        <h5 class="mb-3 mt-4">2.2 Information Automatically Collected</h5>
+                        <p class="text-muted">When you visit our website, we automatically collect certain information about your device, including:</p>
+                        <ul class="text-muted">
+                            <li>IP address</li>
+                            <li>Browser type and version</li>
+                            <li>Operating system</li>
+                            <li>Pages visited and time spent</li>
+                            <li>Referring website addresses</li>
+                        </ul>
+                    </section>
+
+                    <!-- How We Use Your Information -->
+                    <section id="how-we-use" class="mb-5">
+                        <h2 class="h3 mb-4">3. How We Use Your Information</h2>
+                        <p class="text-muted">We use the information we collect to:</p>
+                        <ul class="text-muted">
+                            <li>Provide, operate, and maintain our website and services</li>
+                            <li>Process your transactions and send related information</li>
+                            <li>Send you technical notices, updates, and support messages</li>
+                            <li>Respond to your comments, questions, and requests</li>
+                            <li>Send you marketing communications (with your consent)</li>
+                            <li>Monitor and analyze usage patterns and trends</li>
+                            <li>Improve our website and services</li>
+                            <li>Detect, prevent, and address technical issues or fraud</li>
+                        </ul>
+                    </section>
+
+                    <!-- Cookies & Tracking -->
+                    <section id="cookies" class="mb-5">
+                        <h2 class="h3 mb-4">4. Cookies & Tracking Technologies</h2>
+                        <p class="text-muted">We use cookies and similar tracking technologies to track activity on our website and hold certain information. Cookies are files with small amount of data which may include an anonymous unique identifier.</p>
+                        
+                        <h5 class="mb-3 mt-4">Types of Cookies We Use:</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Cookie Type</th>
+                                        <th>Purpose</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Essential Cookies</td>
+                                        <td>Required for basic site functionality</td>
+                                        <td>Session / Persistent</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Analytics Cookies</td>
+                                        <td>Help us understand how visitors interact with our site</td>
+                                        <td>Up to 2 years</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Preference Cookies</td>
+                                        <td>Remember your settings and preferences</td>
+                                        <td>Up to 1 year</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Marketing Cookies</td>
+                                        <td>Track visitors across websites for advertising</td>
+                                        <td>Up to 90 days</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <p class="text-muted mt-3">You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our website.</p>
+                    </section>
+
+                    <!-- Data Sharing & Disclosure -->
+                    <section id="data-sharing" class="mb-5">
+                        <h2 class="h3 mb-4">5. Data Sharing & Disclosure</h2>
+                        <p class="text-muted">We may share your personal information in the following situations:</p>
+                        <ul class="text-muted">
+                            <li><strong>Service Providers:</strong> We may share your information with third-party vendors who perform services on our behalf (e.g., payment processing, data analysis, email delivery).</li>
+                            <li><strong>Business Transfers:</strong> In connection with any merger, sale of company assets, or acquisition of all or a portion of our business.</li>
+                            <li><strong>Legal Requirements:</strong> If required to do so by law or in response to valid requests by public authorities.</li>
+                            <li><strong>With Your Consent:</strong> We may disclose your information for any other purpose with your consent.</li>
+                        </ul>
+                        <p class="text-muted">We do not sell your personal information to third parties.</p>
+                    </section>
+
+                    <!-- Data Security -->
+                    <section id="data-security" class="mb-5">
+                        <h2 class="h3 mb-4">6. Data Security</h2>
+                        <p class="text-muted">We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. These measures include:</p>
+                        <ul class="text-muted">
+                            <li>Encryption of sensitive data using SSL/TLS protocols</li>
+                            <li>Regular security assessments and penetration testing</li>
+                            <li>Access controls and authentication procedures</li>
+                            <li>Secure data storage and backup systems</li>
+                        </ul>
+                        <p class="text-muted">However, no method of transmission over the Internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your information, we cannot guarantee absolute security.</p>
+                    </section>
+
+                    <!-- Your Rights -->
+                    <section id="your-rights" class="mb-5">
+                        <h2 class="h3 mb-4">7. Your Rights</h2>
+                        <p class="text-muted">Depending on your location, you may have certain rights regarding your personal information, including:</p>
+                        <ul class="text-muted">
+                            <li>The right to access your personal information</li>
+                            <li>The right to correct inaccurate information</li>
+                            <li>The right to delete your information</li>
+                            <li>The right to restrict or object to processing</li>
+                            <li>The right to data portability</li>
+                            <li>The right to withdraw consent</li>
+                        </ul>
+                        <p class="text-muted">To exercise these rights, please contact us using the information provided in the "Contact Us" section below. We will respond to your request within 30 days.</p>
+                    </section>
+
+                    <!-- Children's Privacy -->
+                    <section id="children" class="mb-5">
+                        <h2 class="h3 mb-4">8. Children's Privacy</h2>
+                        <p class="text-muted">Our services are not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If you become aware that a child has provided us with personal information, please contact us. If we become aware that we have collected personal information from children without verification of parental consent, we will take steps to remove that information.</p>
+                    </section>
+
+                    <!-- Changes to Policy -->
+                    <section id="changes" class="mb-5">
+                        <h2 class="h3 mb-4">9. Changes to This Privacy Policy</h2>
+                        <p class="text-muted">We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date at the top of this policy. You are advised to review this Privacy Policy periodically for any changes.</p>
+                    </section>
+
+                    <!-- Contact Us -->
+                    <section id="contact" class="mb-5">
+                        <h2 class="h3 mb-4">10. Contact Us</h2>
+                        <p class="text-muted">If you have questions or concerns about this Privacy Policy or our data practices, please contact us at:</p>
+                        
+                        <div class="contact-details bg-light p-4 rounded-3">
+                            <p class="mb-2"><strong>MfalmeBits</strong></p>
+                            <p class="mb-2"><i class="fas fa-envelope me-2 text-primary"></i> privacy@mfalmebits.com</p>
+                            <p class="mb-2"><i class="fas fa-phone me-2 text-primary"></i> +254 700 000 000</p>
+                            <p class="mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> Nairobi, Kenya</p>
+                            <p class="mb-0"><i class="fas fa-globe me-2 text-primary"></i> www.mfalmebits.com/contact</p>
+                        </div>
+                        
+                        <p class="text-muted mt-4">Or use our <a href="{% url 'home:contact' %}" class="text-primary">contact form</a> to send us a message directly.</p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .privacy-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    }
+    .policy-toc {
+        position: sticky;
+        top: 2rem;
+    }
+    .policy-toc .nav-link {
+        padding: 0.5rem 1rem;
+        color: #6c757d;
+        border-left: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    .policy-toc .nav-link:hover {
+        color: #0d6efd;
+        border-left-color: #0d6efd;
+        background-color: #f8f9fa;
+    }
+    .policy-text section {
+        scroll-margin-top: 2rem;
+    }
+    .policy-text h2 {
+        color: #333;
+        border-bottom: 2px solid #0d6efd;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .policy-text h5 {
+        color: #495057;
+        margin-top: 1.5rem;
+    }
+    .policy-text ul {
+        padding-left: 1.5rem;
+    }
+    .policy-text ul li {
+        margin-bottom: 0.5rem;
+    }
+    .table th {
+        background-color: #f8f9fa;
+    }
+    @media (max-width: 992px) {
+        .policy-toc {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}

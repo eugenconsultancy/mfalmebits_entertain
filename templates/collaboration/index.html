@@ -1,0 +1,953 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block content %}
+<!-- ===== Collaboration Hero Section ===== -->
+<section class="collaboration-hero position-relative overflow-hidden">
+    <div class="hero-background">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+        <div class="particles" id="heroParticles"></div>
+    </div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row min-vh-75 align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge glass-badge mb-4 animate-fade-in-up">
+                    <i class="fas fa-handshake me-2"></i>Let's Create Together
+                </span>
+                <h1 class="display-3 fw-bold text-white mb-4 animate-slide-in-left">
+                    Collaborate with <span class="text-gradient">MfalmeBits</span>
+                </h1>
+                <p class="lead text-white-50 mb-5 animate-slide-in-right">
+                    Join a community of artists, designers, writers, and cultural creators shaping the future of African knowledge and creativity.
+                </p>
+                
+                <div class="hero-cta d-flex flex-wrap gap-3 justify-content-center animate-fade-in-up">
+                    <a href="{% url 'collaboration:submit' %}" class="btn-hero-primary magnetic" data-tilt>
+                        <i class="fas fa-pen-fancy me-2"></i>Submit Your Idea
+                    </a>
+                    <a href="{% url 'collaboration:propose' %}" class="btn-hero-secondary magnetic" data-tilt>
+                        <i class="fas fa-file-alt me-2"></i>Propose a Project
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Bar -->
+    <div class="stats-bar position-absolute bottom-0 start-0 end-0">
+        <div class="container">
+            <div class="row g-0 glass-card-stats">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <span class="stat-number counter" data-target="{{ statistics.projects }}">0</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <span class="stat-number counter" data-target="{{ statistics.collaborators }}">0</span>
+                        <span class="stat-label">Collaborators</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <span class="stat-number counter" data-target="{{ statistics.countries }}">0</span>
+                        <span class="stat-label">Countries</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <span class="stat-number counter" data-target="{{ statistics.categories }}">0</span>
+                        <span class="stat-label">Categories</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== Featured Projects Carousel ===== -->
+{% if featured_projects %}
+<section class="featured-projects py-6">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-end mb-5">
+            <div>
+                <span class="badge glass-badge mb-3 animate-fade-in-up">
+                    <i class="fas fa-star text-warning me-2"></i>Featured Collaborations
+                </span>
+                <h2 class="display-5 fw-bold mb-3 animate-slide-in-left">
+                    Success <span class="text-gradient">Stories</span>
+                </h2>
+                <p class="lead text-muted animate-slide-in-right">
+                    Discover impactful collaborations that brought African creativity to the world
+                </p>
+            </div>
+            <a href="{% url 'collaboration:collaborators' %}" class="view-all-link d-none d-md-block">
+                View All Collaborators <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="featured-carousel owl-carousel owl-theme">
+            {% for project in featured_projects %}
+            <div class="project-card">
+                <a href="{{ project.get_absolute_url }}" class="text-decoration-none">
+                    <div class="project-image">
+                        {% if project.featured_image %}
+                        <img src="{{ project.featured_image.url }}" alt="{{ project.title }}">
+                        {% else %}
+                        <div class="placeholder-image">
+                            <i class="fas fa-handshake fa-3x"></i>
+                        </div>
+                        {% endif %}
+                        <div class="project-category">{{ project.get_category_display }}</div>
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">{{ project.title|truncatechars:40 }}</h3>
+                        <p class="project-creator">by {{ project.creator_name }}</p>
+                        <p class="project-excerpt">{{ project.short_description|truncatechars:60 }}</p>
+                        <div class="project-footer">
+                            <span class="project-status status-{{ project.status }}">{{ project.get_status_display }}</span>
+                            <span class="project-views"><i class="fas fa-eye me-1"></i>{{ project.views_count }}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ===== Collaboration Categories ===== -->
+<section class="categories-section py-6 bg-soft">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="badge glass-badge mb-3">
+                <i class="fas fa-tags me-2"></i>Ways to Collaborate
+            </span>
+            <h2 class="display-5 fw-bold mb-3">Choose Your <span class="text-gradient">Path</span></h2>
+            <p class="lead text-muted">Find the perfect collaboration type for your creative practice</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for category in categories %}
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'collaboration:category' category.slug %}" class="text-decoration-none">
+                    <div class="category-card glass-card-2 p-4 hover-lift" data-tilt>
+                        <div class="category-icon-wrapper">
+                            <div class="category-icon">
+                                <i class="fas {{ category.icon|default:'fa-paint-brush' }} fa-2x"></i>
+                            </div>
+                        </div>
+                        <h3 class="h5 fw-bold mb-3">{{ category.name }}</h3>
+                        <p class="text-muted small mb-3">{{ category.description|truncatechars:80 }}</p>
+                        <div class="category-meta d-flex justify-content-between">
+                            <span class="category-projects">{{ category.collaborationproject_set.count }} projects</span>
+                            <span class="category-link">Explore <i class="fas fa-arrow-right ms-2"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ===== How It Works ===== -->
+<section class="how-it-works py-6">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="badge glass-badge mb-3">
+                <i class="fas fa-sitemap me-2"></i>The Process
+            </span>
+            <h2 class="display-5 fw-bold mb-3">How <span class="text-gradient">Collaboration</span> Works</h2>
+            <p class="lead text-muted">Simple steps to bring your creative vision to life</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card glass-card-1 p-4 text-center h-100">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h4 class="h6 fw-bold mb-3">Share Your Idea</h4>
+                    <p class="small text-muted mb-0">Submit your concept through our simple form, telling us about your vision and goals.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card glass-card-1 p-4 text-center h-100">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h4 class="h6 fw-bold mb-3">Initial Discussion</h4>
+                    <p class="small text-muted mb-0">Our team reviews your proposal and schedules a conversation to explore possibilities.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card glass-card-1 p-4 text-center h-100">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <h4 class="h6 fw-bold mb-3">Agreement</h4>
+                    <p class="small text-muted mb-0">We formalize the collaboration with clear terms, timelines, and expectations.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card glass-card-1 p-4 text-center h-100">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h4 class="h6 fw-bold mb-3">Create Together</h4>
+                    <p class="small text-muted mb-0">Work with our team to bring your project to life and share it with the world.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Testimonials ===== -->
+{% if testimonials %}
+<section class="testimonials-section py-6 bg-soft">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="badge glass-badge mb-3">
+                <i class="fas fa-quote-right me-2"></i>Testimonials
+            </span>
+            <h2 class="display-5 fw-bold mb-3">What <span class="text-gradient">Collaborators</span> Say</h2>
+            <p class="lead text-muted">Hear from artists and creators who've worked with us</p>
+        </div>
+        
+        <div class="testimonials-carousel owl-carousel owl-theme">
+            {% for testimonial in testimonials %}
+            <div class="testimonial-card glass-card-2 p-4">
+                <div class="testimonial-rating mb-3">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= testimonial.rating %}
+                        <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                        <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="testimonial-content mb-4">"{{ testimonial.content }}"</p>
+                <div class="testimonial-author d-flex align-items-center">
+                    <div class="author-avatar me-3">
+                        {% if testimonial.image %}
+                        <img src="{{ testimonial.image.url }}" alt="{{ testimonial.name }}">
+                        {% else %}
+                        <div class="avatar-placeholder">
+                            {{ testimonial.name|first|upper }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="author-info">
+                        <h5 class="author-name fw-bold small mb-0">{{ testimonial.name }}</h5>
+                        <p class="author-title small text-muted">{{ testimonial.title }}</p>
+                    </div>
+                </div>
+                {% if testimonial.project %}
+                <div class="testimonial-project mt-3 pt-3 border-top">
+                    <small class="text-muted">Project: <a href="{{ testimonial.project.get_absolute_url }}">{{ testimonial.project.title }}</a></small>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ===== FAQ Section ===== -->
+{% if faqs %}
+<section class="faq-section py-6">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="badge glass-badge mb-3">
+                <i class="fas fa-question-circle me-2"></i>FAQ
+            </span>
+            <h2 class="display-5 fw-bold mb-3">Frequently Asked <span class="text-gradient">Questions</span></h2>
+            <p class="lead text-muted">Everything you need to know about collaborating with us</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    {% for faq in faqs %}
+                    <div class="accordion-item glass-card-1 mb-3">
+                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" 
+                                    type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#collapse{{ forloop.counter }}" 
+                                    aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" 
+                                    aria-controls="collapse{{ forloop.counter }}">
+                                {{ faq.question }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ forloop.counter }}" 
+                             class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" 
+                             aria-labelledby="heading{{ forloop.counter }}" 
+                             data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                {{ faq.answer|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ===== Call to Action ===== -->
+<section class="cta-section py-6 position-relative overflow-hidden">
+    <div class="cta-background">
+        <div class="floating-elements">
+            <span class="floating-icon">🎨</span>
+            <span class="floating-icon">✍️</span>
+            <span class="floating-icon">🎭</span>
+            <span class="floating-icon">🎵</span>
+        </div>
+    </div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="cta-content glass-card-1 p-5">
+                    <h2 class="display-5 fw-bold mb-4">Ready to Collaborate?</h2>
+                    <p class="lead mb-5">Join our community of creators and help shape the future of African knowledge and creativity.</p>
+                    
+                    <div class="cta-actions d-flex flex-wrap gap-3 justify-content-center">
+                        <a href="{% url 'collaboration:submit' %}" class="btn-cta-primary magnetic" data-tilt>
+                            <i class="fas fa-pen-fancy me-2"></i>Submit Your Idea
+                        </a>
+                        <a href="{% url 'collaboration:propose' %}" class="btn-cta-secondary magnetic" data-tilt>
+                            <i class="fas fa-file-alt me-2"></i>Propose a Project
+                        </a>
+                    </div>
+                    
+                    <p class="mt-4 small text-muted">
+                        Have questions? <a href="{% url 'contact:index' %}" class="text-primary">Contact us</a> for more information.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Enhanced CSS ===== -->
+<style>
+    :root {
+        --primary: #8B4513;
+        --primary-light: #c97c5d;
+        --primary-dark: #6B3410;
+        --accent: #d98c5f;
+        --dark-bg: #0a0c0f;
+        --dark-card: #1e2429;
+        --dark-soft: #2c353d;
+        --text-light: #e0e0e0;
+        --text-muted: #b0b0b0;
+        --gold: #c9a53b;
+        --gradient-1: linear-gradient(135deg, #8B4513, #c97c5d);
+        --gradient-2: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .collaboration-hero {
+        position: relative;
+        min-height: 700px;
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        overflow: hidden;
+    }
+
+    .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(139, 69, 19, 0.1);
+        border-radius: 50%;
+        filter: blur(60px);
+        animation: floatShape 25s infinite;
+    }
+
+    .shape-1 { width: 400px; height: 400px; top: -200px; left: -200px; }
+    .shape-2 { width: 500px; height: 500px; bottom: -250px; right: -250px; animation-delay: 5s; }
+    .shape-3 { width: 300px; height: 300px; top: 30%; left: 20%; animation-delay: 2s; }
+    .shape-4 { width: 350px; height: 350px; bottom: 20%; right: 15%; animation-delay: 7s; }
+    .shape-5 { width: 250px; height: 250px; top: 60%; left: 10%; animation-delay: 3s; }
+
+    @keyframes floatShape {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(50px, -50px) rotate(120deg); }
+        66% { transform: translate(-30px, 30px) rotate(240deg); }
+    }
+
+    .glass-badge {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        color: white;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: inline-block;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #fff, var(--primary-light), var(--gold));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .stats-bar {
+        bottom: 0;
+        transform: translateY(50%);
+        z-index: 10;
+    }
+
+    .glass-card-stats {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-item {
+        text-align: center;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-item:last-child {
+        border-right: none;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1.2;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-hero-primary, .btn-hero-secondary {
+        display: inline-block;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-hero-primary {
+        background: var(--gradient-1);
+        color: white;
+    }
+
+    .btn-hero-secondary {
+        background: transparent;
+        border: 2px solid white;
+        color: white;
+    }
+
+    .btn-hero-primary:hover, .btn-hero-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .project-card {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin: 0.5rem;
+    }
+
+    .project-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--primary);
+        box-shadow: 0 20px 40px rgba(139, 69, 19, 0.2);
+    }
+
+    .project-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .project-card:hover .project-image img {
+        transform: scale(1.1);
+    }
+
+    .placeholder-image {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary-dark), var(--dark-card));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 3rem;
+    }
+
+    .project-category {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--primary);
+        color: white;
+        padding: 0.25rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .project-info {
+        padding: 1.5rem;
+    }
+
+    .project-title {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-creator {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-excerpt {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .project-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .project-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-published { background: #10b981; color: white; }
+    .status-completed { background: #3b82f6; color: white; }
+    .status-in_progress { background: #f59e0b; color: white; }
+    .status-approved { background: #8b5cf6; color: white; }
+
+    .category-card {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary);
+    }
+
+    .category-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-1);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover .category-icon-wrapper {
+        transform: rotate(10deg) scale(1.1);
+    }
+
+    .category-icon {
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .category-link {
+        color: var(--primary-light);
+        font-weight: 600;
+        transition: transform 0.3s ease;
+    }
+
+    .category-card:hover .category-link {
+        transform: translateX(5px);
+    }
+
+    .step-card {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .step-number {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 3rem;
+        font-weight: 700;
+        color: rgba(139, 69, 19, 0.2);
+        line-height: 1;
+    }
+
+    .step-icon {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 1rem;
+        background: var(--gradient-1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .testimonial-card {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        margin: 0.5rem;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .author-avatar img,
+    .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-placeholder {
+        background: var(--gradient-1);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .accordion-item {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 15px !important;
+        overflow: hidden;
+    }
+
+    .accordion-button {
+        background: transparent;
+        color: white;
+        font-weight: 600;
+        padding: 1.5rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: rgba(139, 69, 19, 0.1);
+        color: var(--primary-light);
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+
+    .accordion-body {
+        padding: 1.5rem;
+        color: var(--text-muted);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .cta-content {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 40px;
+    }
+
+    .btn-cta-primary, .btn-cta-secondary {
+        display: inline-block;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cta-primary {
+        background: var(--gradient-1);
+        color: white;
+    }
+
+    .btn-cta-secondary {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-cta-primary:hover, .btn-cta-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+    }
+
+    .py-6 {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+
+    .bg-soft {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .view-all-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary);
+        transition: all 0.3s ease;
+    }
+
+    .view-all-link:hover {
+        color: var(--primary-light);
+        border-bottom-color: var(--primary-light);
+    }
+
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 60px;
+    }
+
+    .wave-divider .shape-fill {
+        fill: #f8f9fa;
+    }
+
+    .z-index-2 {
+        z-index: 2;
+        position: relative;
+    }
+
+    @media (max-width: 768px) {
+        .glass-card-stats {
+            padding: 1rem;
+        }
+        
+        .stat-item {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .py-6 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        
+        .stat-number {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const animateCounter = (counter) => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const count = parseInt(counter.innerText);
+            const increment = Math.ceil(target / speed);
+            
+            if (count < target) {
+                counter.innerText = Math.min(count + increment, target);
+                setTimeout(() => animateCounter(counter), 10);
+            } else {
+                counter.innerText = target;
+            }
+        };
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => counterObserver.observe(counter));
+
+        // Magnetic Buttons
+        const magneticElements = document.querySelectorAll('.magnetic');
+        
+        magneticElements.forEach(element => {
+            element.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                this.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                this.style.transform = 'translate(0px, 0px)';
+            });
+        });
+
+        // Tilt Effect
+        const tiltElements = document.querySelectorAll('[data-tilt]');
+        
+        tiltElements.forEach(element => {
+            element.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const angleX = (y - centerY) / 25;
+                const angleY = (centerX - x) / 25;
+                
+                this.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.02)`;
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+            });
+        });
+    });
+</script>
+
+<!-- Owl Carousel -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".featured-carousel").owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: false,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            responsive: {
+                0: { items: 1 },
+                600: { items: 2 },
+                1000: { items: 3 }
+            }
+        });
+
+        $(".testimonials-carousel").owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: false,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 6000,
+            responsive: {
+                0: { items: 1 },
+                600: { items: 2 },
+                1000: { items: 2 }
+            }
+        });
+    });
+</script>
+{% endblock %}

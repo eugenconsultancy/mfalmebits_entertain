@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Knowledge Archive - MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-dark text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold">Knowledge Archive</h1>
+                <p class="lead">Explore our comprehensive collection of African knowledge, history, and culture</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search and Filter Section -->
+<section class="filters-section py-4 bg-light border-bottom">
+    <div class="container">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="q" class="form-control" placeholder="Search entries..." value="{{ current_filters.q }}">
+            </div>
+            <div class="col-md-3">
+                <select name="theme" class="form-select">
+                    <option value="">All Themes</option>
+                    {% for theme_option in themes %}
+                    <option value="{{ theme_option.slug }}" {% if current_filters.theme == theme_option.slug %}selected{% endif %}>{{ theme_option.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="sort" class="form-select">
+                    <option value="-published_date" {% if current_filters.sort == '-published_date' %}selected{% endif %}>Newest First</option>
+                    <option value="published_date" {% if current_filters.sort == 'published_date' %}selected{% endif %}>Oldest First</option>
+                    <option value="title" {% if current_filters.sort == 'title' %}selected{% endif %}>Title A-Z</option>
+                    <option value="-views_count" {% if current_filters.sort == '-views_count' %}selected{% endif %}>Most Viewed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Featured Entries -->
+{% if featured_entries %}
+<section class="featured-section py-5">
+    <div class="container">
+        <h2 class="h3 mb-4">Featured Entries</h2>
+        <div class="row g-4">
+            {% for entry in featured_entries %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    {% if entry.featured_image %}
+                    <img src="{{ entry.featured_image.url }}" class="card-img-top" alt="{{ entry.image_alt|default:entry.title }}" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-2">{{ entry.theme.name }}</span>
+                        <h5 class="card-title">{{ entry.title }}</h5>
+                        <p class="card-text small text-muted">{{ entry.excerpt|truncatewords:20 }}</p>
+                        <a href="{% url 'archive:detail' entry.theme.slug entry.slug %}" class="btn btn-outline-primary btn-sm">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Entries Listing -->
+<section class="archive-listing py-4">
+    <div class="container">
+        <h2 class="h3 mb-4">All Entries</h2>
+        <div class="row g-4">
+            {% for entry in entries %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    {% if entry.featured_image %}
+                    <img src="{{ entry.featured_image.url }}" class="card-img-top" alt="{{ entry.image_alt|default:entry.title }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-secondary mb-2">{{ entry.theme.name }}</span>
+                        <h5 class="card-title">{{ entry.title }}</h5>
+                        <p class="card-text text-muted small">
+                            <i class="fas fa-user me-1"></i> {{ entry.author }} |
+                            <i class="fas fa-calendar me-1"></i> {{ entry.published_date|date:"M d, Y" }} |
+                            <i class="fas fa-eye me-1"></i> {{ entry.views_count }}
+                        </p>
+                        <p class="card-text">{{ entry.excerpt|truncatewords:25 }}</p>
+                        <div class="mb-2">
+                            {% for tag in entry.tags.all|slice:":3" %}
+                            <a href="{% url 'archive:by_tag' tag.slug %}" class="badge bg-light text-dark text-decoration-none me-1">#{{ tag.name }}</a>
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'archive:detail' entry.theme.slug entry.slug %}" class="btn btn-outline-primary btn-sm">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                <h3>No Entries Found</h3>
+                <p class="text-muted">Try adjusting your search or filter criteria.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.theme %}&theme={{ request.GET.theme }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.theme %}&theme={{ request.GET.theme }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.theme %}&theme={{ request.GET.theme }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.theme %}&theme={{ request.GET.theme }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.theme %}&theme={{ request.GET.theme }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Themes Section -->
+{% if themes %}
+<section class="themes-section py-5 bg-light">
+    <div class="container">
+        <h2 class="h3 mb-4 text-center">Browse by Theme</h2>
+        <div class="row g-4">
+            {% for theme_item in themes %}
+            <div class="col-md-4 col-lg-3">
+                <a href="{% url 'archive:by_theme' theme_item.slug %}" class="text-decoration-none">
+                    <div class="card text-center h-100 shadow-sm hover-card">
+                        <div class="card-body">
+                            <i class="fas {{ theme_item.icon }} fa-3x mb-3" style="color: {{ theme_item.color }};"></i>
+                            <h5 class="card-title">{{ theme_item.name }}</h5>
+                            <p class="text-muted small">{{ theme_item.entry_count }} entries</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Popular Tags -->
+{% if popular_tags %}
+<section class="tags-section py-5">
+    <div class="container">
+        <h2 class="h3 mb-4 text-center">Popular Tags</h2>
+        <div class="text-center">
+            {% for tag in popular_tags %}
+            <a href="{% url 'archive:by_tag' tag.slug %}" class="badge bg-light text-dark text-decoration-none p-2 m-1 border" style="font-size: {% widthratio tag.entry_count 5 0.8 %}rem;">
+                #{{ tag.name }} ({{ tag.entry_count }})
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+    }
+    .page-header {
+        background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+    }
+</style>
+{% endblock %}

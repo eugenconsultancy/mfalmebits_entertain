@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Successful | MfalmeBits Library{% endblock %}
+
+{% block content %}
+<!-- Success Hero -->
+<section class="success-hero position-relative overflow-hidden py-5">
+    <div class="particles" id="successParticles"></div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="success-icon mb-4">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                
+                <h1 class="display-4 fw-bold mb-3 text-white">Payment Successful!</h1>
+                <p class="lead text-white-50 mb-4">Thank you for your purchase. Your transaction has been completed successfully.</p>
+                
+                <div class="order-details glass-card-2 p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Order Details</h5>
+                    <p class="mb-2">
+                        <i class="fas fa-hashtag me-2 text-primary"></i>
+                        Order ID: <strong>{{ request.GET.payment_intent|truncatechars:20 }}</strong>
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2 text-primary"></i>
+                        Confirmation sent to: <strong>{{ user.email }}</strong>
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-clock me-2 text-primary"></i>
+                        Date: <strong>{% now "F j, Y, g:i a" %}</strong>
+                    </p>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{% url 'accounts:downloads' %}" class="btn btn-gradient btn-lg me-3">
+                        <i class="fas fa-download me-2"></i>Go to Downloads
+                    </a>
+                    <a href="{% url 'library:index' %}" class="btn btn-outline-gradient btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Next Steps -->
+<section class="next-steps py-5 bg-soft">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">What's Next?</h2>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-card glass-card-2 p-4 text-center h-100">
+                    <div class="step-icon mb-3">
+                        <i class="fas fa-download fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">1. Download Your Products</h5>
+                    <p class="text-muted">Access your purchased products instantly from your downloads page.</p>
+                    <a href="{% url 'accounts:downloads' %}" class="btn btn-sm btn-outline-gradient mt-2">
+                        View Downloads <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="step-card glass-card-2 p-4 text-center h-100">
+                    <div class="step-icon mb-3">
+                        <i class="fas fa-star fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">2. Leave a Review</h5>
+                    <p class="text-muted">Share your experience and help others discover great content.</p>
+                    <a href="{% url 'accounts:purchases' %}" class="btn btn-sm btn-outline-gradient mt-2">
+                        Write Reviews <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="step-card glass-card-2 p-4 text-center h-100">
+                    <div class="step-icon mb-3">
+                        <i class="fas fa-envelope fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">3. Subscribe to Newsletter</h5>
+                    <p class="text-muted">Stay updated with new releases and special offers.</p>
+                    <button class="btn btn-sm btn-outline-gradient mt-2" data-bs-toggle="modal" data-bs-target="#newsletterModal">
+                        Subscribe <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recommended Products -->
+<section class="recommended-products py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">You Might Also Like</h2>
+        
+        <div class="row g-4">
+            {% for product in recommended_products|default:'' %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="product-card glass-card-2 hover-lift">
+                    <div class="product-image">
+                        <img src="{{ product.cover_image.url }}" alt="{{ product.title }}" class="img-fluid">
+                        <div class="product-overlay">
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-gradient btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-content p-3">
+                        <h6 class="product-title mb-2">
+                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-white">
+                                {{ product.title|truncatechars:30 }}
+                            </a>
+                        </h6>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="product-price">${{ product.get_current_price }}</span>
+                            <span class="product-format small">
+                                <i class="fas fa-file-{{ product.format }}"></i>
+                                {{ product.get_format_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Modal -->
+<div class="modal fade" id="newsletterModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content glass-card-2">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Subscribe to Newsletter</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'newsletter:subscribe' %}" method="post" class="newsletter-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control glass-input" value="{{ user.email }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-gradient w-100">
+                        <i class="fas fa-paper-plane me-2"></i>Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .success-hero {
+        min-height: 500px;
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        display: flex;
+        align-items: center;
+    }
+
+    .success-icon i {
+        font-size: 6rem;
+        color: #10b981;
+        animation: scaleIn 0.5s ease;
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .order-details {
+        animation: slideUp 0.5s ease 0.2s both;
+    }
+
+    .step-card {
+        transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+        transform: translateY(-5px);
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .action-buttons {
+        animation: slideUp 0.5s ease 0.4s both;
+    }
+
+    .modal-content {
+        background: linear-gradient(135deg, rgba(10,12,15,0.95), rgba(26,30,36,0.95));
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-close-white {
+        filter: invert(1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Confetti animation
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    });
+</script>
+{% endblock %}

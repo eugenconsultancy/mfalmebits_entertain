@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+{% load static compress %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- ===== SEO Meta Tags ===== -->
+    <title>{% block seo_title %}{{ default_title }} | MfalmeBits{% endblock %}</title>
+    <meta name="description" content="{% block seo_description %}{{ default_description }}{% endblock %}">
+    <meta name="keywords" content="{% block seo_keywords %}{{ default_keywords }}{% endblock %}">
+    <meta name="author" content="MfalmeBits">
+    <meta name="robots" content="index, follow">
+    
+    <!-- ===== Canonical URL ===== -->
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    
+    <!-- ===== Open Graph / Facebook ===== -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ default_title }}{% endif %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% if self.seo_description %}{{ self.seo_description }}{% else %}{{ default_description }}{% endif %}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ default_og_image }}{% endblock %}">
+    <meta property="og:site_name" content="MfalmeBits">
+    <meta property="og:locale" content="en_US">
+
+    <!-- ===== Twitter ===== -->
+    <meta name="twitter:card" content="{% block twitter_card %}summary_large_image{% endblock %}">
+    <meta name="twitter:site" content="@mfalmebits">
+    <meta name="twitter:creator" content="@mfalmebits">
+    <meta name="twitter:title" content="{% block twitter_title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ default_title }}{% endif %}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{% if self.seo_description %}{{ self.seo_description }}{% else %}{{ default_description }}{% endif %}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ default_og_image }}{% endblock %}">
+    
+    <!-- ===== JSON-LD Schema ===== -->
+    {% block json_ld %}{% endblock %}
+    
+    <!-- ===== Favicon ===== -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}">
+    
+    <!-- ===== Fonts ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ===== Icons ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ===== Bootstrap CSS ===== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- ===== Custom CSS ===== -->
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    {% endcompress %}
+    
+    <!-- ===== Page Specific CSS ===== -->
+    {% block extra_css %}{% endblock %}
+    
+    <!-- ===== Theme Color ===== -->
+    <meta name="theme-color" content="#8B4513">
+    
+    <!-- ===== Global Serenity-Inspired Styles ===== -->
+    <style>
+        :root {
+            /* Primary Brand Colors */
+            --primary-brown: #8B4513;
+            --primary-gold: #D4AF37;
+            --primary-dark: #5D2E0F;
+            --accent-terracotta: #C97C5D;
+            --accent-sage: #8FA998;
+            
+            /* Neutral Palette */
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --mid-gray: #E0E0E0;
+            --dark-gray: #4A4A4A;
+            --charcoal: #2C2C2C;
+            --black: #1A1A1A;
+            
+            /* Semantic Colors */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
+            
+            /* Glassmorphism */
+            --glass-white: rgba(255, 255, 255, 0.95);
+            --glass-light: rgba(255, 255, 255, 0.85);
+            --glass-medium: rgba(255, 255, 255, 0.7);
+            --glass-subtle: rgba(255, 255, 255, 0.2);
+            
+            /* Shadows - Serenity Style */
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            --shadow-2xl: 0 30px 60px -15px rgba(0, 0, 0, 0.2);
+            
+            /* Typography */
+            --font-primary: 'Montserrat', sans-serif;
+            --font-secondary: 'Lora', serif;
+            
+            /* Spacing */
+            --nav-height: 80px;
+            --section-padding: 6rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.5rem;
+            --radius-md: 1rem;
+            --radius-lg: 1.5rem;
+            --radius-xl: 2rem;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== Global Resets & Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--charcoal);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== BACKGROUND IMAGE STYLES ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("{% static 'images/mfalmebits.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+
+        /* Overlay for better text readability */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.92) 0%,
+                rgba(250, 250, 250, 0.88) 50%,
+                rgba(245, 245, 245, 0.90) 100%
+            );
+            z-index: -1;
+        }
+
+        /* Alternative: Darker overlay if you want the background more visible */
+        /* body::after {
+            background: linear-gradient(
+                135deg,
+                rgba(0, 0, 0, 0.3) 0%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.25) 100%
+            );
+        } */
+
+        /* ===== Typography - Serenity Style ===== */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-secondary);
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--black);
+            margin-bottom: 1rem;
+        }
+
+        h1 { font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: -0.02em; }
+        h2 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.01em; }
+        h3 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+        h4 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
+        h5 { font-size: 1.25rem; }
+        h6 { font-size: 1rem; }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--dark-gray);
+        }
+
+        a {
+            color: var(--primary-brown);
+            text-decoration: none;
+            transition: color var(--transition-base);
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* ===== Main Content Layout ===== */
+        .main-content {
+            min-height: calc(100vh - var(--nav-height));
+            padding-top: var(--nav-height);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== Enhanced Loading Screen - Serenity Style ===== */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-wrapper {
+            text-align: center;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--mid-gray);
+            border-top-color: var(--primary-brown);
+            border-right-color: var(--primary-gold);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        .loader-text {
+            color: var(--primary-brown);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            font-family: var(--font-secondary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== Scroll Progress Bar ===== */
+        .scroll-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-brown), var(--primary-gold), var(--accent-terracotta));
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+
+        /* ===== Messages Container - Toast Style ===== */
+        .messages-container {
+            position: fixed;
+            top: calc(var(--nav-height) + 2rem);
+            right: 2rem;
+            z-index: 1050;
+            max-width: 420px;
+            pointer-events: none;
+        }
+
+        .glass-alert {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 1rem;
+            animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 1.25rem 1.5rem;
+            pointer-events: all;
+            border-left: 4px solid;
+        }
+
+        .alert-success { border-left-color: var(--success); }
+        .alert-warning { border-left-color: var(--warning); }
+        .alert-danger, .alert-error { border-left-color: var(--error); }
+        .alert-info { border-left-color: var(--info); }
+
+        .glass-alert i {
+            font-size: 1.25rem;
+            vertical-align: middle;
+        }
+
+        .alert-success i { color: var(--success); }
+        .alert-warning i { color: var(--warning); }
+        .alert-danger i, .alert-error i { color: var(--error); }
+        .alert-info i { color: var(--info); }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== Section Spacing ===== */
+        .section-spacing {
+            padding: var(--section-padding) 0;
+        }
+
+        .section-spacing-sm {
+            padding: 3rem 0;
+        }
+
+        .section-spacing-lg {
+            padding: 8rem 0;
+        }
+
+        /* ===== Utility Classes ===== */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary-brown), var(--primary-gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hover-lift {
+            transition: transform var(--transition-base), box-shadow var(--transition-base);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .slide-in-left.animate-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .slide-in-right.animate-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ===== Glassmorphism Cards ===== */
+        .glass-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+        }
+
+        .glass-card:hover {
+            box-shadow: var(--shadow-xl);
+            border-color: var(--glass-medium);
+        }
+
+        /* ===== Responsive Typography ===== */
+        @media (max-width: 768px) {
+            :root {
+                --nav-height: 70px;
+                --section-padding: 4rem;
+            }
+
+            body {
+                font-size: 0.9375rem;
+            }
+
+            /* Adjust background for mobile */
+            body::before {
+                background-size: cover;
+                background-attachment: scroll;
+            }
+
+            .messages-container {
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
+
+        /* ===== Print Styles ===== */
+        @media print {
+            .navbar,
+            .footer,
+            .back-to-top,
+            .scroll-progress-bar,
+            .messages-container,
+            .loading-screen {
+                display: none !important;
+            }
+
+            body::before,
+            body::after {
+                display: none !important;
+            }
+
+            .main-content {
+                padding-top: 0 !important;
+            }
+        }
+
+        /* ===== Reduced Motion ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <!-- ===== Loading Screen ===== -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-wrapper">
+            <div class="loader"></div>
+            <div class="loader-text">MfalmeBits</div>
+        </div>
+    </div>
+
+    <!-- ===== Scroll Progress Bar ===== -->
+    <div class="scroll-progress-bar" id="scrollProgress"></div>
+
+    <!-- ===== Navigation ===== -->
+    {% include 'includes/navbar.html' %}
+
+    <!-- ===== Main Content ===== -->
+    <main class="main-content">
+        <!-- Messages/Alerts -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} glass-alert alert-dismissible fade show" role="alert">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i>
+                <span>{{ message }}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ===== Footer ===== -->
+    {% include 'includes/footer.html' %}
+
+    <!-- ===== Back to Top Button ===== -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ===== Scripts ===== -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    {% compress js %}
+    <script src="{% static 'js/main.js' %}"></script>
+    {% endcompress %}
+    
+    <!-- Page Specific JS -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- ===== Global Scripts ===== -->
+    <script>
+        // Loading screen
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                }
+            }, 300);
+        });
+
+        // Scroll progress bar
+        function updateScrollProgress() {
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const progressBar = document.getElementById('scrollProgress');
+            if (progressBar) {
+                progressBar.style.width = scrolled + '%';
+            }
+        }
+
+        window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+        // Initialize scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const animationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    animationObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+                animationObserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
+```
+
+---
+
+## 📍 **EXACT LOCATION TO PLACE THE IMAGE:**
+
+Place your `mfalmebits.png` image file at:
+```
+your_django_project/
+├── static/
+│   ├── images/
+│   │   ├── mfalmebits.png  ← PUT YOUR IMAGE HERE
+│   │   ├── favicon-32x32.png
+│   │   ├── favicon-16x16.png
+│   │   └── apple-touch-icon.png
+│   ├── css/
+│   └── js/
+```
+
+**Full path example:**
+```
+/path/to/your/project/static/images/mfalmebits.png

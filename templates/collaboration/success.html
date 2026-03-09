@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+
+{% block content %}
+<!-- Success Page -->
+<section class="success-page py-6">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="success-card glass-card-2 p-5">
+                    <div class="success-icon mb-4">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    
+                    <h1 class="display-5 fw-bold mb-3">Thank You!</h1>
+                    <p class="lead mb-4">Your collaboration idea has been received.</p>
+                    
+                    <div class="success-message glass-card-1 p-4 mb-4">
+                        <p class="mb-3">Our team will review your submission and contact you within 5-7 business days.</p>
+                        <p class="small text-muted mb-0">
+                            <i class="fas fa-envelope me-2"></i>A confirmation email has been sent to your inbox
+                        </p>
+                    </div>
+                    
+                    <div class="next-steps mb-5">
+                        <h3 class="h5 fw-bold mb-3">What's Next?</h3>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Review of your proposal by our collaboration team
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Initial outreach via email to discuss your idea
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Scheduling a conversation to explore possibilities
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="success-actions d-flex flex-wrap gap-3 justify-content-center">
+                        <a href="{% url 'collaboration:index' %}" class="btn btn-outline-gradient">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Collaboration
+                        </a>
+                        <a href="{% url 'home:home' %}" class="btn btn-gradient">
+                            <i class="fas fa-home me-2"></i>Go to Homepage
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .success-page {
+        min-height: 70vh;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .success-card {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 30px;
+    }
+
+    .success-icon {
+        font-size: 5rem;
+        color: #10b981;
+        animation: scaleIn 0.5s ease;
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .success-message {
+        background: var(--dark-soft);
+        border-radius: 15px;
+    }
+
+    .next-steps ul {
+        text-align: left;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .next-steps li {
+        color: var(--text-muted);
+    }
+</style>
+{% endblock %}

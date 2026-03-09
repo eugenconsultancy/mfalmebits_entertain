@@ -1,0 +1,749 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+{% block keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block extra_css %}
+<!-- Using existing CSS files - no extra references needed -->
+<style>
+    /* Additional custom styles that complement the main CSS */
+    .faq-hero {
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .faq-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('{% static "images/pattern.svg" %}') repeat;
+        opacity: 0.05;
+        pointer-events: none;
+    }
+    
+    .search-box .form-control {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+    
+    .search-box .form-control:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #ff6b4a;
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
+        outline: none;
+    }
+    
+    .search-box .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .search-box .btn-light {
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+        border: none;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .search-box .btn-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ===== Enhanced FAQ Hero with Modern Dark Theme ===== -->
+<section class="faq-hero py-6 position-relative overflow-hidden">
+    <div class="hero-background">
+        <div class="particles" id="heroParticles"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="badge glass-badge mb-4 animate-fade-in-up">
+                    <i class="fas fa-question-circle me-2"></i>FAQ
+                </span>
+                <h1 class="display-3 fw-bold text-white mb-4 animate-slide-in-left">
+                    Frequently Asked <span class="text-gradient-highlight">Questions</span>
+                </h1>
+                <p class="lead text-white-50 mb-5 animate-slide-in-right">
+                    Find answers to common questions about MfalmeBits, our services, and how to make the most of our platform.
+                </p>
+                
+                <!-- Enhanced Search Bar -->
+                <div class="search-container animate-fade-in-up">
+                    <form method="get" action="{% url 'home:faq' %}" class="search-form-modern">
+                        <div class="search-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" 
+                                   name="q" 
+                                   class="search-input" 
+                                   placeholder="Search FAQs..." 
+                                   value="{{ request.GET.q }}">
+                            <button type="submit" class="search-button">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== FAQ Categories & Content ===== -->
+<section class="faq-content py-6 bg-soft">
+    <div class="container">
+        <!-- Category Navigation - Enhanced -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="category-nav-wrapper glass-card-2 p-3">
+                    <ul class="nav nav-pills nav-fill gap-2" id="faqTab" role="tablist">
+                        {% for category in faq_categories %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if forloop.first %}active{% endif %} rounded-pill" 
+                                    id="cat-{{ forloop.counter }}-tab" 
+                                    data-bs-toggle="pill" 
+                                    data-bs-target="#cat-{{ forloop.counter }}" 
+                                    type="button" 
+                                    role="tab"
+                                    aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                <i class="fas fa-{{ category.icon|default:'folder' }} me-2"></i>
+                                {{ category.name }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ Content -->
+        <div class="tab-content" id="faqTabContent">
+            {% for category in faq_categories %}
+            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
+                 id="cat-{{ forloop.counter }}" 
+                 role="tabpanel"
+                 aria-labelledby="cat-{{ forloop.counter }}-tab">
+                
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <h2 class="h3 fw-bold mb-4 text-white">
+                            <i class="fas fa-{{ category.icon|default:'question-circle' }} me-2 text-primary"></i>
+                            {{ category.name }} Questions
+                        </h2>
+                        
+                        <div class="accordion modern-accordion" id="accordion-{{ forloop.counter }}">
+                            {% for item in category.questions %}
+                            <div class="accordion-item glass-card-1 mb-3 border-0">
+                                <h3 class="accordion-header" id="heading-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#collapse-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" 
+                                            aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+                                        <span class="fw-semibold text-white">{{ item.question }}</span>
+                                    </button>
+                                </h3>
+                                <div id="collapse-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" 
+                                     class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" 
+                                     aria-labelledby="heading-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" 
+                                     data-bs-parent="#accordion-{{ forloop.parentloop.counter }}">
+                                    <div class="accordion-body">
+                                        <p class="text-light-emphasis mb-0">{{ item.answer }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Still Have Questions - Enhanced -->
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="cta-card glass-card-2 p-5">
+                    <div class="cta-icon mb-4">
+                        <div class="icon-circle-large">
+                            <i class="fas fa-headset fa-3x text-primary"></i>
+                        </div>
+                    </div>
+                    <h3 class="h2 fw-bold mb-3 text-white">Still Have Questions?</h3>
+                    <p class="lead text-light-emphasis mb-4">Can't find the answer you're looking for? Our support team is here to help 24/7.</p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <a href="{% url 'home:contact' %}" class="btn btn-primary btn-lg px-5 py-3">
+                            <i class="fas fa-envelope me-2"></i>Contact Us
+                        </a>
+                        <a href="mailto:support@mfalmebits.com" class="btn btn-outline-primary btn-lg px-5 py-3">
+                            <i class="fas fa-paper-plane me-2"></i>Email Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Quick Links - Enhanced with Modern Cards ===== -->
+<section class="quick-links py-6">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="badge glass-badge mb-3">
+                <i class="fas fa-link me-2"></i>Resources
+            </span>
+            <h2 class="display-5 fw-bold mb-3 text-white">
+                Helpful <span class="text-gradient-highlight">Guides</span>
+            </h2>
+            <p class="lead text-light-emphasis">Quick access to essential resources and documentation</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Account Guide Card -->
+            <div class="col-md-4">
+                <div class="guide-card glass-card-2 p-4 text-center h-100 hover-lift">
+                    <div class="guide-icon-wrapper mb-4">
+                        <div class="guide-icon">
+                            <i class="fas fa-user-plus fa-3x"></i>
+                        </div>
+                    </div>
+                    <h5 class="h4 fw-bold mb-3 text-white">Account Guide</h5>
+                    <p class="text-light-emphasis mb-4">Learn how to create and manage your account, reset passwords, and more.</p>
+                    <a href="#" class="guide-link">
+                        Read Guide <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Download Help Card -->
+            <div class="col-md-4">
+                <div class="guide-card glass-card-2 p-4 text-center h-100 hover-lift">
+                    <div class="guide-icon-wrapper mb-4">
+                        <div class="guide-icon">
+                            <i class="fas fa-download fa-3x"></i>
+                        </div>
+                    </div>
+                    <h5 class="h4 fw-bold mb-3 text-white">Download Help</h5>
+                    <p class="text-light-emphasis mb-4">Instructions for downloading and accessing digital products.</p>
+                    <a href="#" class="guide-link">
+                        Learn More <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Privacy & Security Card -->
+            <div class="col-md-4">
+                <div class="guide-card glass-card-2 p-4 text-center h-100 hover-lift">
+                    <div class="guide-icon-wrapper mb-4">
+                        <div class="guide-icon">
+                            <i class="fas fa-shield-alt fa-3x"></i>
+                        </div>
+                    </div>
+                    <h5 class="h4 fw-bold mb-3 text-white">Privacy & Security</h5>
+                    <p class="text-light-emphasis mb-4">Learn about our security measures and how we protect your data.</p>
+                    <a href="{% url 'home:privacy_policy' %}" class="guide-link">
+                        View Policy <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Enhanced CSS ===== -->
+<style>
+    /* Hero Section */
+    .faq-hero {
+        position: relative;
+        min-height: 500px;
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        overflow: hidden;
+    }
+
+    .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255, 107, 74, 0.1);
+        border-radius: 50%;
+        filter: blur(60px);
+        animation: floatShape 20s infinite;
+    }
+
+    .shape-1 {
+        width: 300px;
+        height: 300px;
+        top: -150px;
+        left: -150px;
+        background: rgba(255, 107, 74, 0.2);
+    }
+
+    .shape-2 {
+        width: 400px;
+        height: 400px;
+        bottom: -200px;
+        right: -200px;
+        background: rgba(255, 138, 111, 0.15);
+        animation-delay: 5s;
+    }
+
+    .shape-3 {
+        width: 200px;
+        height: 200px;
+        top: 30%;
+        left: 20%;
+        background: rgba(139, 69, 19, 0.1);
+        animation-delay: 2s;
+    }
+
+    .shape-4 {
+        width: 250px;
+        height: 250px;
+        bottom: 20%;
+        right: 15%;
+        background: rgba(201, 124, 93, 0.1);
+        animation-delay: 3s;
+    }
+
+    @keyframes floatShape {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(30px, -30px) rotate(120deg); }
+        66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+
+    /* Glass Badge */
+    .glass-badge {
+        background: rgba(255, 107, 74, 0.2);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        color: white;
+        font-weight: 500;
+        border: 1px solid rgba(255, 107, 74, 0.3);
+        display: inline-block;
+    }
+
+    .text-gradient-highlight {
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f, #ffaa8a);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Search Bar */
+    .search-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .search-form-modern .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 0.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-form-modern .search-wrapper:focus-within {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #ff6b4a;
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1.5rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1rem;
+        pointer-events: none;
+    }
+
+    .search-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 1rem 1rem 1rem 3rem;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .search-button {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.25rem;
+    }
+
+    .search-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(255, 107, 74, 0.3);
+    }
+
+    /* Category Navigation */
+    .category-nav-wrapper {
+        background: #1e2429;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 60px;
+        padding: 0.5rem;
+    }
+
+    .nav-pills .nav-link {
+        color: #b0b0b0;
+        font-weight: 500;
+        padding: 1rem 1.5rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        background: transparent;
+    }
+
+    .nav-pills .nav-link:hover {
+        color: white;
+        background: rgba(255, 107, 74, 0.1);
+    }
+
+    .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+        color: white;
+        box-shadow: 0 5px 15px rgba(255, 107, 74, 0.3);
+    }
+
+    /* Modern Accordion */
+    .modern-accordion .accordion-item {
+        background: #1e2429;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px !important;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .modern-accordion .accordion-item:hover {
+        border-color: #ff6b4a;
+        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.1);
+    }
+
+    .modern-accordion .accordion-button {
+        background: transparent;
+        color: white;
+        padding: 1.5rem;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .modern-accordion .accordion-button:not(.collapsed) {
+        background: rgba(255, 107, 74, 0.1);
+        color: #ff8a6f;
+    }
+
+    .modern-accordion .accordion-button:focus {
+        box-shadow: none;
+        border-color: transparent;
+    }
+
+    .modern-accordion .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ff6b4a'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+
+    .modern-accordion .accordion-body {
+        padding: 1.5rem;
+        color: #e0e0e0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* CTA Card */
+    .cta-card {
+        background: #1e2429;
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 40px;
+        padding: 3rem;
+    }
+
+    .icon-circle-large {
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 107, 74, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        border: 2px solid #ff6b4a;
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle-large:hover {
+        transform: scale(1.1);
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+    }
+
+    .icon-circle-large:hover i {
+        color: white !important;
+    }
+
+    /* Guide Cards */
+    .guide-card {
+        background: #1e2429;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .guide-card:hover {
+        transform: translateY(-10px);
+        border-color: #ff6b4a;
+        box-shadow: 0 20px 40px rgba(255, 107, 74, 0.2);
+    }
+
+    .guide-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 107, 74, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+
+    .guide-card:hover .guide-icon-wrapper {
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .guide-icon {
+        color: #ff6b4a;
+        transition: all 0.3s ease;
+    }
+
+    .guide-card:hover .guide-icon {
+        color: white;
+    }
+
+    .guide-link {
+        color: #ff6b4a;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .guide-link:hover {
+        color: #ff8a6f;
+        transform: translateX(5px);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.4);
+        color: white;
+    }
+
+    .btn-outline-primary {
+        background: transparent;
+        border: 2px solid #ff6b4a;
+        color: #ff6b4a;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #ff6b4a, #ff8a6f);
+        border-color: transparent;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Background Colors */
+    .bg-soft {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    /* Text Colors */
+    .text-light-emphasis {
+        color: #e0e0e0 !important;
+    }
+
+    .text-primary {
+        color: #ff6b4a !important;
+    }
+
+    /* Wave Divider */
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 60px;
+    }
+
+    .wave-divider .shape-fill {
+        fill: #f8f9fa;
+    }
+
+    /* Particles */
+    .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    @keyframes floatParticle {
+        from { transform: translateY(100vh) rotate(0deg); }
+        to { transform: translateY(-100vh) rotate(360deg); }
+    }
+
+    /* Spacing */
+    .py-6 {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .category-nav-wrapper {
+            border-radius: 20px;
+        }
+        
+        .nav-pills .nav-link {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .py-6 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        
+        .cta-card {
+            padding: 2rem;
+        }
+    }
+</style>
+
+<!-- Particles JavaScript -->
+<script>
+    function createParticles() {
+        const container = document.getElementById('heroParticles');
+        if (!container) return;
+        
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const duration = Math.random() * 10 + 10;
+            
+            particle.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${posX}%;
+                top: ${posY}%;
+                background: rgba(255, 107, 74, ${Math.random() * 0.3});
+                box-shadow: 0 0 ${size * 2}px rgba(255, 107, 74, 0.3);
+                animation: floatParticle ${duration}s linear infinite;
+                animation-delay: -${delay}s;
+            `;
+            
+            container.appendChild(particle);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        createParticles();
+    });
+</script>
+{% endblock %}

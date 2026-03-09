@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{{ organization_schema|safe }}
+</script>
+<script type="application/ld+json">
+{{ breadcrumb_schema|safe }}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative py-24 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 text-reveal">About MfalmeBits</h1>
+        <p class="text-xl max-w-3xl mx-auto text-reveal" data-delay="200">
+            Preserving African knowledge, celebrating culture, and shaping the future through digital innovation
+        </p>
+    </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="py-20">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="glass p-8">
+                <div class="text-primary text-5xl mb-4">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">Our Mission</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                    To preserve, curate, and share African knowledge, history, and culture with the world, 
+                    while empowering future generations with the wisdom of the past and tools for the future.
+                </p>
+            </div>
+            
+            <div class="glass p-8">
+                <div class="text-primary text-5xl mb-4">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">Our Vision</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                    To become the world's most comprehensive and accessible digital repository of African 
+                    knowledge, fostering understanding, innovation, and cultural pride across generations.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values -->
+{% if values %}
+<section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12">Our Core Values</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for value in values %}
+            <div class="glass p-6 text-center group hover:scale-105 transition-transform">
+                <div class="text-primary text-4xl mb-4">
+                    <i class="fas fa-{{ value.icon }}"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">{{ value.title }}</h3>
+                <p class="text-gray-600 dark:text-gray-300">{{ value.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Timeline -->
+{% if timeline %}
+<section class="py-20">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12">Our Journey</h2>
+        <div class="relative">
+            <!-- Timeline line -->
+            <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-primary"></div>
+            
+            <div class="space-y-12">
+                {% for item in timeline %}
+                <div class="relative flex items-center {% cycle 'justify-start' 'justify-end' %}">
+                    <div class="w-1/2 {% cycle 'pr-12 text-right' 'pl-12' %}">
+                        <div class="glass p-6">
+                            <span class="text-primary font-bold text-xl">{{ item.year }}</span>
+                            <h3 class="text-xl font-bold mb-2">{{ item.title }}</h3>
+                            <p class="text-gray-600 dark:text-gray-300">{{ item.description|safe }}</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rounded-full"></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Achievements -->
+{% if achievements %}
+<section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12">Our Impact</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {% for achievement in achievements %}
+            <div class="text-center">
+                <div class="text-4xl text-primary mb-2">
+                    <i class="fas fa-{{ achievement.icon }}"></i>
+                </div>
+                <div class="text-3xl font-bold text-primary mb-2">{{ achievement.value }}</div>
+                <div class="text-gray-600 dark:text-gray-300">{{ achievement.title }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Team -->
+{% if team_leadership or team_founders %}
+<section class="py-20">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12">Meet Our Team</h2>
+        
+        {% if team_founders %}
+        <div class="mb-12">
+            <h3 class="text-2xl font-bold text-center mb-8">Founders</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                {% for member in team_founders %}
+                <div class="glass p-6 text-center group hover:scale-105 transition-transform">
+                    {% if member.photo %}
+                    <img src="{{ member.photo.url }}" 
+                         alt="{{ member.photo_alt }}"
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    {% endif %}
+                    <h3 class="text-xl font-bold">{{ member.name }}</h3>
+                    <p class="text-primary mb-2">{{ member.position }}</p>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ member.bio|truncatewords:20 }}</p>
+                    <a href="{{ member.get_absolute_url }}" class="text-primary hover:underline">
+                        Learn more <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if team_leadership %}
+        <div>
+            <h3 class="text-2xl font-bold text-center mb-8">Leadership</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for member in team_leadership %}
+                <div class="glass p-6 text-center group hover:scale-105 transition-transform">
+                    {% if member.photo %}
+                    <img src="{{ member.photo.url }}" 
+                         alt="{{ member.photo_alt }}"
+                         class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                    {% endif %}
+                    <h3 class="text-lg font-bold">{{ member.name }}</h3>
+                    <p class="text-primary text-sm">{{ member.position }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="text-center mt-8">
+            <a href="{% url 'about:team' %}" class="text-primary hover:underline">
+                Meet the full team <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Testimonials -->
+{% if testimonials %}
+<section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12">What People Say</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for testimonial in testimonials %}
+            <div class="glass p-6">
+                <div class="flex items-center mb-4">
+                    {% if testimonial.author_image %}
+                    <img src="{{ testimonial.author_image.url }}" 
+                         alt="{{ testimonial.author_name }}"
+                         class="w-12 h-12 rounded-full mr-4 object-cover">
+                    {% endif %}
+                    <div>
+                        <h3 class="font-bold">{{ testimonial.author_name }}</h3>
+                        {% if testimonial.author_title %}
+                        <p class="text-sm text-gray-500">{{ testimonial.author_title }}</p>
+                        {% endif %}
+                        {% if testimonial.author_organization %}
+                        <p class="text-sm text-primary">{{ testimonial.author_organization }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-4 italic">"{{ testimonial.content }}"</p>
+                <div class="flex text-yellow-400">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= testimonial.rating %}
+                        <i class="fas fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Partners -->
+{% if partners %}
+<section class="py-20">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12">Our Partners</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center">
+            {% for partner in partners %}
+            <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" 
+               class="glass p-4 hover:scale-105 transition-transform">
+                <img src="{{ partner.logo.url }}" 
+                     alt="{{ partner.name }}"
+                     class="w-full h-auto grayscale hover:grayscale-0 transition-all">
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

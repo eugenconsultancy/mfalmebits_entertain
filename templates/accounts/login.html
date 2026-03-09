@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login - MfalmeBits{% endblock %}
+
+{% block content %}
+<section class="min-h-screen flex items-center justify-center py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-md mx-auto">
+            <div class="glass p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold">Welcome Back</h1>
+                    <p class="text-gray-600 dark:text-gray-300 mt-2">Log in to your MfalmeBits account</p>
+                </div>
+                
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <div>
+                        <label class="block mb-2">Username or Email</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.username.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Password</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.password.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            {{ form.remember_me }}
+                            <span class="ml-2 text-sm">Remember me</span>
+                        </label>
+                        
+                        <a href="{% url 'accounts:password_reset_request' %}" class="text-sm text-primary hover:underline">
+                            Forgot password?
+                        </a>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full bg-primary text-white px-6 py-3 rounded-lg text-lg font-semibold 
+                                   hover:bg-opacity-90 transition-colors magnetic">
+                        Log In
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Don't have an account? 
+                        <a href="{% url 'accounts:register' %}" class="text-primary hover:underline">
+                            Sign up
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

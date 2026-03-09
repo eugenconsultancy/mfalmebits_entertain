@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block content %}
+<!-- Unsubscribe Section -->
+<section class="unsubscribe-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5 text-center">
+                        <!-- Success State -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if 'success' in message.tags %}
+                                <div class="success-state">
+                                    <div class="icon-box bg-success text-white rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" 
+                                         style="width: 80px; height: 80px;">
+                                        <i class="fas fa-check fa-3x"></i>
+                                    </div>
+                                    <h2 class="h3 mb-3">Successfully Unsubscribed</h2>
+                                    <p class="text-muted mb-4">{{ message }}</p>
+                                    <p class="text-muted small mb-4">
+                                        You've been removed from our mailing list and will no longer receive newsletter emails.
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'home' %}" class="btn btn-primary">
+                                            <i class="fas fa-home me-2"></i>Return to Home
+                                        </a>
+                                        <a href="{% url 'blog:index' %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-blog me-2"></i>Browse Blog
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Re-subscribe Option -->
+                                <div class="resubscribe-option mt-5 pt-4 border-top">
+                                    <h3 class="h5 mb-3">Changed your mind?</h3>
+                                    <p class="text-muted small mb-3">You can re-subscribe to our newsletter anytime.</p>
+                                    <form method="post" action="{% url 'blog:newsletter_subscribe' %}" class="newsletter-form">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <input type="email" name="email" class="form-control" placeholder="Your email address" required>
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="fas fa-paper-plane me-2"></i>Re-subscribe
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                {% elif 'error' in message.tags %}
+                                <!-- Error State -->
+                                <div class="error-state">
+                                    <div class="icon-box bg-danger text-white rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" 
+                                         style="width: 80px; height: 80px;">
+                                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                                    </div>
+                                    <h2 class="h3 mb-3">Unsubscribe Failed</h2>
+                                    <p class="text-muted mb-4">{{ message }}</p>
+                                    <p class="text-muted small mb-4">
+                                        The unsubscribe link may be invalid or expired. Please try again or contact support.
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'contact' %}" class="btn btn-primary">
+                                            <i class="fas fa-envelope me-2"></i>Contact Support
+                                        </a>
+                                        <a href="{% url 'home' %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-home me-2"></i>Return to Home
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <!-- Initial State (if no messages) -->
+                            <div class="initial-state">
+                                <div class="icon-box bg-warning text-white rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" 
+                                     style="width: 80px; height: 80px;">
+                                    <i class="fas fa-envelope-open fa-3x"></i>
+                                </div>
+                                <h2 class="h3 mb-3">Unsubscribe from Newsletter</h2>
+                                <p class="text-muted mb-4">
+                                    Are you sure you want to unsubscribe from our newsletter? You'll no longer receive updates about new posts, features, and offers.
+                                </p>
+                                <div class="d-grid gap-2">
+                                    <a href="?confirm=true" class="btn btn-danger">
+                                        <i class="fas fa-ban me-2"></i>Confirm Unsubscribe
+                                    </a>
+                                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="text-center mt-4">
+                    <p class="text-muted small">
+                        Have questions? <a href="{% url 'contact' %}" class="text-primary">Contact our support team</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .icon-box {
+        transition: transform 0.3s ease;
+    }
+    .icon-box:hover {
+        transform: scale(1.1);
+    }
+    .newsletter-form .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+</style>
+
+<script>
+    // Handle newsletter re-subscription via AJAX
+    document.querySelectorAll('.newsletter-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + (data.errors?.email?.[0] || 'Unable to subscribe'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    });
+</script>
+{% endblock %}

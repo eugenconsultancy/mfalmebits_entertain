@@ -1,0 +1,467 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}Propose a Collaboration Project | MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Proposal Hero -->
+<section class="proposal-hero py-5 position-relative overflow-hidden">
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas fa-file-alt me-2"></i>Detailed Proposal
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-4">Propose a <span class="text-gradient">Project</span></h1>
+                <p class="lead text-white-50">Ready to dive deeper? Submit a comprehensive project proposal with detailed information.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Proposal Form -->
+<section class="proposal-form py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card-2 p-5">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Progress Indicator -->
+                        <div class="form-progress mb-5">
+                            <div class="progress-steps">
+                                <div class="step active" data-step="1">
+                                    <span class="step-number">1</span>
+                                    <span class="step-label">Basic Info</span>
+                                </div>
+                                <div class="step" data-step="2">
+                                    <span class="step-number">2</span>
+                                    <span class="step-label">Creator Details</span>
+                                </div>
+                                <div class="step" data-step="3">
+                                    <span class="step-number">3</span>
+                                    <span class="step-label">Project Details</span>
+                                </div>
+                                <div class="step" data-step="4">
+                                    <span class="step-number">4</span>
+                                    <span class="step-label">Budget</span>
+                                </div>
+                                <div class="step" data-step="5">
+                                    <span class="step-number">5</span>
+                                    <span class="step-label">Files & Terms</span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width: 20%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Sections -->
+                        <div class="form-sections">
+                            <!-- Section 1: Basic Information -->
+                            <div class="form-section active" data-section="1">
+                                <h3 class="h5 fw-bold mb-4">Basic Information</h3>
+                                
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <label class="form-label">Project Title *</label>
+                                        {{ form.title }}
+                                        {% if form.title.errors %}
+                                        <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Creator Category *</label>
+                                        {{ form.category }}
+                                        {% if form.category.errors %}
+                                        <div class="text-danger small mt-1">{{ form.category.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Collaboration Category</label>
+                                        {{ form.collaboration_category }}
+                                        {% if form.collaboration_category.errors %}
+                                        <div class="text-danger small mt-1">{{ form.collaboration_category.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label">Short Description *</label>
+                                        {{ form.short_description }}
+                                        {% if form.short_description.errors %}
+                                        <div class="text-danger small mt-1">{{ form.short_description.errors }}</div>
+                                        {% endif %}
+                                        <div class="form-text text-muted">Brief summary (max 300 characters)</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-navigation mt-4 text-end">
+                                    <button type="button" class="btn btn-gradient next-step">Next <i class="fas fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                            
+                            <!-- Section 2: Creator Details -->
+                            <div class="form-section" data-section="2">
+                                <h3 class="h5 fw-bold mb-4">Creator Information</h3>
+                                
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <label class="form-label">Full Name *</label>
+                                        {{ form.creator_name }}
+                                        {% if form.creator_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.creator_name.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label">Biography *</label>
+                                        {{ form.creator_bio }}
+                                        {% if form.creator_bio.errors %}
+                                        <div class="text-danger small mt-1">{{ form.creator_bio.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email *</label>
+                                        {{ form.creator_email }}
+                                        {% if form.creator_email.errors %}
+                                        <div class="text-danger small mt-1">{{ form.creator_email.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone</label>
+                                        {{ form.creator_phone }}
+                                        {% if form.creator_phone.errors %}
+                                        <div class="text-danger small mt-1">{{ form.creator_phone.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Website</label>
+                                        {{ form.creator_website }}
+                                        {% if form.creator_website.errors %}
+                                        <div class="text-danger small mt-1">{{ form.creator_website.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Location</label>
+                                        {{ form.creator_location }}
+                                        {% if form.creator_location.errors %}
+                                        <div class="text-danger small mt-1">{{ form.creator_location.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="form-navigation mt-4 d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-gradient prev-step">
+                                        <i class="fas fa-arrow-left me-2"></i>Previous
+                                    </button>
+                                    <button type="button" class="btn btn-gradient next-step">Next <i class="fas fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                            
+                            <!-- Section 3: Project Details -->
+                            <div class="form-section" data-section="3">
+                                <h3 class="h5 fw-bold mb-4">Project Details</h3>
+                                
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <label class="form-label">Full Description *</label>
+                                        {{ form.description }}
+                                        {% if form.description.errors %}
+                                        <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label">Goals *</label>
+                                        {{ form.goals }}
+                                        {% if form.goals.errors %}
+                                        <div class="text-danger small mt-1">{{ form.goals.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label">Inspiration</label>
+                                        {{ form.inspiration }}
+                                        {% if form.inspiration.errors %}
+                                        <div class="text-danger small mt-1">{{ form.inspiration.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Proposed Duration *</label>
+                                        {{ form.proposed_duration }}
+                                        {% if form.proposed_duration.errors %}
+                                        <div class="text-danger small mt-1">{{ form.proposed_duration.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Proposed Start Date</label>
+                                        {{ form.proposed_start_date }}
+                                        {% if form.proposed_start_date.errors %}
+                                        <div class="text-danger small mt-1">{{ form.proposed_start_date.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="form-navigation mt-4 d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-gradient prev-step">
+                                        <i class="fas fa-arrow-left me-2"></i>Previous
+                                    </button>
+                                    <button type="button" class="btn btn-gradient next-step">Next <i class="fas fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                            
+                            <!-- Section 4: Budget -->
+                            <div class="form-section" data-section="4">
+                                <h3 class="h5 fw-bold mb-4">Budget Information</h3>
+                                
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <div class="form-check mb-3">
+                                            {{ form.has_budget }}
+                                            <label class="form-check-label" for="{{ form.has_budget.id_for_label }}">
+                                                This project has a budget/funding request
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 budget-fields" style="display: none;">
+                                        <label class="form-label">Budget Details</label>
+                                        {{ form.budget_details }}
+                                        {% if form.budget_details.errors %}
+                                        <div class="text-danger small mt-1">{{ form.budget_details.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 budget-fields" style="display: none;">
+                                        <label class="form-label">Funding Request ($)</label>
+                                        {{ form.funding_request }}
+                                        {% if form.funding_request.errors %}
+                                        <div class="text-danger small mt-1">{{ form.funding_request.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label">Portfolio URL</label>
+                                        {{ form.portfolio_url }}
+                                        {% if form.portfolio_url.errors %}
+                                        <div class="text-danger small mt-1">{{ form.portfolio_url.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="form-navigation mt-4 d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-gradient prev-step">
+                                        <i class="fas fa-arrow-left me-2"></i>Previous
+                                    </button>
+                                    <button type="button" class="btn btn-gradient next-step">Next <i class="fas fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                            
+                            <!-- Section 5: Files & Terms -->
+                            <div class="form-section" data-section="5">
+                                <h3 class="h5 fw-bold mb-4">Files & Terms</h3>
+                                
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <label class="form-label">Proposal Document (PDF, DOC, DOCX)</label>
+                                        <div class="file-upload-area">
+                                            {{ form.proposal_document }}
+                                            <div class="upload-hint text-center">
+                                                <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                                                <p class="small text-muted mb-0">Upload detailed proposal document (optional)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label">Featured Image</label>
+                                        <div class="file-upload-area">
+                                            {{ form.featured_image }}
+                                            <div class="upload-hint text-center">
+                                                <i class="fas fa-image fa-2x mb-2"></i>
+                                                <p class="small text-muted mb-0">Upload a representative image for your project</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            {{ form.terms_accepted }}
+                                            <label class="form-check-label" for="{{ form.terms_accepted.id_for_label }}">
+                                                I confirm that all information provided is accurate and I agree to the <a href="{% url 'home:terms_of_service' %}" target="_blank">Terms of Service</a> and <a href="{% url 'home:privacy_policy' %}" target="_blank">Privacy Policy</a> *
+                                            </label>
+                                        </div>
+                                        {% if form.terms_accepted.errors %}
+                                        <div class="text-danger small mt-1">{{ form.terms_accepted.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="form-navigation mt-4 d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-gradient prev-step">
+                                        <i class="fas fa-arrow-left me-2"></i>Previous
+                                    </button>
+                                    <button type="submit" class="btn btn-gradient">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Proposal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .proposal-hero {
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        min-height: 300px;
+    }
+
+    /* Progress Steps */
+    .form-progress {
+        position: relative;
+        margin-bottom: 3rem;
+    }
+
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .step {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .step-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--dark-soft);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin: 0 auto 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .step.active .step-number {
+        background: var(--gradient-1);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    .step-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .step.active .step-label {
+        color: var(--primary-light);
+    }
+
+    .progress-bar-container {
+        position: absolute;
+        top: 20px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 1;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: var(--gradient-1);
+        transition: width 0.3s ease;
+    }
+
+    /* Form Sections */
+    .form-section {
+        display: none;
+    }
+
+    .form-section.active {
+        display: block;
+    }
+
+    .budget-fields {
+        transition: all 0.3s ease;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Multi-step form navigation
+        const sections = document.querySelectorAll('.form-section');
+        const steps = document.querySelectorAll('.step');
+        const progressBar = document.querySelector('.progress-bar-fill');
+        const nextBtns = document.querySelectorAll('.next-step');
+        const prevBtns = document.querySelectorAll('.prev-step');
+        let currentStep = 0;
+
+        function showStep(step) {
+            sections.forEach(section => section.classList.remove('active'));
+            sections[step].classList.add('active');
+            
+            steps.forEach((s, index) => {
+                if (index <= step) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+            
+            const progress = ((step + 1) / sections.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        nextBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (currentStep < sections.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        prevBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        // Toggle budget fields
+        const hasBudgetCheckbox = document.getElementById('{{ form.has_budget.id_for_label }}');
+        const budgetFields = document.querySelectorAll('.budget-fields');
+        
+        if (hasBudgetCheckbox) {
+            hasBudgetCheckbox.addEventListener('change', function() {
+                budgetFields.forEach(field => {
+                    field.style.display = this.checked ? 'block' : 'none';
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

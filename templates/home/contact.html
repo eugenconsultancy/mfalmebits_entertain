@@ -1,0 +1,786 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+{% block keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block content %}
+<!-- ===== Enhanced Contact Hero with Parallax ===== -->
+<section class="contact-hero position-relative overflow-hidden">
+    <!-- Animated Background -->
+    <div class="hero-bg">
+        <div class="particles" id="heroParticles"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row min-vh-50 align-items-center py-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge glass-badge animate-fade-in-up mb-4">
+                    <i class="fas fa-headset me-2"></i>Get In Touch
+                </span>
+                <h1 class="display-3 fw-bold text-white mb-4 animate-slide-in-left">
+                    Let's Start a <span class="text-gradient">Conversation</span>
+                </h1>
+                <p class="lead text-white-50 mb-5 animate-slide-in-right">
+                    We'd love to hear from you! Whether you have a question, feedback, or collaboration idea, our team is ready to help.
+                </p>
+                <div class="hero-cta animate-fade-in-up">
+                    <a href="#contact-form" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                    </a>
+                    <a href="#contact-info" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== Contact Form & Info ===== -->
+<section class="contact-content py-5" id="contact-form">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="glass-card-2 p-5" data-tilt>
+                    <div class="section-header mb-5">
+                        <h2 class="display-6 fw-bold mb-3">
+                            <span class="gradient-text">Send Us</span> a Message
+                        </h2>
+                        <p class="text-muted">Fill out the form below and we'll get back to you within 24 hours.</p>
+                    </div>
+                    
+                    <form method="post" action="{% url 'contact:submit' %}" class="contact-form">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control glass-input" id="name" name="name" placeholder="Your Name" required>
+                                    <label for="name"><i class="fas fa-user me-2 text-primary"></i>Your Name *</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control glass-input" id="email" name="email" placeholder="Email Address" required>
+                                    <label for="email"><i class="fas fa-envelope me-2 text-primary"></i>Email Address *</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control glass-input" id="subject" name="subject" placeholder="Subject" required>
+                                    <label for="subject"><i class="fas fa-heading me-2 text-primary"></i>Subject *</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control glass-input" id="message" name="message" placeholder="Your Message" style="height: 150px" required></textarea>
+                                    <label for="message"><i class="fas fa-comment me-2 text-primary"></i>Message *</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="privacy" required>
+                                    <label class="form-check-label" for="privacy">
+                                        I agree to the <a href="{% url 'home:privacy_policy' %}" class="text-primary">Privacy Policy</a> and consent to having my data processed.
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-gradient btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                    <span class="btn-overlay"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="col-lg-5" id="contact-info">
+                <div class="contact-info-wrapper">
+                    <h2 class="display-6 fw-bold mb-4">
+                        <span class="gradient-text">Contact</span> Information
+                    </h2>
+                    
+                    <div class="info-grid">
+                        <!-- Visit Us -->
+                        <div class="info-card glass-card-3 p-4 mb-4 hover-lift">
+                            <div class="d-flex align-items-start">
+                                <div class="info-icon-wrapper me-4">
+                                    <div class="info-icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="h5 fw-bold mb-2">Visit Us</h3>
+                                    <p class="text-muted mb-0">Nairobi, Kenya<br>East Africa</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Call Us -->
+                        <div class="info-card glass-card-3 p-4 mb-4 hover-lift">
+                            <div class="d-flex align-items-start">
+                                <div class="info-icon-wrapper me-4">
+                                    <div class="info-icon">
+                                        <i class="fas fa-phone-alt"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="h5 fw-bold mb-2">Call Us</h3>
+                                    <p class="mb-1">
+                                        <a href="tel:+254700000000" class="text-decoration-none contact-link">
+                                            <i class="fas fa-phone me-2 text-primary"></i>+254 700 000 000
+                                        </a>
+                                    </p>
+                                    <p class="mb-0">
+                                        <a href="tel:+254711111111" class="text-decoration-none contact-link">
+                                            <i class="fas fa-phone me-2 text-primary"></i>+254 711 111 111
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Us -->
+                        <div class="info-card glass-card-3 p-4 mb-4 hover-lift">
+                            <div class="d-flex align-items-start">
+                                <div class="info-icon-wrapper me-4">
+                                    <div class="info-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="h5 fw-bold mb-2">Email Us</h3>
+                                    <p class="mb-1">
+                                        <a href="mailto:info@mfalmebits.com" class="text-decoration-none contact-link">
+                                            <i class="fas fa-envelope me-2 text-primary"></i>info@mfalmebits.com
+                                        </a>
+                                    </p>
+                                    <p class="mb-0">
+                                        <a href="mailto:support@mfalmebits.com" class="text-decoration-none contact-link">
+                                            <i class="fas fa-envelope me-2 text-primary"></i>support@mfalmebits.com
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Business Hours -->
+                        <div class="info-card glass-card-3 p-4 hover-lift">
+                            <div class="d-flex align-items-start">
+                                <div class="info-icon-wrapper me-4">
+                                    <div class="info-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="h5 fw-bold mb-2">Business Hours</h3>
+                                    <p class="text-muted mb-1">Monday - Friday: 9:00 AM - 6:00 PM</p>
+                                    <p class="text-muted mb-0">Saturday: 10:00 AM - 4:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media -->
+                    <div class="social-section glass-card-2 p-4 mt-4">
+                        <h3 class="h5 fw-bold mb-3">Connect With Us</h3>
+                        <div class="social-links-modern">
+                            <a href="#" class="social-link-modern facebook" target="_blank" rel="noopener">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-link-modern twitter" target="_blank" rel="noopener">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link-modern instagram" target="_blank" rel="noopener">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-link-modern linkedin" target="_blank" rel="noopener">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-link-modern youtube" target="_blank" rel="noopener">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Map Section with Modern Overlay ===== -->
+<section class="map-section position-relative">
+    <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255282.358328203!2d36.68257999781715!3d-1.3023056989699767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172d84d49a7%3A0xf7cf0254b297924c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
+                width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+    <div class="map-overlay">
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-lg-4">
+                    <div class="glass-card-3 p-4">
+                        <h4 class="fw-bold mb-3">Visit Our Office</h4>
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-map-pin me-2 text-primary"></i>Nairobi, Kenya
+                        </p>
+                        <a href="https://maps.google.com" target="_blank" class="btn btn-gradient btn-sm">
+                            <i class="fas fa-directions me-2"></i>Get Directions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FAQ Preview ===== -->
+<section class="faq-section py-5 bg-soft">
+    <div class="container">
+        <div class="row justify-content-center text-center mb-5">
+            <div class="col-lg-8">
+                <span class="badge glass-badge mb-3">
+                    <i class="fas fa-question-circle me-2"></i>FAQ
+                </span>
+                <h2 class="display-6 fw-bold mb-3">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                <p class="text-muted">Find quick answers to common questions. For more details, visit our FAQ page.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="faq-item glass-card-2 p-4 hover-lift">
+                    <div class="d-flex">
+                        <div class="faq-icon me-3">
+                            <i class="fas fa-question-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-2">How quickly do you respond?</h5>
+                            <p class="text-muted mb-0">We typically respond within 24-48 hours during business days.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="faq-item glass-card-2 p-4 hover-lift">
+                    <div class="d-flex">
+                        <div class="faq-icon me-3">
+                            <i class="fas fa-globe fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-2">Do you work internationally?</h5>
+                            <p class="text-muted mb-0">Yes! We collaborate with partners and clients worldwide.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <a href="{% url 'home:faq' %}" class="btn btn-outline-gradient btn-lg">
+                <i class="fas fa-question-circle me-2"></i>View All FAQs
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Enhanced CSS Styles ===== -->
+<style>
+    :root {
+        --primary: #8B4513;
+        --primary-light: #c97c5d;
+        --primary-dark: #6B3410;
+        --gradient-1: linear-gradient(135deg, #8B4513, #c97c5d);
+        --gradient-2: linear-gradient(135deg, #667eea, #764ba2);
+        --gradient-3: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    /* Hero Section */
+    .contact-hero {
+        position: relative;
+        min-height: 600px;
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        overflow: hidden;
+    }
+
+    .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(139, 69, 19, 0.1);
+        border-radius: 50%;
+        filter: blur(60px);
+        animation: floatShape 20s infinite;
+    }
+
+    .shape-1 {
+        width: 300px;
+        height: 300px;
+        top: -150px;
+        left: -150px;
+        background: rgba(139, 69, 19, 0.2);
+        animation-delay: 0s;
+    }
+
+    .shape-2 {
+        width: 400px;
+        height: 400px;
+        bottom: -200px;
+        right: -200px;
+        background: rgba(201, 124, 93, 0.15);
+        animation-delay: 5s;
+    }
+
+    .shape-3 {
+        width: 200px;
+        height: 200px;
+        top: 50%;
+        left: 30%;
+        background: rgba(102, 126, 234, 0.1);
+        animation-delay: 2s;
+    }
+
+    .shape-4 {
+        width: 350px;
+        height: 350px;
+        bottom: 20%;
+        right: 20%;
+        background: rgba(116, 75, 162, 0.1);
+        animation-delay: 3s;
+    }
+
+    @keyframes floatShape {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(30px, -30px) rotate(120deg); }
+        66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+
+    .glass-badge {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        color: white;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: inline-block;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #fff, var(--primary-light));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 80px;
+    }
+
+    .wave-divider .shape-fill {
+        fill: #FFFFFF;
+    }
+
+    /* Form Styling */
+    .glass-input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        height: 60px;
+    }
+
+    .glass-input:focus {
+        background: white;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        transform: translateY(-2px);
+    }
+
+    textarea.glass-input {
+        height: auto;
+    }
+
+    .form-floating label {
+        padding-left: 1rem;
+        color: #6c757d;
+    }
+
+    .form-floating .form-control:focus ~ label,
+    .form-floating .form-control:not(:placeholder-shown) ~ label {
+        color: var(--primary);
+        font-weight: 500;
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    }
+
+    /* Gradient Button */
+    .btn-gradient {
+        background: var(--gradient-1);
+        color: white;
+        border: none;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        border-radius: 50px;
+    }
+
+    .btn-gradient::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+    }
+
+    .btn-gradient:hover::before {
+        opacity: 1;
+    }
+
+    .btn-outline-gradient {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        border-radius: 50px;
+    }
+
+    .btn-outline-gradient::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--gradient-1);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .btn-outline-gradient:hover {
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+    }
+
+    .btn-outline-gradient:hover::before {
+        opacity: 1;
+    }
+
+    /* Info Cards */
+    .info-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+
+    .info-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover .info-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .contact-link {
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+
+    .contact-link:hover {
+        color: var(--primary);
+    }
+
+    /* Social Links Modern */
+    .social-links-modern {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .social-link-modern {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .social-link-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: currentColor;
+        opacity: 0.1;
+        transition: opacity 0.3s ease;
+    }
+
+    .social-link-modern:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-link-modern:hover::before {
+        opacity: 0.2;
+    }
+
+    .social-link-modern.facebook { background: #1877f2; }
+    .social-link-modern.twitter { background: #1da1f2; }
+    .social-link-modern.instagram { background: linear-gradient(45deg, #f09433, #d62976, #962fbf); }
+    .social-link-modern.linkedin { background: #0077b5; }
+    .social-link-modern.youtube { background: #ff0000; }
+
+    /* Map Section */
+    .map-section {
+        position: relative;
+        height: 500px;
+    }
+
+    .map-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .map-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .faq-item {
+        cursor: pointer;
+    }
+
+    .faq-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .faq-item:hover .faq-icon {
+        transform: rotate(5deg) scale(1.1);
+    }
+
+    /* Animations */
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-slide-in-left {
+        animation: slideInLeft 1s ease forwards;
+    }
+
+    .animate-slide-in-right {
+        animation: slideInRight 1s ease forwards;
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp 1s ease forwards;
+    }
+
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .contact-hero {
+            min-height: 500px;
+        }
+
+        .map-section {
+            height: 400px;
+        }
+
+        .map-overlay {
+            align-items: flex-end;
+            padding: 1rem;
+        }
+
+        .social-links-modern {
+            flex-wrap: wrap;
+        }
+    }
+
+    /* Particles */
+    .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    // Particles Background
+    document.addEventListener('DOMContentLoaded', function() {
+        const particlesContainer = document.getElementById('heroParticles');
+        if (particlesContainer) {
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 5 + 2;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 10 + 10;
+                
+                particle.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${posX}%;
+                    top: ${posY}%;
+                    animation-delay: ${delay}s;
+                    animation-duration: ${duration}s;
+                    opacity: ${Math.random() * 0.3 + 0.1};
+                    background: rgba(255, 255, 255, ${Math.random() * 0.3});
+                    box-shadow: 0 0 ${size * 2}px rgba(255, 255, 255, 0.3);
+                    animation: floatParticle ${duration}s linear infinite;
+                `;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+    });
+
+    @keyframes floatParticle {
+        from { transform: translateY(0) rotate(0deg); }
+        to { transform: translateY(-100vh) rotate(360deg); }
+    }
+</script>
+{% endblock %}

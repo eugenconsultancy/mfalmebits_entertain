@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Wishlist | MfalmeBits Library{% endblock %}
+
+{% block content %}
+<!-- Wishlist Header -->
+<section class="wishlist-header py-5 bg-soft">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-3">My Wishlist</h1>
+        <p class="lead text-muted">Save your favorite products for later</p>
+    </div>
+</section>
+
+<!-- Wishlist Items -->
+<section class="wishlist-content py-5">
+    <div class="container">
+        {% if wishlist_items %}
+            <div class="row g-4">
+                {% for item in wishlist_items %}
+                <div class="col-lg-3 col-md-4 col-sm-6" id="product-{{ item.product.id }}">
+                    <div class="product-card glass-card-2 hover-lift">
+                        <div class="wishlist-actions">
+                            <button class="btn-remove" onclick="removeFromWishlist({{ item.product.id }})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="product-image">
+                            <img src="{{ item.product.cover_image.url }}" alt="{{ item.product.title }}" class="img-fluid">
+                            <div class="product-overlay">
+                                <a href="{{ item.product.get_absolute_url }}" class="btn btn-gradient btn-sm">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="product-content p-4">
+                            <div class="product-meta d-flex justify-content-between align-items-center mb-2">
+                                <span class="product-format">
+                                    <i class="fas fa-{% if item.product.format == 'pdf' %}file-pdf{% elif item.product.format == 'epub' %}book{% elif item.product.format == 'mp3' %}music{% else %}file{% endif %} me-1"></i>
+                                    {{ item.product.get_format_display }}
+                                </span>
+                            </div>
+                            
+                            <h5 class="product-title">
+                                <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-white">
+                                    {{ item.product.title|truncatechars:40 }}
+                                </a>
+                            </h5>
+                            
+                            <p class="product-author text-muted small">
+                                <i class="fas fa-user me-1"></i>{{ item.product.author }}
+                            </p>
+                            
+                            <div class="product-footer d-flex justify-content-between align-items-center">
+                                <div class="product-price">
+                                    {% if item.product.is_on_sale %}
+                                        <span class="old-price">${{ item.product.price }}</span>
+                                        <span class="current-price">${{ item.product.sale_price }}</span>
+                                    {% elif item.product.is_free %}
+                                        <span class="current-price text-success">FREE</span>
+                                    {% else %}
+                                        <span class="current-price">${{ item.product.price }}</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <button class="btn-add-to-cart" onclick="addToCart({{ item.product.id }})" title="Add to Cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="added-date text-muted small text-center mt-3">
+                                <i class="fas fa-clock me-1"></i>Added {{ item.added_date|timesince }} ago
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state text-center py-5">
+                <div class="empty-icon mb-4">
+                    <i class="fas fa-heart-broken fa-4x text-muted"></i>
+                </div>
+                <h3 class="mb-3">Your Wishlist is Empty</h3>
+                <p class="text-muted mb-4">Save items you're interested in and come back to them later.</p>
+                <a href="{% url 'library:index' %}" class="btn btn-gradient">
+                    <i class="fas fa-shopping-bag me-2"></i>Browse Library
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .wishlist-actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 10;
+    }
+
+    .btn-remove {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: rgba(220, 53, 69, 0.9);
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .btn-remove:hover {
+        background: #dc3545;
+        transform: scale(1.1);
+    }
+
+    .added-date {
+        opacity: 0.7;
+        font-size: 0.8rem;
+    }
+</style>
+
+<script>
+    function removeFromWishlist(productId) {
+        fetch(`/library/wishlist/toggle/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                action: 'remove'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove card with animation
+                const card = document.getElementById(`product-${productId}`);
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.8)';
+                
+                setTimeout(() => {
+                    card.remove();
+                    
+                    // Show empty state if no items left
+                    if (document.querySelectorAll('.product-card').length === 0) {
+                        location.reload();
+                    }
+                    
+                    showToast('Removed from wishlist', 'success');
+                }, 300);
+            }
+        });
+    }
+
+    function addToCart(productId) {
+        // Add to cart logic
+        showToast('Added to cart!', 'success');
+    }
+</script>
+{% endblock %}

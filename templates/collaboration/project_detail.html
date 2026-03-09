@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Project Hero -->
+<section class="project-hero position-relative overflow-hidden">
+    {% if project.featured_image %}
+    <div class="hero-background">
+        <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" class="hero-bg-img">
+        <div class="overlay-dark"></div>
+    </div>
+    {% endif %}
+    
+    <div class="container position-relative z-index-2">
+        <div class="row min-vh-50 align-items-center py-5">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb glass-breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="{% url 'collaboration:index' %}">Collaboration</a></li>
+                        {% if project.collaboration_category %}
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'collaboration:category' project.collaboration_category.slug %}">
+                                {{ project.collaboration_category.name }}
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ project.title|truncatechars:30 }}</li>
+                    </ol>
+                </nav>
+                
+                <span class="badge project-status-badge status-{{ project.status }} mb-4">
+                    {{ project.get_status_display }}
+                </span>
+                
+                <h1 class="display-4 fw-bold text-white mb-4">{{ project.title }}</h1>
+                
+                <div class="project-meta d-flex flex-wrap gap-4 text-white-50">
+                    <span>
+                        <i class="fas fa-user me-2"></i>{{ project.creator_name }}
+                    </span>
+                    <span>
+                        <i class="fas fa-calendar me-2"></i>{{ project.created_at|date:"F d, Y" }}
+                    </span>
+                    <span>
+                        <i class="fas fa-eye me-2"></i>{{ project.views_count }} views
+                    </span>
+                    {% if project.creator_location %}
+                    <span>
+                        <i class="fas fa-map-marker-alt me-2"></i>{{ project.creator_location }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Content -->
+<section class="project-content py-6">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <div class="glass-card-2 p-5 mb-5">
+                    <h2 class="h3 fw-bold mb-4">About the Project</h2>
+                    <div class="project-description mb-5">
+                        {{ project.description|safe }}
+                    </div>
+                    
+                    {% if project.goals %}
+                    <h3 class="h4 fw-bold mb-3">Goals & Objectives</h3>
+                    <div class="project-goals mb-5">
+                        {{ project.goals|linebreaks }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if project.inspiration %}
+                    <h3 class="h4 fw-bold mb-3">Inspiration</h3>
+                    <div class="project-inspiration mb-5">
+                        {{ project.inspiration|linebreaks }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if project.budget_details %}
+                    <div class="project-budget glass-card-1 p-4">
+                        <h4 class="h6 fw-bold mb-3">Budget Information</h4>
+                        <p>{{ project.budget_details }}</p>
+                        {% if project.funding_request %}
+                        <p class="mb-0"><strong>Funding Request:</strong> ${{ project.funding_request }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Gallery -->
+                {% if project.images.all %}
+                <div class="glass-card-2 p-5">
+                    <h3 class="h4 fw-bold mb-4">Project Gallery</h3>
+                    <div class="row g-4">
+                        {% for image in project.images.all %}
+                        <div class="col-md-4 col-6">
+                            <a href="{{ image.image.url }}" data-lightbox="project-gallery" data-title="{{ image.caption }}">
+                                <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="img-fluid rounded-3 gallery-thumb">
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar-wrapper sticky-sidebar">
+                    <!-- Creator Info -->
+                    <div class="glass-card-2 p-4 mb-4">
+                        <h3 class="h5 fw-bold mb-4">About the Creator</h3>
+                        
+                        <div class="creator-info text-center mb-4">
+                            <div class="creator-avatar-large mx-auto mb-3">
+                                <i class="fas fa-user-circle fa-4x text-primary"></i>
+                            </div>
+                            <h4 class="h5 fw-bold mb-1">{{ project.creator_name }}</h4>
+                            <p class="small text-muted">{{ project.get_category_display }}</p>
+                        </div>
+                        
+                        {% if project.creator_bio %}
+                        <div class="creator-bio mb-4">
+                            <p class="small">{{ project.creator_bio|truncatechars:150 }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="creator-contact">
+                            {% if project.creator_website %}
+                            <a href="{{ project.creator_website }}" target="_blank" class="btn btn-outline-gradient w-100 mb-2">
+                                <i class="fas fa-globe me-2"></i>Website
+                            </a>
+                            {% endif %}
+                            
+                            {% if project.portfolio_url %}
+                            <a href="{{ project.portfolio_url }}" target="_blank" class="btn btn-outline-gradient w-100">
+                                <i class="fas fa-briefcase me-2"></i>Portfolio
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Project Details -->
+                    <div class="glass-card-2 p-4 mb-4">
+                        <h3 class="h5 fw-bold mb-4">Project Details</h3>
+                        
+                        <ul class="project-details-list list-unstyled">
+                            <li class="d-flex justify-content-between mb-3">
+                                <span class="text-muted">Category:</span>
+                                <span class="fw-semibold">{{ project.get_category_display }}</span>
+                            </li>
+                            {% if project.collaboration_category %}
+                            <li class="d-flex justify-content-between mb-3">
+                                <span class="text-muted">Focus:</span>
+                                <span class="fw-semibold">{{ project.collaboration_category.name }}</span>
+                            </li>
+                            {% endif %}
+                            <li class="d-flex justify-content-between mb-3">
+                                <span class="text-muted">Status:</span>
+                                <span class="project-status-small status-{{ project.status }}">
+                                    {{ project.get_status_display }}
+                                </span>
+                            </li>
+                            {% if project.proposed_duration %}
+                            <li class="d-flex justify-content-between mb-3">
+                                <span class="text-muted">Duration:</span>
+                                <span class="fw-semibold">{{ project.proposed_duration }}</span>
+                            </li>
+                            {% endif %}
+                            {% if project.proposed_start_date %}
+                            <li class="d-flex justify-content-between mb-3">
+                                <span class="text-muted">Start Date:</span>
+                                <span class="fw-semibold">{{ project.proposed_start_date|date:"F Y" }}</span>
+                            </li>
+                            {% endif %}
+                            <li class="d-flex justify-content-between">
+                                <span class="text-muted">Submitted:</span>
+                                <span class="fw-semibold">{{ project.created_at|date:"M d, Y" }}</span>
+                            </li>
+                        </ul>
+                        
+                        {% if project.proposal_document %}
+                        <a href="{{ project.proposal_document.url }}" class="btn btn-gradient w-100 mt-3" download>
+                            <i class="fas fa-file-pdf me-2"></i>Download Proposal
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Related Projects -->
+                    {% if related_projects %}
+                    <div class="glass-card-2 p-4">
+                        <h3 class="h5 fw-bold mb-4">Related Projects</h3>
+                        
+                        {% for related in related_projects %}
+                        <div class="related-project-item d-flex align-items-center mb-3">
+                            <div class="related-project-thumb me-3">
+                                {% if related.featured_image %}
+                                <img src="{{ related.featured_image.url }}" alt="{{ related.title }}">
+                                {% else %}
+                                <div class="placeholder-thumb">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="related-project-title small fw-bold mb-1">
+                                    <a href="{{ related.get_absolute_url }}">{{ related.title|truncatechars:30 }}</a>
+                                </h4>
+                                <span class="small text-muted">by {{ related.creator_name }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JSON-LD Schema -->
+<script type="application/ld+json">
+{{ breadcrumb_schema|safe }}
+</script>
+
+<style>
+    .project-hero {
+        position: relative;
+        min-height: 500px;
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+    }
+
+    .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .hero-bg-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.3;
+    }
+
+    .overlay-dark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, rgba(10,12,15,0.9) 0%, rgba(10,12,15,0.6) 100%);
+    }
+
+    .glass-breadcrumb {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        display: inline-flex;
+    }
+
+    .glass-breadcrumb .breadcrumb-item a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+    }
+
+    .glass-breadcrumb .breadcrumb-item a:hover {
+        color: white;
+    }
+
+    .glass-breadcrumb .breadcrumb-item.active {
+        color: white;
+    }
+
+    .glass-breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .project-status-badge {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .project-status-small {
+        display: inline-block;
+        padding: 0.25rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .gallery-thumb {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .gallery-thumb:hover {
+        transform: scale(1.05);
+        border-color: var(--primary);
+    }
+
+    .related-project-thumb {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .related-project-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .placeholder-thumb {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary-dark), var(--dark-card));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 1.2rem;
+    }
+
+    .related-project-title a {
+        color: var(--text-light);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .related-project-title a:hover {
+        color: var(--primary-light);
+    }
+</style>
+
+<!-- Lightbox for Gallery -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+{% endblock %}

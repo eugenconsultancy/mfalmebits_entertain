@@ -1,0 +1,696 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saved Items | {{ user.username }} | MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header py-5 position-relative overflow-hidden">
+    <div class="animated-bg"></div>
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas fa-bookmark me-2"></i>Collection
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-4">Saved <span class="text-gradient-highlight">Items</span></h1>
+                <p class="lead text-light-emphasis">Your personally curated collection of knowledge and resources</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Saved Items Content -->
+<section class="saved-content py-5">
+    <div class="container">
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="stat-card glass-card-1 p-4 text-center">
+                    <div class="stat-icon bg-primary-gradient text-white mx-auto mb-3">
+                        <i class="fas fa-bookmark fa-2x"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold text-white mb-2">{{ counts.total }}</h3>
+                    <p class="text-light-emphasis mb-0">Total Saved</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card glass-card-1 p-4 text-center">
+                    <div class="stat-icon bg-archive-gradient text-white mx-auto mb-3">
+                        <i class="fas fa-archive fa-2x"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold text-white mb-2">{{ counts.archive }}</h3>
+                    <p class="text-light-emphasis mb-0">Archive Items</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card glass-card-1 p-4 text-center">
+                    <div class="stat-icon bg-product-gradient text-white mx-auto mb-3">
+                        <i class="fas fa-book fa-2x"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold text-white mb-2">{{ counts.product }}</h3>
+                    <p class="text-light-emphasis mb-0">Library Items</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card glass-card-1 p-4 text-center">
+                    <div class="stat-icon bg-blog-gradient text-white mx-auto mb-3">
+                        <i class="fas fa-newspaper fa-2x"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold text-white mb-2">{{ counts.blog }}</h3>
+                    <p class="text-light-emphasis mb-0">Blog Posts</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="filters-bar glass-card-2 p-4 mb-5">
+            <div class="row align-items-center g-3">
+                <div class="col-md-4">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               id="searchInput" 
+                               class="form-control search-input" 
+                               placeholder="Search saved items..." 
+                               value="{{ search_query }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select id="typeFilter" class="form-select filter-select">
+                        <option value="all" {% if current_type == 'all' %}selected{% endif %}>All Types</option>
+                        <option value="archive" {% if current_type == 'archive' %}selected{% endif %}>Archive</option>
+                        <option value="product" {% if current_type == 'product' %}selected{% endif %}>Library</option>
+                        <option value="blog" {% if current_type == 'blog' %}selected{% endif %}>Blog</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="sortFilter" class="form-select filter-select">
+                        <option value="-created_at">Newest First</option>
+                        <option value="created_at">Oldest First</option>
+                        <option value="item_type">Type</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button id="applyFilters" class="btn btn-primary-gradient w-100">
+                        <i class="fas fa-filter me-2"></i>Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saved Items Grid -->
+        {% if saved_items %}
+            <div class="row g-4">
+                {% for item in saved_items %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="saved-item-card glass-card-2 hover-lift" data-tilt>
+                        <div class="card-header d-flex justify-content-between align-items-start mb-3">
+                            <span class="type-badge type-{{ item.item_type }}">
+                                <i class="fas fa-{% if item.item_type == 'archive' %}archive{% elif item.item_type == 'product' %}book{% else %}newspaper{% endif %} me-1"></i>
+                                {{ item.get_item_type_display }}
+                            </span>
+                            <button class="btn-remove" onclick="removeSavedItem({{ item.id }})" title="Remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="card-body">
+                            <h5 class="item-title text-white fw-bold mb-2">
+                                <a href="{{ item.get_item.get_absolute_url }}" class="text-white text-decoration-none">
+                                    {{ item.get_item.title|default:'Item'|truncatechars:50 }}
+                                </a>
+                            </h5>
+                            
+                            {% if item.notes %}
+                                <p class="item-notes text-light-emphasis small mb-3">{{ item.notes|truncatechars:80 }}</p>
+                            {% endif %}
+                            
+                            {% if item.tags %}
+                                <div class="item-tags mb-3">
+                                    {% for tag in item.tags.split %}
+                                        <span class="tag">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="item-meta d-flex justify-content-between align-items-center">
+                                <span class="text-light-emphasis small">
+                                    <i class="fas fa-clock me-1"></i>{{ item.created_at|timesince }} ago
+                                </span>
+                                <div class="item-actions">
+                                    <a href="{{ item.get_item.get_absolute_url }}" class="btn-icon" title="View Item">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn-icon" onclick="editNotes({{ item.id }})" title="Edit Notes">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav class="pagination-wrapper mt-5">
+                <ul class="pagination-modern">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}{% if current_type != 'all' %}&type={{ current_type }}{% endif %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_type != 'all' %}&type={{ current_type }}{% endif %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_type != 'all' %}&type={{ current_type }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_type != 'all' %}&type={{ current_type }}{% endif %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_type != 'all' %}&type={{ current_type }}{% endif %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state glass-card-2 text-center py-5">
+                <div class="empty-icon mb-4">
+                    <i class="fas fa-bookmark fa-5x text-light-emphasis"></i>
+                </div>
+                <h3 class="h3 text-white mb-3">No Saved Items Yet</h3>
+                <p class="text-light-emphasis mb-4">Start saving your favorite content from across the platform.</p>
+                <div class="action-buttons">
+                    <a href="{% url 'archive:index' %}" class="btn btn-primary-gradient btn-lg me-3">
+                        <i class="fas fa-archive me-2"></i>Browse Archive
+                    </a>
+                    <a href="{% url 'library:index' %}" class="btn btn-outline-gradient btn-lg">
+                        <i class="fas fa-book me-2"></i>Explore Library
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Edit Notes Modal -->
+<div class="modal fade" id="editNotesModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content glass-card-2">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white">Edit Notes</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editNotesForm" method="post" action="{% url 'accounts:toggle_saved' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="item_id" id="editItemId">
+                    <input type="hidden" name="item_type" id="editItemType">
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-white">Notes</label>
+                        <textarea name="notes" id="editNotes" class="form-control glass-input" rows="4"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-white">Tags</label>
+                        <input type="text" name="tags" id="editTags" class="form-control glass-input" placeholder="Comma-separated tags">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-gradient" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="editNotesForm" class="btn btn-primary-gradient">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-accent: #ff6b4a;
+        --secondary-accent: #ff8a6f;
+        --archive-accent: #8B4513;
+        --product-accent: #10b981;
+        --blog-accent: #f59e0b;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        min-height: 300px;
+    }
+
+    .animated-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(-45deg, var(--primary-accent), var(--secondary-accent), #8B4513, #c97c5d);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        opacity: 0.1;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .glass-badge {
+        background: rgba(255, 107, 74, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 107, 74, 0.3);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    .text-gradient-highlight {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .text-light-emphasis {
+        color: #e0e0e0 !important;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: #1e2429;
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-accent);
+        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.2);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    }
+
+    .bg-archive-gradient {
+        background: linear-gradient(135deg, #8B4513, #c97c5d);
+    }
+
+    .bg-product-gradient {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .bg-blog-gradient {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    /* Filters Bar */
+    .filters-bar {
+        background: #1e2429;
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+    }
+
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #e0e0e0;
+        z-index: 10;
+    }
+
+    .search-input, .filter-select {
+        background: #2a2f36;
+        border: 2px solid rgba(255, 107, 74, 0.2);
+        color: white;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border-radius: 10px;
+        width: 100%;
+    }
+
+    .search-input:focus, .filter-select:focus {
+        border-color: var(--primary-accent);
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
+        outline: none;
+    }
+
+    .filter-select {
+        padding-left: 1rem;
+        cursor: pointer;
+    }
+
+    .filter-select option {
+        background: #1e2429;
+    }
+
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        border: none;
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 107, 74, 0.3);
+    }
+
+    /* Saved Item Cards */
+    .saved-item-card {
+        background: #1e2429;
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .saved-item-card:hover {
+        border-color: var(--primary-accent);
+        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.2);
+    }
+
+    .type-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .type-archive {
+        background: rgba(139, 69, 19, 0.2);
+        color: #c97c5d;
+    }
+
+    .type-product {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+
+    .type-blog {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+
+    .btn-remove {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(220, 53, 69, 0.1);
+        border: none;
+        color: #dc3545;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-remove:hover {
+        background: #dc3545;
+        color: white;
+    }
+
+    .item-title {
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .item-title a:hover {
+        color: var(--primary-accent) !important;
+    }
+
+    .item-notes {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.75rem;
+        border-radius: 10px;
+        border-left: 3px solid var(--primary-accent);
+    }
+
+    .item-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .tag {
+        background: rgba(255, 107, 74, 0.1);
+        color: var(--primary-accent);
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+    }
+
+    .item-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: rgba(255, 107, 74, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-accent);
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-icon:hover {
+        background: var(--primary-accent);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Pagination */
+    .pagination-modern {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .pagination-modern .page-item {
+        margin: 0 0.25rem;
+    }
+
+    .pagination-modern .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: #1e2429;
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 10px;
+        color: #e0e0e0;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .pagination-modern .page-link:hover {
+        background: var(--primary-accent);
+        color: white;
+        border-color: var(--primary-accent);
+    }
+
+    .pagination-modern .active .page-link {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        color: white;
+        border-color: var(--primary-accent);
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: #1e2429;
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 30px;
+        padding: 4rem;
+    }
+
+    .empty-icon i {
+        color: var(--primary-accent);
+        opacity: 0.3;
+    }
+
+    .btn-outline-gradient {
+        background: transparent;
+        border: 2px solid var(--primary-accent);
+        color: var(--primary-accent);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-gradient:hover {
+        background: var(--primary-accent);
+        color: white;
+    }
+
+    /* Modal */
+    .modal-content {
+        background: #1e2429;
+        border: 1px solid rgba(255, 107, 74, 0.3);
+        border-radius: 20px;
+    }
+
+    .glass-input {
+        background: #2a2f36;
+        border: 2px solid rgba(255, 107, 74, 0.2);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+        width: 100%;
+    }
+
+    .glass-input:focus {
+        border-color: var(--primary-accent);
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
+        outline: none;
+    }
+
+    .btn-close-white {
+        filter: invert(1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+
+        .pagination-modern .page-link {
+            width: 35px;
+            height: 35px;
+        }
+
+        .empty-state {
+            padding: 2rem;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const typeFilter = document.getElementById('typeFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const applyBtn = document.getElementById('applyFilters');
+
+        function applyFilters() {
+            const params = new URLSearchParams(window.location.search);
+            
+            if (searchInput.value) {
+                params.set('q', searchInput.value);
+            } else {
+                params.delete('q');
+            }
+            
+            if (typeFilter.value && typeFilter.value !== 'all') {
+                params.set('type', typeFilter.value);
+            } else {
+                params.delete('type');
+            }
+            
+            if (sortFilter.value) {
+                params.set('sort', sortFilter.value);
+            } else {
+                params.delete('sort');
+            }
+            
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        }
+
+        applyBtn.addEventListener('click', applyFilters);
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+    });
+
+    function removeSavedItem(itemId) {
+        if (confirm('Are you sure you want to remove this item from your saved items?')) {
+            fetch('{% url "accounts:toggle_saved" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    item_id: itemId,
+                    action: 'remove'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+    }
+
+    function editNotes(itemId) {
+        // Implement edit notes functionality
+        const modal = new bootstrap.Modal(document.getElementById('editNotesModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}

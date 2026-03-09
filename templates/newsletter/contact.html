@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Contact Newsletter Team</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+            Have questions about our newsletter? We're here to help.
+        </p>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <div class="glass p-8">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <div>
+                        <label class="block mb-2">Name *</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Subject *</label>
+                        {{ form.subject }}
+                        {% if form.subject.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.subject.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Message *</label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.message.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="text-center pt-4">
+                        <button type="submit" 
+                                class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
+                                       hover:bg-opacity-90 transition-colors magnetic">
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Alternative Contact Methods -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="glass p-4 text-center">
+                    <i class="fas fa-envelope text-2xl text-primary mb-2"></i>
+                    <h3 class="font-semibold mb-1">Email Us Directly</h3>
+                    <p class="text-gray-600 dark:text-gray-300">newsletter@mfalmebits.com</p>
+                </div>
+                <div class="glass p-4 text-center">
+                    <i class="fas fa-clock text-2xl text-primary mb-2"></i>
+                    <h3 class="font-semibold mb-1">Response Time</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Within 24-48 hours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Link -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            Check our FAQ for quick answers to common questions
+        </p>
+        <a href="{% url 'contact:faq' %}" class="text-primary hover:underline text-lg">
+            View FAQ <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}

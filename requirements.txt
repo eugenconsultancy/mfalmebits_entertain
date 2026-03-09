@@ -1,0 +1,61 @@
+# Django Core
+Django==4.2.7
+gunicorn==21.2.0
+python-decouple==3.8
+
+# Database
+psycopg2-binary==2.9.9
+dj-database-url==2.1.0
+
+# Authentication
+django-allauth==0.57.0
+
+# SEO & Metadata
+django-taggit==4.0.0
+unidecode==1.3.7
+
+# Content Management
+django-ckeditor==6.7.0
+django-crispy-forms==2.1
+crispy-bootstrap5==0.7
+Pillow==10.1.0
+
+# Payments
+stripe==7.5.0
+paypalrestsdk==1.13.2
+
+# File Storage
+django-storages==1.14
+boto3==1.34.0
+
+# Search
+django-elasticsearch-dsl==7.3
+elasticsearch==7.17.9
+
+# Background Tasks
+celery==5.3.4
+redis==5.0.1
+django-celery-beat==2.5.0
+django-celery-results==2.5.1
+
+# Email/Newsletter
+django-anymail==10.2
+
+# Performance & Caching
+django-compressor==4.4
+whitenoise==6.6.0
+django-cacheops==7.0.2
+
+# Development Tools
+django-debug-toolbar==4.2
+django-extensions==3.2.3
+ipython==8.17.2
+
+# Monitoring & Analytics
+sentry-sdk==1.39.0
+
+# API (if needed)
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+django-robots

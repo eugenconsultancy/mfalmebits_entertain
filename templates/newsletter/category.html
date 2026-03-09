@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Category Header -->
+<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ category.name }}</h1>
+        {% if category.description %}
+        <p class="text-xl max-w-2xl mx-auto">{{ category.description }}</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Articles Grid -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        {% if articles %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for article in articles %}
+            <div class="glass-card group">
+                <a href="{{ article.get_absolute_url }}">
+                    {% if article.featured_image %}
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ article.featured_image.url }}" 
+                             alt="{{ article.image_alt }}"
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+                            {{ article.title }}
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">{{ article.excerpt|truncatechars:100 }}</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span>{{ article.created_at|date:"M d, Y" }}</span>
+                            <span><i class="fas fa-eye mr-1"></i>{{ article.views_count }}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="mt-12 flex justify-center">
+            <div class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                <a href="?page=1" class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    First
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}" 
+                   class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    Previous
+                </a>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="px-4 py-2 bg-primary text-white">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}" 
+                       class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" 
+                   class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    Next
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" 
+                   class="px-4 py-2 glass hover:bg-primary hover:text-white transition-colors">
+                    Last
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div class="text-center py-12">
+            <p class="text-xl text-gray-500">No articles found in this category.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Other Categories -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">Other Categories</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {% for cat in category_list %}
+                {% if cat.id != category.id %}
+                <a href="{% url 'newsletter:category' cat.slug %}" 
+                   class="glass p-4 text-center hover:bg-primary hover:text-white transition-colors">
+                    {% if cat.icon %}
+                    <i class="fas fa-{{ cat.icon }} text-2xl mb-2"></i>
+                    {% endif %}
+                    <h3 class="font-semibold">{{ cat.name }}</h3>
+                </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

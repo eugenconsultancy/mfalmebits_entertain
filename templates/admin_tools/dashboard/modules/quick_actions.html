@@ -1,0 +1,14 @@
+{% load i18n %}
+<div class="dashboard-module quick-actions-module">
+    <h3>{{ module.title }}</h3>
+    <div class="module-content">
+        <div class="quick-actions-grid">
+            {% for action in module.actions %}
+            <a href="{{ action.url }}" class="quick-action-btn {{ action.color }}">
+                <i class="fa {{ action.icon }}"></i>
+                <span>{{ action.title }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>

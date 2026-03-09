@@ -1,0 +1,589 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Download History | {{ user.username }} | MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header py-5 position-relative overflow-hidden">
+    <div class="animated-bg"></div>
+    <div class="container position-relative z-index-2">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <span class="badge glass-badge mb-4">
+                    <i class="fas fa-download me-2"></i>History
+                </span>
+                <h1 class="display-4 fw-bold text-white mb-4">Download <span class="text-gradient-highlight">History</span></h1>
+                <p class="lead text-light-emphasis">Track all your downloaded content from MfalmeBits</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Downloads List -->
+<section class="downloads-list py-5">
+    <div class="container">
+        <!-- Summary Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="summary-card glass-card-1 p-4 text-center">
+                    <div class="summary-icon bg-primary-gradient text-white mx-auto mb-3">
+                        <i class="fas fa-download fa-2x"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold text-white mb-2">{{ downloads.count }}</h3>
+                    <p class="text-light-emphasis mb-0">Total Downloads</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="summary-card glass-card-1 p-4 text-center">
+                    <div class="summary-icon bg-success-gradient text-white mx-auto mb-3">
+                        <i class="fas fa-archive fa-2x"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold text-white mb-2">{{ archive_count|default:'0' }}</h3>
+                    <p class="text-light-emphasis mb-0">Archive Items</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="summary-card glass-card-1 p-4 text-center">
+                    <div class="summary-icon bg-warning-gradient text-white mx-auto mb-3">
+                        <i class="fas fa-book fa-2x"></i>
+                    </div>
+                    <h3 class="display-6 fw-bold text-white mb-2">{{ product_count|default:'0' }}</h3>
+                    <p class="text-light-emphasis mb-0">Library Items</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar glass-card-2 p-4 mb-5">
+            <div class="row align-items-center g-3">
+                <div class="col-md-6">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               id="downloadSearch" 
+                               class="form-control search-input" 
+                               placeholder="Search downloads..." 
+                               value="{{ request.GET.q }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select id="typeFilter" class="form-select filter-select">
+                        <option value="">All Types</option>
+                        <option value="archive" {% if request.GET.type == 'archive' %}selected{% endif %}>Archive</option>
+                        <option value="product" {% if request.GET.type == 'product' %}selected{% endif %}>Library</option>
+                        <option value="blog" {% if request.GET.type == 'blog' %}selected{% endif %}>Blog</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button id="applyFilters" class="btn btn-primary-gradient w-100">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Downloads Table -->
+        {% if downloads %}
+            <div class="glass-card-2 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0">
+                        <thead class="table-header">
+                            <tr>
+                                <th>Item</th>
+                                <th>Type</th>
+                                <th>Download Count</th>
+                                <th>Last Downloaded</th>
+                                <th>First Downloaded</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for download in downloads %}
+                            <tr class="download-row">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="type-icon me-3">
+                                            <i class="fas fa-{% if download.item_type == 'archive' %}archive{% elif download.item_type == 'product' %}book{% else %}newspaper{% endif %}"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-white fw-bold mb-0">{{ download.item_title }}</h6>
+                                            <small class="text-light-emphasis">ID: #{{ download.item_id }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge type-badge type-{{ download.item_type }}">
+                                        {{ download.get_item_type_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="download-count">{{ download.download_count }}x</span>
+                                </td>
+                                <td>
+                                    <span class="text-light-emphasis">
+                                        <i class="fas fa-clock me-1"></i>{{ download.last_downloaded|date:"M d, Y" }}
+                                        <br><small>{{ download.last_downloaded|timesince }} ago</small>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-light-emphasis">
+                                        <i class="fas fa-calendar me-1"></i>{{ download.first_downloaded|date:"M d, Y" }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="#" class="btn-icon" title="Download Again">
+                                            <i class="fas fa-redo-alt"></i>
+                                        </a>
+                                        <a href="#" class="btn-icon" title="View Item">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav class="pagination-wrapper mt-5">
+                <ul class="pagination-modern">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state glass-card-2 text-center py-5">
+                <div class="empty-icon mb-4">
+                    <i class="fas fa-download fa-5x text-light-emphasis"></i>
+                </div>
+                <h3 class="h3 text-white mb-3">No Downloads Yet</h3>
+                <p class="text-light-emphasis mb-4">You haven't downloaded any content yet. Explore our library to get started!</p>
+                <div class="action-buttons">
+                    <a href="{% url 'library:index' %}" class="btn btn-primary-gradient btn-lg me-3">
+                        <i class="fas fa-book me-2"></i>Browse Library
+                    </a>
+                    <a href="{% url 'archive:index' %}" class="btn btn-outline-gradient btn-lg">
+                        <i class="fas fa-archive me-2"></i>Explore Archive
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    :root {
+        --primary-accent: #ff6b4a;
+        --secondary-accent: #ff8a6f;
+        --success-accent: #10b981;
+        --warning-accent: #f59e0b;
+        --info-accent: #3b82f6;
+        --deep-charcoal: #0a0c0f;
+        --medium-charcoal: #1a1e24;
+        --light-charcoal: #2a2f36;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--deep-charcoal) 0%, var(--medium-charcoal) 100%);
+        min-height: 300px;
+    }
+
+    .animated-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(-45deg, var(--primary-accent), var(--secondary-accent), #8B4513, #c97c5d);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        opacity: 0.1;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .glass-badge {
+        background: rgba(255, 107, 74, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 107, 74, 0.3);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    .text-gradient-highlight {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .text-light-emphasis {
+        color: #e0e0e0 !important;
+    }
+
+    /* Summary Cards */
+    .summary-card {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-accent);
+        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.2);
+    }
+
+    .summary-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    }
+
+    .bg-success-gradient {
+        background: linear-gradient(135deg, var(--success-accent), #059669);
+    }
+
+    .bg-warning-gradient {
+        background: linear-gradient(135deg, var(--warning-accent), #d97706);
+    }
+
+    /* Filters Bar */
+    .filters-bar {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+    }
+
+    .search-wrapper {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light-emphasis);
+        z-index: 10;
+    }
+
+    .search-input {
+        background: var(--light-charcoal);
+        border: 2px solid rgba(255, 107, 74, 0.2);
+        color: white;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border-radius: 10px;
+        width: 100%;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-accent);
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
+        outline: none;
+    }
+
+    .filter-select {
+        background: var(--light-charcoal);
+        border: 2px solid rgba(255, 107, 74, 0.2);
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .filter-select option {
+        background: var(--medium-charcoal);
+    }
+
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        border: none;
+        color: white;
+        padding: 0.75rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 107, 74, 0.3);
+    }
+
+    /* Table Styles */
+    .glass-card-2 {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 20px;
+    }
+
+    .table {
+        margin-bottom: 0;
+        --bs-table-bg: transparent;
+        --bs-table-hover-bg: rgba(255, 107, 74, 0.05);
+        --bs-table-hover-color: white;
+    }
+
+    .table-header {
+        background: rgba(255, 107, 74, 0.1);
+        border-bottom: 2px solid rgba(255, 107, 74, 0.3);
+    }
+
+    .table-header th {
+        color: white;
+        font-weight: 600;
+        padding: 1rem;
+        border: none;
+    }
+
+    .download-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .download-row td {
+        padding: 1rem;
+        color: #e0e0e0;
+        vertical-align: middle;
+    }
+
+    .type-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 107, 74, 0.1);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-accent);
+    }
+
+    .type-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+    }
+
+    .type-archive {
+        background: rgba(255, 107, 74, 0.2);
+        color: var(--primary-accent);
+    }
+
+    .type-product {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--success-accent);
+    }
+
+    .type-blog {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning-accent);
+    }
+
+    .download-count {
+        font-weight: 600;
+        color: var(--success-accent);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: rgba(255, 107, 74, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-accent);
+        transition: all 0.3s ease;
+    }
+
+    .btn-icon:hover {
+        background: var(--primary-accent);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Pagination */
+    .pagination-modern {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .pagination-modern .page-item {
+        margin: 0 0.25rem;
+    }
+
+    .pagination-modern .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 10px;
+        color: #e0e0e0;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .pagination-modern .page-link:hover {
+        background: var(--primary-accent);
+        color: white;
+        border-color: var(--primary-accent);
+    }
+
+    .pagination-modern .active .page-link {
+        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+        color: white;
+        border-color: var(--primary-accent);
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: var(--medium-charcoal);
+        border: 1px solid rgba(255, 107, 74, 0.2);
+        border-radius: 30px;
+        padding: 4rem;
+    }
+
+    .empty-icon i {
+        color: var(--primary-accent);
+        opacity: 0.3;
+    }
+
+    .btn-outline-gradient {
+        background: transparent;
+        border: 2px solid var(--primary-accent);
+        color: var(--primary-accent);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-gradient:hover {
+        background: var(--primary-accent);
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .table {
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-icon {
+            width: 30px;
+            height: 30px;
+            font-size: 0.8rem;
+        }
+
+        .pagination-modern .page-link {
+            width: 35px;
+            height: 35px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('downloadSearch');
+        const typeFilter = document.getElementById('typeFilter');
+        const applyBtn = document.getElementById('applyFilters');
+
+        function applyFilters() {
+            const params = new URLSearchParams(window.location.search);
+            
+            if (searchInput.value) {
+                params.set('q', searchInput.value);
+            } else {
+                params.delete('q');
+            }
+            
+            if (typeFilter.value) {
+                params.set('type', typeFilter.value);
+            } else {
+                params.delete('type');
+            }
+            
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        }
+
+        applyBtn.addEventListener('click', applyFilters);
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+    });
+</script>
+{% endblock %}

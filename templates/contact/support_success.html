@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ticket Submitted - MfalmeBits{% endblock %}
+
+{% block content %}
+<!-- Success Section -->
+<section class="success-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body text-center p-5">
+                        <!-- Success Icon -->
+                        <div class="success-icon mb-4">
+                            <div class="icon-box bg-success text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                 style="width: 100px; height: 100px;">
+                                <i class="fas fa-check-circle fa-4x"></i>
+                            </div>
+                        </div>
+
+                        <h1 class="display-5 fw-bold mb-3">Ticket Submitted!</h1>
+                        
+                        <p class="lead text-muted mb-4">
+                            Thank you for contacting our support team. Your ticket has been created and will be processed shortly.
+                        </p>
+
+                        <!-- What Happens Next -->
+                        <div class="next-steps text-start bg-light p-4 rounded-3 mb-4">
+                            <h3 class="h6 mb-3">What happens next?</h3>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-envelope text-success me-2"></i>
+                                    You'll receive a confirmation email with your ticket details
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-clock text-success me-2"></i>
+                                    Our support team will review your ticket within {{ settings.support_response_time|default:"4 hours" }}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-comments text-success me-2"></i>
+                                    You'll be notified when we respond to your ticket
+                                </li>
+                                <li>
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Track your ticket status via the link in your email
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Quick Tips -->
+                        <div class="tips-section mb-4">
+                            <h3 class="h6 mb-3">Quick Tips:</h3>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="tip-item p-3 border rounded-3">
+                                        <i class="fas fa-inbox text-primary mb-2"></i>
+                                        <p class="small mb-0">Check your spam folder if you don't see our email</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="tip-item p-3 border rounded-3">
+                                        <i class="fas fa-ticket-alt text-primary mb-2"></i>
+                                        <p class="small mb-0">Save your ticket number for future reference</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons mt-4">
+                            <a href="{% url 'home' %}" class="btn btn-primary me-2">
+                                <i class="fas fa-home me-2"></i>Go Home
+                            </a>
+                            <a href="{% url 'contact:faq' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-question-circle me-2"></i>Browse FAQs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info text-center mt-4">
+                    <p class="text-muted small">
+                        Need immediate assistance? 
+                        <a href="tel:{{ settings.primary_phone }}" class="text-primary">{{ settings.primary_phone }}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .success-icon {
+        animation: scaleIn 0.5s ease;
+    }
+    .tip-item {
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+    .tip-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,.1);
+    }
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+{% endblock %}

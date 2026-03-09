@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Pricing Calculator</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+            Estimate your institutional licensing costs based on your requirements
+        </p>
+    </div>
+</section>
+
+<!-- Calculator -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass p-8">
+                <form id="calculator-form" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Plan Selection -->
+                    <div>
+                        <label class="block text-lg font-semibold mb-3">Select Plan</label>
+                        <select id="plan-select" class="w-full px-4 py-3 border rounded-lg dark:bg-gray-800" required>
+                            <option value="">Choose a plan...</option>
+                            {% for plan in plans %}
+                            <option value="{{ plan.id }}" 
+                                    data-price="{{ plan.price_per_year }}"
+                                    data-setup="{{ plan.setup_fee }}"
+                                    data-min="{{ plan.min_users }}"
+                                    data-max="{{ plan.max_users }}">
+                                {{ plan.get_plan_type_display }} - {{ plan.name }} (${{ plan.price_per_year }}/year)
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Number of Users -->
+                    <div>
+                        <label class="block text-lg font-semibold mb-3">Number of Users</label>
+                        <input type="number" 
+                               id="users-input" 
+                               min="1" 
+                               value="1"
+                               class="w-full px-4 py-3 border rounded-lg dark:bg-gray-800">
+                        <p class="text-sm text-gray-500 mt-2">Volume discounts available for larger institutions</p>
+                    </div>
+                    
+                    <!-- Calculate Button -->
+                    <div class="text-center">
+                        <button type="submit" 
+                                class="bg-primary text-white px-12 py-4 rounded-full text-lg font-semibold 
+                                       hover:bg-opacity-90 transition-colors magnetic">
+                            Calculate Price
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Results -->
+                <div id="results" class="mt-8 hidden">
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-8">
+                        <h3 class="text-2xl font-bold text-center mb-6">Price Estimate</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="glass p-4 text-center">
+                                <div class="text-gray-500 mb-2">Base Price (per user)</div>
+                                <div class="text-2xl font-bold" id="base-price">$0</div>
+                            </div>
+                            <div class="glass p-4 text-center">
+                                <div class="text-gray-500 mb-2">Setup Fee</div>
+                                <div class="text-2xl font-bold" id="setup-fee">$0</div>
+                            </div>
+                            <div class="glass p-4 text-center">
+                                <div class="text-gray-500 mb-2">Volume Discount</div>
+                                <div class="text-2xl font-bold text-green-500" id="discount">0%</div>
+                            </div>
+                            <div class="glass p-4 text-center bg-primary text-white">
+                                <div class="mb-2">Total per Year</div>
+                                <div class="text-3xl font-bold" id="total">$0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center text-gray-600 dark:text-gray-300 text-sm">
+                            <p>* This is an estimate. Final pricing may vary based on specific requirements.</p>
+                            <p class="mt-2">Contact our team for a customized quote.</p>
+                        </div>
+                        
+                        <div class="text-center mt-6">
+                            <a href="{% url 'institutional:inquiry' %}" 
+                               class="inline-block bg-primary text-white px-8 py-3 rounded-full font-semibold 
+                                      hover:bg-opacity-90 transition-colors">
+                                Request Official Quote
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Calculator JavaScript -->
+<script>
+document.getElementById('calculator-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const planSelect = document.getElementById('plan-select');
+    const users = document.getElementById('users-input').value;
+    
+    if (!planSelect.value) {
+        alert('Please select a plan');
+        return;
+    }
+    
+    // Get selected plan data
+    const selectedOption = planSelect.options[planSelect.selectedIndex];
+    const planId = planSelect.value;
+    const basePrice = parseFloat(selectedOption.dataset.price);
+    const setupFee = parseFloat(selectedOption.dataset.setup);
+    const minUsers = parseInt(selectedOption.dataset.min);
+    const maxUsers = parseInt(selectedOption.dataset.max);
+    
+    // Validate users
+    const numUsers = parseInt(users);
+    if (numUsers < minUsers) {
+        alert(`Minimum users for this plan is ${minUsers}`);
+        return;
+    }
+    if (maxUsers !== -1 && numUsers > maxUsers) {
+        alert(`Maximum users for this plan is ${maxUsers}`);
+        return;
+    }
+    
+    // Calculate discount
+    let discount = 0;
+    if (numUsers > 100) {
+        discount = 20;
+    } else if (numUsers > 50) {
+        discount = 15;
+    } else if (numUsers > 20) {
+        discount = 10;
+    } else if (numUsers > 10) {
+        discount = 5;
+    }
+    
+    // Calculate total
+    const subtotal = basePrice * numUsers;
+    const discountAmount = subtotal * (discount / 100);
+    const total = (subtotal - discountAmount) + setupFee;
+    
+    // Display results
+    document.getElementById('base-price').textContent = `$${basePrice.toFixed(2)}`;
+    document.getElementById('setup-fee').textContent = `$${setupFee.toFixed(2)}`;
+    document.getElementById('discount').textContent = `${discount}%`;
+    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+    
+    document.getElementById('results').classList.remove('hidden');
+    
+    // Scroll to results
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+});
+</script>
+{% endblock %}

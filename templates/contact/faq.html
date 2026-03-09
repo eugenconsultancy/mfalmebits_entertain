@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- FAQ Hero -->
+<section class="faq-hero py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-4">Frequently Asked Questions</h1>
+                <p class="lead mb-5">Find answers to common questions about MfalmeBits, our services, and how to make the most of our platform.</p>
+                
+                <!-- Search Form -->
+                <form method="get" class="search-form">
+                    <div class="input-group">
+                        <input type="text" 
+                               name="q" 
+                               class="form-control form-control-lg" 
+                               placeholder="Search FAQs..." 
+                               value="{{ current_filters.q }}">
+                        <button class="btn btn-light" type="submit">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Content -->
+<section class="faq-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="faq-sidebar sticky-top" style="top: 2rem;">
+                    <!-- Categories -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title h6 mb-3">Categories</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <a href="{% url 'contact:faq' %}" class="text-decoration-none {% if not current_filters.category %}fw-bold text-primary{% else %}text-muted{% endif %}">
+                                        All Categories
+                                    </a>
+                                </li>
+                                {% for cat in categories %}
+                                <li class="mb-2">
+                                    <a href="?category={{ cat.category }}" 
+                                       class="text-decoration-none d-flex justify-content-between align-items-center {% if current_filters.category == cat.category %}fw-bold text-primary{% else %}text-muted{% endif %}">
+                                        <span>{{ cat.get_category_display }}</span>
+                                        <span class="badge bg-light text-dark">{{ cat.count }}</span>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Popular FAQs -->
+                    {% if popular_faqs %}
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title h6 mb-3">Popular Questions</h5>
+                            <ul class="list-unstyled">
+                                {% for faq in popular_faqs %}
+                                <li class="mb-2">
+                                    <a href="{% url 'contact:faq_detail' faq.pk %}" class="text-decoration-none text-muted small">
+                                        <i class="fas fa-question-circle text-primary me-2"></i>
+                                        {{ faq.question|truncatechars:50 }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Contact Support -->
+                    <div class="card border-0 bg-primary text-white mt-4">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-headset fa-3x mb-3"></i>
+                            <h5 class="h6 mb-3">Need More Help?</h5>
+                            <p class="small mb-3">Can't find what you're looking for? Our support team is here to help.</p>
+                            <a href="{% url 'contact:support' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-ticket-alt me-2"></i>Open Support Ticket
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Active Filters -->
+                {% if current_filters.q or current_filters.category %}
+                <div class="active-filters mb-4">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <span class="fw-bold me-2">Filters:</span>
+                        {% if current_filters.q %}
+                        <span class="badge bg-light text-dark p-2">
+                            Search: "{{ current_filters.q }}"
+                            <a href="?{% if current_filters.category %}category={{ current_filters.category }}{% endif %}" class="text-danger ms-2">&times;</a>
+                        </span>
+                        {% endif %}
+                        {% if current_filters.category %}
+                        <span class="badge bg-light text-dark p-2">
+                            Category: {{ current_filters.get_category_display }}
+                            <a href="?{% if current_filters.q %}q={{ current_filters.q }}{% endif %}" class="text-danger ms-2">&times;</a>
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- FAQ List -->
+                {% if faqs %}
+                <div class="faq-list">
+                    {% regroup faqs by get_category_display as category_groups %}
+                    {% for group in category_groups %}
+                    <div class="faq-category mb-5">
+                        <h2 class="h4 mb-4 text-primary">{{ group.grouper }}</h2>
+                        <div class="accordion" id="accordion{{ forloop.counter }}">
+                            {% for faq in group.list %}
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header" id="heading{{ forloop.parentloop.counter }}{{ forloop.counter }}">
+                                    <button class="accordion-button collapsed" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#collapse{{ forloop.parentloop.counter }}{{ forloop.counter }}">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <span class="h6 mb-0">{{ faq.question }}</span>
+                                            <small class="text-muted ms-3">
+                                                <i class="far fa-eye me-1"></i>{{ faq.views_count }}
+                                            </small>
+                                        </div>
+                                    </button>
+                                </h3>
+                                <div id="collapse{{ forloop.parentloop.counter }}{{ forloop.counter }}" 
+                                     class="accordion-collapse collapse"
+                                     data-bs-parent="#accordion{{ forloop.parentloop.counter }}">
+                                    <div class="accordion-body">
+                                        {{ faq.answer|safe }}
+                                        <div class="text-end mt-3">
+                                            <a href="{% url 'contact:faq_detail' faq.pk %}" class="btn btn-sm btn-link text-primary">
+                                                View Details <i class="fas fa-arrow-right ms-2"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_filters.q %}&q={{ current_filters.q }}{% endif %}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if current_filters.q %}&q={{ current_filters.q }}{% endif %}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}">
+                                    {{ num }}
+                                </a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_filters.q %}&q={{ current_filters.q }}{% endif %}{% if current_filters.category %}&category={{ current_filters.category }}{% endif %}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-question-circle fa-4x text-muted mb-3"></i>
+                    <h3>No FAQs Found</h3>
+                    <p class="text-muted">Try adjusting your search or browse all categories.</p>
+                    <a href="{% url 'contact:faq' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-arrow-left me-2"></i>View All FAQs
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .faq-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    }
+    .search-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .accordion-button:not(.collapsed) {
+        background-color: #e7f1ff;
+        color: #0d6efd;
+    }
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(0,0,0,.125);
+    }
+    .faq-sidebar {
+        position: sticky;
+        top: 2rem;
+    }
+    @media (max-width: 992px) {
+        .faq-sidebar {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}

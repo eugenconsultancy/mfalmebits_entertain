@@ -1,0 +1,77 @@
+[
+  {
+    "model": "archive.theme",
+    "pk": 1,
+    "fields": {
+      "name": "Identity",
+      "slug": "identity",
+      "description": "Exploring African identity, selfhood, and belonging in the modern world",
+      "icon": "fas fa-user-circle",
+      "color": "#8B4513",
+      "order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "archive.theme",
+    "pk": 2,
+    "fields": {
+      "name": "History",
+      "slug": "history",
+      "description": "African history from ancient civilizations to modern times",
+      "icon": "fas fa-history",
+      "color": "#D2691E",
+      "order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "archive.theme",
+    "pk": 3,
+    "fields": {
+      "name": "Culture",
+      "slug": "culture",
+      "description": "African cultural practices, traditions, and contemporary expressions",
+      "icon": "fas fa-mask",
+      "color": "#CD853F",
+      "order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "library.productcategory",
+    "pk": 1,
+    "fields": {
+      "name": "eBooks",
+      "slug": "ebooks",
+      "description": "Digital books on African knowledge and culture",
+      "icon": "fas fa-book",
+      "order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "library.productcategory",
+    "pk": 2,
+    "fields": {
+      "name": "eMagazines",
+      "slug": "emagazines",
+      "description": "Digital magazines and periodicals",
+      "icon": "fas fa-newspaper",
+      "order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "library.productcategory",
+    "pk": 3,
+    "fields": {
+      "name": "Curriculum Kits",
+      "slug": "curriculum-kits",
+      "description": "Educational curriculum packages for schools and institutions",
+      "icon": "fas fa-graduation-cap",
+      "order": 3,
+      "is_active": true
+    }
+  }
+]

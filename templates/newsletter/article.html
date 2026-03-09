@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Article Header -->
+<section class="relative py-20 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        {% if article.category %}
+        <span class="inline-block glass-dark text-white px-4 py-2 rounded-full text-sm mb-4">
+            {{ article.category.name }}
+        </span>
+        {% endif %}
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">{{ article.title }}</h1>
+        <div class="flex items-center justify-center space-x-6">
+            {% if article.author %}
+            <span><i class="fas fa-user mr-2"></i>{{ article.author }}</span>
+            {% endif %}
+            <span><i class="fas fa-calendar mr-2"></i>{{ article.created_at|date:"F d, Y" }}</span>
+            <span><i class="fas fa-eye mr-2"></i>{{ article.views_count }} views</span>
+        </div>
+    </div>
+</section>
+
+<!-- Article Content -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Featured Image -->
+            {% if article.featured_image %}
+            <div class="mb-8 rounded-lg overflow-hidden">
+                <img src="{{ article.featured_image.url }}" 
+                     alt="{{ article.image_alt }}"
+                     class="w-full h-auto">
+            </div>
+            {% endif %}
+            
+            <!-- Excerpt -->
+            <div class="text-xl text-gray-600 dark:text-gray-300 mb-8 italic">
+                {{ article.excerpt }}
+            </div>
+            
+            <!-- Main Content -->
+            <div class="prose prose-lg dark:prose-invert max-w-none">
+                {{ article.content|safe }}
+            </div>
+            
+            <!-- Source -->
+            {% if article.source_url %}
+            <div class="mt-8 p-4 glass">
+                <p class="text-sm">
+                    <strong>Source:</strong> 
+                    <a href="{{ article.source_url }}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">
+                        {{ article.source_name|default:article.source_url }}
+                    </a>
+                </p>
+            </div>
+            {% endif %}
+            
+            <!-- Share Buttons -->
+            <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold mb-4">Share this article:</h3>
+                <div class="flex space-x-4">
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ article.title }}" 
+                       target="_blank"
+                       class="w-10 h-10 bg-blue-400 text-white rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                       target="_blank"
+                       class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ article.title }}" 
+                       target="_blank"
+                       class="w-10 h-10 bg-blue-700 text-white rounded-full flex items-center justify-center hover:bg-blue-800 transition-colors">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="mailto:?subject={{ article.title }}&body={{ request.build_absolute_uri }}" 
+                       class="w-10 h-10 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Articles -->
+{% if related_articles %}
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Related Articles</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for related in related_articles %}
+            <div class="glass-card group">
+                <a href="{{ related.get_absolute_url }}">
+                    {% if related.featured_image %}
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ related.featured_image.url }}" 
+                             alt="{{ related.image_alt }}"
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+                            {{ related.title|truncatechars:60 }}
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">{{ related.excerpt|truncatechars:100 }}</p>
+                        <div class="text-sm text-gray-500">
+                            {{ related.created_at|date:"M d, Y" }}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Subscribe CTA -->
+<section class="py-16 bg-primary text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Enjoying Our Content?</h2>
+        <p class="text-xl mb-8">Subscribe to our newsletter for more articles like this</p>
+        <a href="{% url 'newsletter:subscribe' %}" 
+           class="bg-white text-primary px-8 py-4 rounded-full text-lg font-semibold 
+                  hover:bg-opacity-90 transition-colors inline-block magnetic">
+            Subscribe Now
+        </a>
+    </div>
+</section>
+{% endblock %}

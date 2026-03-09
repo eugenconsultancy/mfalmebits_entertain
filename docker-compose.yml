@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=mfalmebits
+      - POSTGRES_USER=mfalmebits
+      - POSTGRES_PASSWORD=mfalmebits123
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  elasticsearch:
+    image: elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  web:
+    build: .
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings.production
+      - DATABASE_URL=postgresql://mfalmebits:mfalmebits123@db:5432/mfalmebits
+      - REDIS_URL=redis://redis:6379/1
+      - ELASTICSEARCH_HOST=elasticsearch:9200
+
+  celery:
+    build: .
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings.production
+      - DATABASE_URL=postgresql://mfalmebits:mfalmebits123@db:5432/mfalmebits
+      - REDIS_URL=redis://redis:6379/1
+
+  celery-beat:
+    build: .
+    command: celery -A core beat --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings.production
+      - DATABASE_URL=postgresql://mfalmebits:mfalmebits123@db:5432/mfalmebits
+      - REDIS_URL=redis://redis:6379/1
+
+  nginx:
+    image: nginx:1.25
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/static
+      - media_volume:/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:
+  static_volume:
+  media_volume:

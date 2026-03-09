@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Request Institutional Information</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+            Fill out the form below and our institutional team will contact you within 24 hours
+        </p>
+    </div>
+</section>
+
+<!-- Inquiry Form -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto">
+            <div class="glass p-8">
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
+                        {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Institution Information -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Institution Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                {{ form.institution_name.label_tag }}
+                                {{ form.institution_name }}
+                                {% if form.institution_name.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.institution_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.institution_type.label_tag }}
+                                {{ form.institution_type }}
+                                {% if form.institution_type.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.institution_type.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.website.label_tag }}
+                                {{ form.website }}
+                                {% if form.website.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.website.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.country.label_tag }}
+                                {{ form.country }}
+                                {% if form.country.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.country.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.city.label_tag }}
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.city.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="md:col-span-2">
+                                {{ form.address.label_tag }}
+                                {{ form.address }}
+                                {% if form.address.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.address.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Contact Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                {{ form.contact_person.label_tag }}
+                                {{ form.contact_person }}
+                                {% if form.contact_person.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.contact_person.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.job_title.label_tag }}
+                                {{ form.job_title }}
+                                {% if form.job_title.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.job_title.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.phone.label_tag }}
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.phone.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inquiry Details -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Inquiry Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                {{ form.plan.label_tag }}
+                                {{ form.plan }}
+                                {% if form.plan.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.plan.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.number_of_users.label_tag }}
+                                {{ form.number_of_users }}
+                                {% if form.number_of_users.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.number_of_users.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="md:col-span-2">
+                                {{ form.content_types.label_tag }}
+                                {{ form.content_types }}
+                                {% if form.content_types.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.content_types.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="md:col-span-2">
+                                {{ form.message.label_tag }}
+                                {{ form.message }}
+                                {% if form.message.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.message.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="md:col-span-2">
+                                {{ form.additional_requirements.label_tag }}
+                                {{ form.additional_requirements }}
+                                {% if form.additional_requirements.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.additional_requirements.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline & Budget -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Timeline & Budget</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                {{ form.start_date.label_tag }}
+                                {{ form.start_date }}
+                                {% if form.start_date.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.start_date.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {{ form.budget_range.label_tag }}
+                                {{ form.budget_range }}
+                                {% if form.budget_range.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.budget_range.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Attachment -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Supporting Documents</h3>
+                        <div>
+                            {{ form.attachment.label_tag }}
+                            {{ form.attachment }}
+                            {% if form.attachment.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.attachment.errors.0 }}</p>
+                            {% endif %}
+                            <p class="text-sm text-gray-500 mt-1">
+                            <p class="text-sm text-gray-500 mt-1">Accepted formats: PDF, DOC, DOCX, TXT (Max size: 10MB)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="text-center pt-6">
+                        <button type="submit" 
+                                class="bg-primary text-white px-12 py-4 rounded-full text-lg font-semibold 
+                                       hover:bg-opacity-90 transition-colors magnetic">
+                            Submit Inquiry
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="mt-8 text-center text-gray-600 dark:text-gray-300">
+                <p class="mb-2">Prefer to contact us directly?</p>
+                <p>
+                    <i class="fas fa-envelope mr-2"></i> institutional@mfalmebits.com |
+                    <i class="fas fa-phone mr-2 ml-4"></i> +1 (234) 567-8900
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

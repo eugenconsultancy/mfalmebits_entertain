@@ -1,0 +1,1256 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block content %}
+<!-- ===== Enhanced Blog Hero with Modern Dark Theme ===== -->
+<section class="blog-hero position-relative overflow-hidden">
+    <!-- Animated Background -->
+    <div class="hero-bg">
+        <div class="particles" id="heroParticles"></div>
+        <div class="floating-elements">
+            <div class="floating-element element-1">
+                <i class="fas fa-pen-fancy"></i>
+            </div>
+            <div class="floating-element element-2">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <div class="floating-element element-3">
+                <i class="fas fa-quote-right"></i>
+            </div>
+            <div class="floating-element element-4">
+                <i class="fas fa-feather-alt"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container position-relative z-index-2">
+        <div class="row min-vh-50 align-items-center py-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <span class="badge glass-badge mb-4 animate-fade-in-up">
+                    <i class="fas fa-blog me-2"></i>MfalmeBits Blog
+                </span>
+                <h1 class="display-3 fw-bold text-white mb-4 animate-slide-in-left">
+                    Insights & <span class="text-gradient">Stories</span>
+                </h1>
+                <p class="lead text-white-50 mb-5 animate-slide-in-right">
+                    News, updates, and deep dives into African knowledge, culture, and digital innovation
+                </p>
+                
+                <!-- Enhanced Search Bar -->
+                <div class="search-container animate-fade-in-up">
+                    <form method="get" class="search-form-modern">
+                        <div class="search-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            {{ search_form.q }}
+                            <button type="submit" class="search-button">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== Featured Posts Carousel ===== -->
+{% if featured_posts %}
+<section class="featured-posts py-5">
+    <div class="container">
+        <div class="section-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="badge glass-badge mb-2">
+                    <i class="fas fa-star text-warning me-2"></i>Editor's Pick
+                </span>
+                <h2 class="h2 fw-bold mb-0">Featured <span class="gradient-text">Stories</span></h2>
+            </div>
+            <div class="carousel-nav">
+                <button class="carousel-prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="featured-carousel owl-carousel owl-theme">
+            {% for post in featured_posts %}
+            <div class="featured-card glass-card-2">
+                <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+                    <div class="card-image">
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.image_alt }}" loading="lazy">
+                        <div class="category-badge">{{ post.category.name }}</div>
+                    </div>
+                    <div class="card-content p-4">
+                        <div class="post-meta d-flex align-items-center mb-3">
+                            <span class="post-date">
+                                <i class="far fa-calendar-alt me-1"></i>{{ post.published_date|date:"M d, Y" }}
+                            </span>
+                            <span class="post-read ms-3">
+                                <i class="far fa-clock me-1"></i>{{ post.reading_time }} min read
+                            </span>
+                        </div>
+                        <h3 class="post-title h5 fw-bold mb-3">{{ post.title|truncatechars:60 }}</h3>
+                        <p class="post-excerpt text-muted small">{{ post.excerpt|truncatechars:80 }}</p>
+                        <div class="post-author d-flex align-items-center mt-3">
+                            <div class="author-avatar">
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <div class="author-info ms-2">
+                                <span class="author-name small fw-bold">{{ post.author.get_full_name|default:post.author.username }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ===== Main Blog Content ===== -->
+<section class="blog-content py-5 bg-soft">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Main Posts Column -->
+            <div class="col-lg-8">
+                <!-- Section Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="h3 fw-bold mb-1">
+                            {% if current_filters.q %}
+                                <i class="fas fa-search me-2 text-primary"></i>Search: "{{ current_filters.q }}"
+                            {% elif current_filters.category %}
+                                <i class="fas fa-folder me-2 text-primary"></i>{{ current_filters.category }}
+                            {% elif current_filters.tag %}
+                                <i class="fas fa-tag me-2 text-primary"></i>#{{ current_filters.tag }}
+                            {% else %}
+                                <i class="fas fa-newspaper me-2 text-primary"></i>Latest Posts
+                            {% endif %}
+                        </h2>
+                        <p class="text-muted small mb-0">{{ page_obj.paginator.count }} articles found</p>
+                    </div>
+                    
+                    <!-- Sort Dropdown -->
+                    <div class="sort-dropdown">
+                        <select class="form-select sort-select" onchange="applySort(this.value)">
+                            <option value="-created_at" {% if current_filters.sort == '-created_at' %}selected{% endif %}>Newest First</option>
+                            <option value="created_at" {% if current_filters.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                            <option value="title" {% if current_filters.sort == 'title' %}selected{% endif %}>Title A-Z</option>
+                            <option value="-views_count" {% if current_filters.sort == '-views_count' %}selected{% endif %}>Most Viewed</option>
+                            <option value="-comments_count" {% if current_filters.sort == '-comments_count' %}selected{% endif %}>Most Discussed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Posts Grid -->
+                <div class="posts-grid">
+                    {% for post in posts %}
+                    <article class="post-card-modern glass-card-2 mb-4 hover-lift">
+                        <div class="row g-0">
+                            {% if post.featured_image %}
+                            <div class="col-md-4">
+                                <div class="post-image">
+                                    <img src="{{ post.featured_image.url }}" alt="{{ post.image_alt }}" loading="lazy">
+                                    <div class="image-overlay">
+                                        <span class="quick-read">Quick Read</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="{% if post.featured_image %}col-md-8{% else %}col-12{% endif %}">
+                                <div class="post-body p-4">
+                                    <div class="post-meta-top d-flex align-items-center mb-2">
+                                        <span class="post-category">
+                                            <i class="fas fa-folder me-1"></i>{{ post.category.name }}
+                                        </span>
+                                        <span class="post-date ms-3">
+                                            <i class="far fa-calendar-alt me-1"></i>{{ post.published_date|date:"M d, Y" }}
+                                        </span>
+                                    </div>
+                                    
+                                    <h3 class="post-title h4 fw-bold mb-3">
+                                        <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+                                            {{ post.title }}
+                                        </a>
+                                    </h3>
+                                    
+                                    <p class="post-excerpt text-muted mb-3">{{ post.excerpt|truncatechars:120 }}</p>
+                                    
+                                    <div class="post-meta-bottom d-flex justify-content-between align-items-center">
+                                        <div class="post-author d-flex align-items-center">
+                                            <div class="author-avatar-sm me-2">
+                                                <i class="fas fa-user-circle fa-lg text-primary"></i>
+                                            </div>
+                                            <span class="author-name small">{{ post.author.get_full_name|default:post.author.username }}</span>
+                                        </div>
+                                        
+                                        <div class="post-stats d-flex gap-3">
+                                            <span class="stat" title="Views">
+                                                <i class="fas fa-eye me-1"></i>{{ post.views_count }}
+                                            </span>
+                                            <span class="stat" title="Comments">
+                                                <i class="fas fa-comment me-1"></i>{{ post.comments.count }}
+                                            </span>
+                                            <span class="stat" title="Read time">
+                                                <i class="fas fa-clock me-1"></i>{{ post.reading_time }} min
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if post.tags.all %}
+                                    <div class="post-tags mt-3">
+                                        {% for tag in post.tags.all|slice:":3" %}
+                                        <a href="{% url 'blog:tag' tag.slug %}" class="tag-link">
+                                            <i class="fas fa-tag me-1"></i>{{ tag.name }}
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    {% empty %}
+                    <div class="empty-state text-center py-5">
+                        <div class="empty-icon mb-4">
+                            <i class="fas fa-newspaper fa-4x text-muted"></i>
+                        </div>
+                        <h3 class="h4 mb-3">No Posts Found</h3>
+                        <p class="text-muted mb-4">We couldn't find any articles matching your criteria.</p>
+                        <a href="{% url 'blog:index' %}" class="btn btn-gradient">
+                            <i class="fas fa-redo-alt me-2"></i>Clear Filters
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav class="pagination-wrapper mt-5">
+                    <ul class="pagination-modern">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key,value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1" aria-label="First">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key,value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% for key,value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key,value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key,value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+            
+            <!-- ===== Sidebar - Enhanced Dark Theme ===== -->
+            <div class="col-lg-4">
+                <div class="sidebar-wrapper sticky-sidebar">
+                    <!-- Newsletter Card -->
+                    <div class="sidebar-card glass-card-2 p-4 mb-4">
+                        <div class="card-header d-flex align-items-center mb-3">
+                            <div class="header-icon me-3">
+                                <i class="fas fa-envelope-open-text fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="h5 fw-bold mb-1">Newsletter</h3>
+                                <p class="text-muted small mb-0">Get weekly insights</p>
+                            </div>
+                        </div>
+                        
+                        <form method="post" action="{% url 'blog:newsletter_subscribe' %}" class="newsletter-form">
+                            {% csrf_token %}
+                            <div class="form-group mb-3">
+                                <label class="form-label small fw-bold mb-2">Email Address</label>
+                                {{ newsletter_form.email }}
+                            </div>
+                            <button type="submit" class="btn btn-gradient w-100">
+                                <i class="fas fa-paper-plane me-2"></i>Subscribe
+                            </button>
+                            <p class="text-muted small text-center mt-2 mb-0">
+                                No spam, unsubscribe anytime.
+                            </p>
+                        </form>
+                    </div>
+                    
+                    <!-- Categories Card -->
+                    <div class="sidebar-card glass-card-2 p-4 mb-4">
+                        <h3 class="h5 fw-bold mb-3">
+                            <i class="fas fa-folder me-2 text-primary"></i>Categories
+                        </h3>
+                        <ul class="category-list">
+                            {% for category in categories %}
+                            <li class="category-item">
+                                <a href="{% url 'blog:category' category.slug %}" class="category-link">
+                                    <span class="category-name">{{ category.name }}</span>
+                                    <span class="category-count">{{ category.post_count }}</span>
+                                </a>
+                                <div class="progress category-progress">
+                                    <div class="progress-bar" style="width: {{ category.percentage }}%"></div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <!-- Popular Posts Card -->
+                    {% if popular_posts %}
+                    <div class="sidebar-card glass-card-2 p-4 mb-4">
+                        <h3 class="h5 fw-bold mb-3">
+                            <i class="fas fa-fire me-2 text-primary"></i>Popular Posts
+                        </h3>
+                        <div class="popular-posts-list">
+                            {% for post in popular_posts %}
+                            <div class="popular-post-item d-flex align-items-start mb-3">
+                                {% if post.featured_image %}
+                                <div class="post-thumbnail me-3">
+                                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" loading="lazy">
+                                </div>
+                                {% endif %}
+                                <div class="post-info">
+                                    <h4 class="post-title-small">
+                                        <a href="{{ post.get_absolute_url }}">{{ post.title|truncatechars:40 }}</a>
+                                    </h4>
+                                    <div class="post-meta small">
+                                        <span class="date">
+                                            <i class="far fa-calendar-alt me-1"></i>{{ post.published_date|date:"M d, Y" }}
+                                        </span>
+                                        <span class="views ms-2">
+                                            <i class="fas fa-eye me-1"></i>{{ post.views_count }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Tags Cloud -->
+                    {% if popular_tags %}
+                    <div class="sidebar-card glass-card-2 p-4 mb-4">
+                        <h3 class="h5 fw-bold mb-3">
+                            <i class="fas fa-tags me-2 text-primary"></i>Popular Tags
+                        </h3>
+                        <div class="tags-cloud">
+                            {% for tag in popular_tags %}
+                            <a href="{% url 'blog:tag' tag.slug %}" class="tag-cloud-item" style="font-size: {% widthratio tag.count 10 0.8|add:'0.8' %}rem;">
+                                #{{ tag.name }}
+                                <span class="tag-count">{{ tag.count }}</span>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Archive Card -->
+                    {% if years %}
+                    <div class="sidebar-card glass-card-2 p-4">
+                        <h3 class="h5 fw-bold mb-3">
+                            <i class="fas fa-archive me-2 text-primary"></i>Archive
+                        </h3>
+                        <div class="accordion-archive" id="archiveAccordion">
+                            {% for year in years %}
+                            <div class="archive-year">
+                                <button class="archive-year-btn w-100" type="button" data-bs-toggle="collapse" data-bs-target="#year{{ year|date:'Y' }}">
+                                    <span>{{ year|date:'Y' }}</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="collapse" id="year{{ year|date:'Y' }}" data-bs-parent="#archiveAccordion">
+                                    <ul class="archive-months">
+                                        {% for month in year.months %}
+                                        <li>
+                                            <a href="{% url 'blog:archive_month' year|date:'Y' month|date:'m' %}" class="archive-link">
+                                                {{ month|date:'F' }}
+                                                <span class="count">({{ month.count }})</span>
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Enhanced CSS ===== -->
+<style>
+    :root {
+        --primary: #8B4513;
+        --primary-light: #c97c5d;
+        --primary-dark: #6B3410;
+        --secondary: #2c3e50;
+        --accent: #e74c3c;
+        --dark-bg: #0a0c0f;
+        --dark-card: #1e2429;
+        --dark-soft: #2c353d;
+        --text-light: #e0e0e0;
+        --text-muted: #b0b0b0;
+    }
+
+    /* Hero Section */
+    .blog-hero {
+        position: relative;
+        min-height: 500px;
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        overflow: hidden;
+    }
+
+    .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .floating-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .floating-element {
+        position: absolute;
+        color: rgba(139, 69, 19, 0.1);
+        font-size: 3rem;
+        animation: floatElement 20s infinite;
+    }
+
+    .element-1 { top: 20%; left: 10%; animation-delay: 0s; }
+    .element-2 { top: 60%; right: 15%; animation-delay: 3s; }
+    .element-3 { bottom: 20%; left: 20%; animation-delay: 6s; }
+    .element-4 { top: 40%; right: 25%; animation-delay: 9s; }
+
+    @keyframes floatElement {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.1; }
+        25% { transform: translate(10px, -10px) rotate(5deg); opacity: 0.15; }
+        50% { transform: translate(-5px, 5px) rotate(-5deg); opacity: 0.1; }
+        75% { transform: translate(-10px, -5px) rotate(3deg); opacity: 0.15; }
+    }
+
+    .glass-badge {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        color: white;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: inline-block;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #fff, var(--primary-light));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Search Bar */
+    .search-container {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .search-form-modern .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 0.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-form-modern .search-wrapper:focus-within {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1.5rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1rem;
+        pointer-events: none;
+    }
+
+    .search-wrapper input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 1rem 1rem 1rem 3rem;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        width: 100%;
+    }
+
+    .search-wrapper input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .search-button {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.25rem;
+    }
+
+    .search-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+    }
+
+    /* Featured Posts Carousel */
+    .featured-carousel {
+        margin: 0 -0.5rem;
+    }
+
+    .featured-card {
+        margin: 0.5rem;
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+    }
+
+    .featured-card .card-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .featured-card .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .featured-card:hover .card-image img {
+        transform: scale(1.1);
+    }
+
+    .category-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--primary);
+        color: white;
+        padding: 0.25rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .featured-card .card-content {
+        color: var(--text-light);
+    }
+
+    .post-meta {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .post-title {
+        color: white;
+        transition: color 0.3s ease;
+    }
+
+    .post-title a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .post-title a:hover {
+        color: var(--primary-light);
+    }
+
+    /* Post Cards */
+    .post-card-modern {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .post-card-modern:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-color: var(--primary);
+    }
+
+    .post-image {
+        position: relative;
+        height: 100%;
+        min-height: 200px;
+        overflow: hidden;
+    }
+
+    .post-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .post-card-modern:hover .post-image img {
+        transform: scale(1.1);
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .post-card-modern:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .quick-read {
+        background: var(--primary);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+
+    .post-card-modern:hover .quick-read {
+        transform: translateY(0);
+    }
+
+    .post-body {
+        color: var(--text-light);
+    }
+
+    .post-category {
+        color: var(--primary-light);
+        font-size: 0.85rem;
+    }
+
+    .post-stats .stat {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        transition: color 0.3s ease;
+    }
+
+    .post-stats .stat:hover {
+        color: var(--primary-light);
+    }
+
+    .tag-link {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-muted);
+        padding: 0.2rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        margin-right: 0.5rem;
+        margin-bottom: 0.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .tag-link:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* Sidebar Cards */
+    .sidebar-card {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--text-light);
+    }
+
+    /* Newsletter Form */
+    .newsletter-form input {
+        background: var(--dark-soft);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .newsletter-form input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+    }
+
+    /* Category List */
+    .category-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .category-item {
+        margin-bottom: 1rem;
+    }
+
+    .category-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-light);
+        text-decoration: none;
+        margin-bottom: 0.25rem;
+        transition: color 0.3s ease;
+    }
+
+    .category-link:hover {
+        color: var(--primary-light);
+    }
+
+    .category-count {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .category-progress {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+    }
+
+    .category-progress .progress-bar {
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        border-radius: 2px;
+    }
+
+    /* Popular Posts */
+    .popular-post-item {
+        padding: 0.5rem;
+        border-radius: 10px;
+        transition: background 0.3s ease;
+    }
+
+    .popular-post-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .post-thumbnail {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .post-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .popular-post-item:hover .post-thumbnail img {
+        transform: scale(1.1);
+    }
+
+    .post-title-small {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        line-height: 1.4;
+    }
+
+    .post-title-small a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .post-title-small a:hover {
+        color: var(--primary-light);
+    }
+
+    /* Tags Cloud */
+    .tags-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .tag-cloud-item {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-light);
+        padding: 0.25rem 1rem;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .tag-cloud-item:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .tag-count {
+        margin-left: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    .tag-cloud-item:hover .tag-count {
+        color: white;
+    }
+
+    /* Archive Accordion */
+    .archive-year {
+        margin-bottom: 0.5rem;
+    }
+
+    .archive-year-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: none;
+        color: var(--text-light);
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .archive-year-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .archive-year-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .archive-year-btn[aria-expanded="true"] i {
+        transform: rotate(180deg);
+    }
+
+    .archive-months {
+        list-style: none;
+        padding: 0.5rem 0 0 1rem;
+        margin: 0;
+    }
+
+    .archive-months li {
+        margin-bottom: 0.25rem;
+    }
+
+    .archive-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: flex;
+        justify-content: space-between;
+        padding: 0.25rem 0.5rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .archive-link:hover {
+        color: var(--primary-light);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .archive-link .count {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    /* Sort Dropdown */
+    .sort-select {
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-light);
+        padding: 0.5rem 2rem 0.5rem 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .sort-select:hover {
+        border-color: var(--primary);
+    }
+
+    .sort-select option {
+        background: var(--dark-card);
+        color: var(--text-light);
+    }
+
+    /* Pagination */
+    .pagination-modern {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .pagination-modern .page-item {
+        margin: 0 0.25rem;
+    }
+
+    .pagination-modern .page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--dark-card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .pagination-modern .page-link:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .pagination-modern .active .page-link {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: var(--dark-card);
+        border-radius: 20px;
+        padding: 3rem;
+    }
+
+    .empty-icon {
+        color: var(--primary);
+        opacity: 0.5;
+    }
+
+    /* Wave Divider */
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 60px;
+    }
+
+    .wave-divider .shape-fill {
+        fill: #f8f9fa;
+    }
+
+    .bg-soft {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    /* Sticky Sidebar */
+    .sticky-sidebar {
+        position: sticky;
+        top: 100px;
+        z-index: 100;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .blog-hero {
+            min-height: 400px;
+        }
+
+        .sticky-sidebar {
+            position: static;
+            margin-top: 2rem;
+        }
+
+        .floating-element {
+            font-size: 2rem;
+        }
+
+        .post-image {
+            min-height: 150px;
+        }
+    }
+
+    /* Particles */
+    .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    @keyframes floatParticle {
+        from { transform: translateY(100vh) rotate(0deg); }
+        to { transform: translateY(-100vh) rotate(360deg); }
+    }
+</style>
+
+<!-- JavaScript -->
+<script>
+    // Particles background
+    function createParticles() {
+        const container = document.getElementById('heroParticles');
+        if (!container) return;
+        
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const duration = Math.random() * 10 + 10;
+            
+            particle.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                left: ${posX}%;
+                top: ${posY}%;
+                animation-delay: ${delay}s;
+                animation-duration: ${duration}s;
+                opacity: ${Math.random() * 0.3 + 0.1};
+                background: rgba(255, 255, 255, ${Math.random() * 0.3});
+                box-shadow: 0 0 ${size * 2}px rgba(255, 255, 255, 0.3);
+                animation: floatParticle ${duration}s linear infinite;
+            `;
+            
+            container.appendChild(particle);
+        }
+    }
+
+    // Sort function
+    function applySort(value) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('sort', value);
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }
+
+    // Newsletter AJAX
+    document.querySelectorAll('.newsletter-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    this.reset();
+                } else {
+                    showToast('Error: ' + JSON.stringify(data.errors), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred', 'error');
+            });
+        });
+    });
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification toast-${type}`;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+            ${message}
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', createParticles);
+</script>
+
+<style>
+    .toast-notification {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: var(--dark-card);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transform: translateX(100%);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 9999;
+        border-left: 4px solid var(--primary);
+    }
+
+    .toast-notification.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    .toast-success {
+        border-left-color: #10b981;
+    }
+
+    .toast-error {
+        border-left-color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Owl Carousel for featured posts -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".featured-carousel").owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: false,
+            dots: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                768: {
+                    items: 2
+                },
+                992: {
+                    items: 3
+                }
+            }
+        });
+        
+        // Custom nav
+        $(".carousel-prev").click(function() {
+            $(".featured-carousel").trigger("prev.owl.carousel");
+        });
+        $(".carousel-next").click(function() {
+            $(".featured-carousel").trigger("next.owl.carousel");
+        });
+    });
+</script>
+{% endblock %}

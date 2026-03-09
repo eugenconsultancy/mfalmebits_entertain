@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ entry.title }} - MfalmeBits Archive{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-dark text-white py-4">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-white-50">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'archive:index' %}" class="text-white-50">Archive</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'archive:by_theme' entry.theme.slug %}" class="text-white-50">{{ entry.theme.name }}</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ entry.title|truncatechars:50 }}</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="entry-content py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <article class="card border-0 shadow-sm">
+                    {% if entry.featured_image %}
+                    <img src="{{ entry.featured_image.url }}" class="card-img-top" alt="{{ entry.image_alt|default:entry.title }}">
+                    {% endif %}
+                    
+                    <div class="card-body p-4 p-lg-5">
+                        <h1 class="display-5 fw-bold mb-4">{{ entry.title }}</h1>
+                        
+                        <div class="entry-meta mb-4 pb-3 border-bottom">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><i class="fas fa-user me-2"></i> By <strong>{{ entry.author }}</strong></p>
+                                    <p class="mb-1"><i class="fas fa-calendar me-2"></i> Published: {{ entry.published_date|date:"F d, Y" }}</p>
+                                    <p class="mb-1"><i class="fas fa-sync me-2"></i> Updated: {{ entry.updated_date|date:"F d, Y" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><i class="fas fa-tag me-2"></i> Theme: <a href="{% url 'archive:by_theme' entry.theme.slug %}">{{ entry.theme.name }}</a></p>
+                                    <p class="mb-1"><i class="fas fa-eye me-2"></i> Views: {{ entry.views_count }}</p>
+                                    {% if entry.document %}
+                                    <p class="mb-1"><i class="fas fa-download me-2"></i> Downloads: {{ entry.download_count }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if entry.excerpt %}
+                        <div class="entry-excerpt lead fst-italic text-muted mb-4 p-3 bg-light rounded">
+                            {{ entry.excerpt }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="entry-content">
+                            {{ entry.content|safe }}
+                        </div>
+                        
+                        <!-- Tags -->
+                        {% if entry.tags.all %}
+                        <div class="entry-tags mt-4 pt-3 border-top">
+                            <h5 class="h6 mb-3">Tags:</h5>
+                            {% for tag in entry.tags.all %}
+                            <a href="{% url 'archive:by_tag' tag.slug %}" class="badge bg-light text-dark text-decoration-none p-2 me-1 mb-2 border">
+                                #{{ tag.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Document Download -->
+                        {% if entry.document %}
+                        <div class="entry-download mt-4 p-4 bg-light rounded">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="h6 mb-2">Download Document</h5>
+                                    <p class="small text-muted mb-md-0">Get the full document in {{ entry.get_document_type_display }} format.</p>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <form method="post" action="{% url 'archive:detail' entry.theme.slug entry.slug %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-download me-2"></i>Download
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- References -->
+                        {% if entry.references %}
+                        <div class="entry-references mt-4">
+                            <h5 class="h6 mb-3">References & Sources</h5>
+                            <div class="bg-light p-3 rounded small">
+                                {{ entry.references|linebreaks }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Citation -->
+                        {% if entry.citation_text %}
+                        <div class="entry-citation mt-4">
+                            <h5 class="h6 mb-3">How to Cite</h5>
+                            <div class="bg-light p-3 rounded small font-monospace">
+                                {{ entry.citation_text }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Author Bio -->
+                        {% if entry.author_bio %}
+                        <div class="author-bio mt-5 p-4 bg-light rounded">
+                            <h5 class="h6 mb-3">About the Author</h5>
+                            <p class="small mb-0">{{ entry.author_bio }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </article>
+                
+                <!-- Related Entries -->
+                {% if related_entries %}
+                <section class="related-entries mt-5">
+                    <h3 class="h4 mb-4">Related Entries</h3>
+                    <div class="row g-4">
+                        {% for related in related_entries %}
+                        <div class="col-md-4">
+                            <div class="card h-100 shadow-sm">
+                                {% if related.featured_image %}
+                                <img src="{{ related.featured_image.url }}" class="card-img-top" alt="{{ related.title }}" style="height: 120px; object-fit: cover;">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ related.title }}</h6>
+                                    <p class="card-text small text-muted">{{ related.published_date|date:"M d, Y" }}</p>
+                                    <a href="{% url 'archive:detail' related.theme.slug related.slug %}" class="btn btn-outline-primary btn-sm">Read</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+    }
+    .entry-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+    .entry-content blockquote {
+        border-left: 4px solid #2E7D32;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #555;
+    }
+    .entry-content h2 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.75rem;
+    }
+    .entry-content h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.5rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Case Studies</h1>
+        <p class="text-xl max-w-2xl mx-auto">
+            See how institutions around the world are using MfalmeBits
+        </p>
+    </div>
+</section>
+
+<!-- Case Studies Grid -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for study in case_studies %}
+            <div class="glass-card group overflow-hidden">
+                <div class="relative h-48 overflow-hidden">
+                    <img src="{% static 'images/case-studies/'|add:study.image %}" 
+                         alt="{{ study.title }}"
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm text-primary">{{ study.institution }}</span>
+                        <span class="text-sm text-gray-500">{{ study.country }}</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                        {{ study.title }}
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                        <span class="font-semibold">Challenge:</span> {{ study.challenge }}
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                        <span class="font-semibold">Solution:</span> {{ study.solution }}
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                        <span class="font-semibold">Results:</span> {{ study.results }}
+                    </p>
+                    
+                    {% if study.quote %}
+                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="text-sm italic">"{{ study.quote }}"</p>
+                        <p class="text-xs text-gray-500 mt-2">— {{ study.author }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if study.link != '#' %}
+                    <a href="{{ study.link }}" 
+                       class="mt-4 inline-flex items-center text-primary hover:underline">
+                        Read Full Case Study
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 bg-primary text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4">Ready to Transform Your Institution?</h2>
+        <p class="text-xl mb-8">Join these institutions in bringing African knowledge to your community</p>
+        <a href="{% url 'institutional:inquiry' %}" 
+           class="bg-white text-primary px-8 py-4 rounded-full text-lg font-semibold 
+                  hover:bg-opacity-90 transition-colors inline-block magnetic">
+            Get Started Today
+        </a>
+    </div>
+</section>
+{% endblock %}

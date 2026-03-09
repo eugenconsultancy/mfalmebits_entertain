@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout | MfalmeBits Library{% endblock %}
+
+{% block content %}
+<!-- Checkout Header -->
+<section class="checkout-header py-4 bg-soft">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-0">Checkout</h1>
+        <p class="text-muted">Complete your purchase to access digital products</p>
+    </div>
+</section>
+
+<!-- Checkout Content -->
+<section class="checkout-content py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Order Summary -->
+            <div class="col-lg-5 order-lg-2">
+                <div class="glass-card-2 p-4 sticky-top" style="top: 100px;">
+                    <h3 class="fw-bold mb-4">Order Summary</h3>
+                    
+                    {% for product in products %}
+                    <div class="order-item d-flex align-items-center mb-3">
+                        <img src="{{ product.cover_image.url }}" alt="{{ product.title }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ product.title|truncatechars:40 }}</h6>
+                            <p class="text-muted small mb-0">Qty: {{ cart|get_item:product.id }}</p>
+                        </div>
+                        <div class="text-end">
+                            <span class="fw-bold">${{ product.get_current_price }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span class="fw-bold">${{ total }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tax:</span>
+                        <span class="fw-bold">$0.00</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h5">Total:</span>
+                        <span class="h5 text-primary">${{ total }}</span>
+                    </div>
+                    
+                    <div class="payment-methods mb-3">
+                        <img src="{% static 'images/payment/visa.svg' %}" alt="Visa" class="me-2" style="height: 30px;">
+                        <img src="{% static 'images/payment/mastercard.svg' %}" alt="Mastercard" class="me-2" style="height: 30px;">
+                        <img src="{% static 'images/payment/amex.svg' %}" alt="American Express" class="me-2" style="height: 30px;">
+                        <img src="{% static 'images/payment/paypal.svg' %}" alt="PayPal" style="height: 30px;">
+                    </div>
+                    
+                    <p class="text-muted small">
+                        <i class="fas fa-lock me-2"></i>Your payment is secure and encrypted
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Payment Form -->
+            <div class="col-lg-7 order-lg-1">
+                <div class="glass-card-2 p-4">
+                    <h3 class="fw-bold mb-4">Payment Details</h3>
+                    
+                    <!-- Stripe Elements Form -->
+                    <form id="payment-form" class="payment-form">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control glass-input" value="{{ user.email }}" readonly>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Card Information</label>
+                                <div id="card-element" class="glass-input p-3">
+                                    <!-- Stripe Elements will be inserted here -->
+                                </div>
+                                <div id="card-errors" class="text-danger small mt-2" role="alert"></div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control glass-input" value="{{ user.first_name }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control glass-input" value="{{ user.last_name }}" required>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Address (Optional)</label>
+                                <input type="text" class="form-control glass-input" placeholder="Street address">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control glass-input">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Postal Code</label>
+                                <input type="text" class="form-control glass-input">
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                                    <label class="form-check-label" for="termsCheck">
+                                        I agree to the <a href="{% url 'home:terms_of_service' %}" target="_blank">Terms of Service</a> and <a href="{% url 'home:privacy_policy' %}" target="_blank">Privacy Policy</a>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <button type="submit" id="submit-button" class="btn btn-gradient btn-lg w-100">
+                                    <i class="fas fa-lock me-2"></i>Pay ${{ total }}
+                                </button>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="d-flex justify-content-center">
+                                    <a href="{% url 'library:index' %}" class="text-muted text-decoration-none">
+                                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stripe JS -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Stripe
+        const stripe = Stripe('{{ stripe_public_key }}');
+        const elements = stripe.elements();
+
+        // Custom styling
+        const style = {
+            base: {
+                color: '#ffffff',
+                fontFamily: '"Inter", sans-serif',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#6c757d'
+                },
+                padding: '10px 12px',
+            },
+            invalid: {
+                color: '#dc3545',
+                iconColor: '#dc3545'
+            }
+        };
+
+        // Create card element
+        const cardElement = elements.create('card', {
+            style: style,
+            hidePostalCode: true
+        });
+        cardElement.mount('#card-element');
+
+        // Handle validation errors
+        cardElement.on('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            // Disable button to prevent multiple clicks
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+
+            try {
+                // Create payment intent
+                const response = await fetch('{% url "library:checkout" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({})
+                });
+
+                const { clientSecret, error } = await response.json();
+
+                if (error) {
+                    throw new Error(error);
+                }
+
+                // Confirm payment
+                const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: '{{ user.get_full_name|default:user.username }}',
+                            email: '{{ user.email }}'
+                        }
+                    }
+                });
+
+                if (confirmError) {
+                    throw new Error(confirmError.message);
+                }
+
+                // Redirect to success page
+                window.location.href = '{% url "library:success" %}?payment_intent=' + paymentIntent.id;
+
+            } catch (error) {
+                // Show error
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = error.message;
+
+                // Re-enable button
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-lock me-2"></i>Pay ${{ total }}';
+            }
+        });
+    });
+</script>
+
+<style>
+    .sticky-top {
+        position: sticky;
+        top: 100px;
+        z-index: 1020;
+    }
+
+    .payment-form .glass-input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .payment-form .glass-input:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+    }
+
+    .payment-form .glass-input[readonly] {
+        background: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    #card-element {
+        transition: all 0.3s ease;
+    }
+
+    #card-element.StripeElement--focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+    }
+
+    #card-errors {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .order-item {
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .order-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .payment-methods img {
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+
+    .payment-methods img:hover {
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        .sticky-top {
+            position: static;
+        }
+    }
+</style>
+
+<!-- Template filter for dictionary access -->
+{% with cart=request.session.cart %}
+    {% load library_tags %}
+{% endwith %}
+{% endblock %}

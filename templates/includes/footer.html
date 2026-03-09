@@ -1,0 +1,291 @@
+{% load static %}
+
+<!-- Minimal Footer -->
+<footer class="footer-minimal">
+    <div class="container">
+        <div class="footer-content">
+            <!-- Brand & Social - Compact -->
+            <div class="footer-brand">
+                <a href="{% url 'home:home' %}" class="footer-logo">
+                    <span class="gradient-text">Mfalme<span class="text-primary">Bits</span></span>
+                </a>
+                <div class="social-links-minimal">
+                    <a href="#" class="social-link" target="_blank" rel="noopener" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" target="_blank" rel="noopener" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" target="_blank" rel="noopener" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" target="_blank" rel="noopener" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Newsletter - Compact -->
+            <div class="footer-newsletter">
+                <form action="{% url 'newsletter:subscribe' %}" method="post" class="newsletter-form-minimal">
+                    {% csrf_token %}
+                    <div class="input-group-minimal">
+                        <input type="email" name="email" placeholder="Email for updates" required>
+                        <button type="submit" aria-label="Subscribe">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Quick Links - Horizontal -->
+            <div class="footer-links-minimal">
+                <a href="{% url 'home:about' %}">About</a>
+                <span class="separator">•</span>
+                <a href="{% url 'blog:index' %}">Blog</a>
+                <span class="separator">•</span>
+                <a href="{% url 'contact:index' %}">Contact</a>
+                <span class="separator">•</span>
+                <a href="{% url 'home:privacy_policy' %}">Privacy</a>
+                <span class="separator">•</span>
+                <a href="{% url 'home:terms_of_service' %}">Terms</a>
+            </div>
+
+            <!-- Copyright - Compact -->
+            <div class="footer-copyright">
+                <p>&copy; {% now "Y" %} MfalmeBits. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Minimal Footer CSS -->
+<style>
+    .footer-minimal {
+        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
+        padding: 1.5rem 0;
+        border-top: 1px solid rgba(139, 69, 19, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .footer-minimal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(139, 69, 19, 0.5), transparent);
+    }
+
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    /* Brand Section */
+    .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer-logo {
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-decoration: none;
+        color: white;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #fff 0%, #8B4513 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .text-primary {
+        color: #8B4513 !important;
+    }
+
+    /* Social Links */
+    .social-links-minimal {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .social-link {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .social-link:hover {
+        background: #8B4513;
+        color: white;
+        transform: translateY(-3px);
+        border-color: transparent;
+    }
+
+    /* Newsletter Form */
+    .newsletter-form-minimal {
+        display: inline-block;
+    }
+
+    .input-group-minimal {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        padding: 0.25rem 0.25rem 0.25rem 1rem;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        width: 300px;
+        max-width: 100%;
+    }
+
+    .input-group-minimal:focus-within {
+        border-color: #8B4513;
+        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+    }
+
+    .input-group-minimal input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 0.5rem 0;
+        color: white;
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    .input-group-minimal input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .input-group-minimal button {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8B4513, #c97c5d);
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .input-group-minimal button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+    }
+
+    /* Quick Links */
+    .footer-links-minimal {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer-links-minimal a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+    .footer-links-minimal a:hover {
+        color: #8B4513;
+    }
+
+    .separator {
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.8rem;
+    }
+
+    /* Copyright */
+    .footer-copyright p {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .footer-content {
+            gap: 1.25rem;
+        }
+
+        .footer-brand {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .social-links-minimal {
+            justify-content: center;
+        }
+
+        .input-group-minimal {
+            width: 280px;
+        }
+
+        .footer-links-minimal {
+            flex-direction: row;
+            gap: 0.75rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .footer-minimal {
+            padding: 1.25rem 0;
+        }
+
+        .footer-links-minimal {
+            gap: 0.5rem;
+        }
+
+        .separator {
+            display: none;
+        }
+
+        .footer-links-minimal a {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Animation */
+    .footer-minimal {
+        animation: fadeInUp 1s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
