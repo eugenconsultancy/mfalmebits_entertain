@@ -5,6 +5,230 @@
 {% block seo_description %}{{ seo_description }}{% endblock %}
 {% block seo_keywords %}{{ seo_keywords }}{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Section-specific background images */
+    .hero-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/mfalmebits.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.15;
+        z-index: -1;
+    }
+    
+    .mission-vision-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .mission-vision-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/background.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        z-index: -1;
+    }
+    
+    .values-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .values-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/group_culture.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.1;
+        z-index: -1;
+    }
+    
+    .timeline-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .timeline-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/mfalmebits.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        z-index: -1;
+    }
+    
+    .achievements-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .achievements-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/background.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.12;
+        z-index: -1;
+    }
+    
+    .team-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .team-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/group_culture.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        z-index: -1;
+    }
+    
+    .testimonials-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .testimonials-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/mfalmebits.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        z-index: -1;
+    }
+    
+    .partners-section {
+        position: relative;
+        isolation: isolate;
+    }
+    
+    .partners-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'images/background.png' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        z-index: -1;
+    }
+    
+    /* Ensure sections have proper z-index for content */
+    section {
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Glass card styling for readability */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(249, 115, 22, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark .glass-card {
+        background: rgba(17, 24, 39, 0.95);
+    }
+    
+    /* Timeline specific styling */
+    .timeline-item {
+        position: relative;
+    }
+    
+    .timeline-dot {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 16px;
+        height: 16px;
+        background: #f97316;
+        border-radius: 50%;
+        border: 4px solid #7c2d12;
+        z-index: 20;
+    }
+    
+    /* Dark orange text utility classes */
+    .text-dark-orange {
+        color: #b45309;
+    }
+    
+    .text-dark-orange-light {
+        color: #c2410c;
+    }
+    
+    .text-dark-orange-dark {
+        color: #7c2d12;
+    }
+    
+    .text-black-dark {
+        color: #1a1a1a;
+    }
+    
+    /* Ensure text readability */
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Stats styling */
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        color: #b45309;
+    }
+    
+    .stat-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    @media (max-width: 768px) {
+        .timeline-item {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        .timeline-item > div {
+            width: 100% !important;
+            padding: 0 !important;
+            text-align: left !important;
+        }
+        .timeline-dot {
+            display: none;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block json_ld %}
 <script type="application/ld+json">
 {{ organization_schema|safe }}
@@ -15,37 +239,56 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="relative py-24 bg-gradient-to-b from-primary to-black text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h1 class="text-5xl md:text-7xl font-bold mb-6 text-reveal">About MfalmeBits</h1>
-        <p class="text-xl max-w-3xl mx-auto text-reveal" data-delay="200">
-            Preserving African knowledge, celebrating culture, and shaping the future through digital innovation
+<!-- Hero Section - Using mfalmebits.png background with dark overlay -->
+<section class="hero-section relative py-32 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-orange-950/95 to-black/95 z-0"></div>
+    <div class="container mx-auto px-6 text-center relative z-10">
+        <h1 class="text-5xl md:text-7xl font-bold mb-4 text-orange-500 drop-shadow-2xl">Preserving African</h1>
+        <h2 class="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-2xl">Knowledge & Culture</h2>
+        <p class="text-xl md:text-2xl max-w-3xl mx-auto text-orange-100/90 leading-relaxed drop-shadow-lg mb-12">
+            MfalmeBits is a digital sanctuary dedicated to preserving, promoting, and providing access to African knowledge, cultural heritage, and creative works for generations to come.
         </p>
+        
+        <!-- Statistics with dark orange text -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-orange-700/30">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label text-orange-300">Archive Entries</div>
+            </div>
+            <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-orange-700/30">
+                <div class="stat-number">5K+</div>
+                <div class="stat-label text-orange-300">Digital Products</div>
+            </div>
+            <div class="bg-black/20 backdrop-blur-sm rounded-2xl p-6 border border-orange-700/30">
+                <div class="stat-number">50K+</div>
+                <div class="stat-label text-orange-300">Community Members</div>
+            </div>
+        </div>
     </div>
 </section>
 
-<!-- Mission & Vision -->
-<section class="py-20">
-    <div class="container mx-auto px-4">
+<!-- Mission & Vision - Dark orange gradient background -->
+<section class="mission-vision-section relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-orange-950 to-orange-900 z-0"></div>
+    <div class="container mx-auto px-6 relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div class="glass p-8">
-                <div class="text-primary text-5xl mb-4">
+            <div class="bg-orange-900/30 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-8 hover:scale-105 transition-transform duration-300">
+                <div class="text-5xl text-orange-400 mb-6">
                     <i class="fas fa-bullseye"></i>
                 </div>
-                <h2 class="text-3xl font-bold mb-4">Our Mission</h2>
-                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <h2 class="text-3xl font-bold mb-4 text-orange-300">Our Mission</h2>
+                <p class="text-lg text-orange-100/90 leading-relaxed">
                     To preserve, curate, and share African knowledge, history, and culture with the world, 
                     while empowering future generations with the wisdom of the past and tools for the future.
                 </p>
             </div>
             
-            <div class="glass p-8">
-                <div class="text-primary text-5xl mb-4">
+            <div class="bg-orange-900/30 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-8 hover:scale-105 transition-transform duration-300">
+                <div class="text-5xl text-orange-400 mb-6">
                     <i class="fas fa-eye"></i>
                 </div>
-                <h2 class="text-3xl font-bold mb-4">Our Vision</h2>
-                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <h2 class="text-3xl font-bold mb-4 text-orange-300">Our Vision</h2>
+                <p class="text-lg text-orange-100/90 leading-relaxed">
                     To become the world's most comprehensive and accessible digital repository of African 
                     knowledge, fostering understanding, innovation, and cultural pride across generations.
                 </p>
@@ -54,19 +297,20 @@
     </div>
 </section>
 
-<!-- Core Values -->
+<!-- Core Values - Dark burnt orange background -->
 {% if values %}
-<section class="py-20 bg-gray-50 dark:bg-gray-900">
-    <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Our Core Values</h2>
+<section class="values-section relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-t from-orange-950 to-orange-900 z-0"></div>
+    <div class="container mx-auto px-6 relative z-10">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-orange-300">Our Core Values</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {% for value in values %}
-            <div class="glass p-6 text-center group hover:scale-105 transition-transform">
-                <div class="text-primary text-4xl mb-4">
+            <div class="bg-orange-900/40 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-6 text-center group hover:scale-105 transition-transform duration-300">
+                <div class="text-4xl text-orange-400 mb-4">
                     <i class="fas fa-{{ value.icon }}"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-2">{{ value.title }}</h3>
-                <p class="text-gray-600 dark:text-gray-300">{{ value.description }}</p>
+                <h3 class="text-xl font-bold mb-2 text-orange-300">{{ value.title }}</h3>
+                <p class="text-orange-100/80">{{ value.description }}</p>
             </div>
             {% endfor %}
         </div>
@@ -74,26 +318,27 @@
 </section>
 {% endif %}
 
-<!-- Timeline -->
+<!-- Timeline - Darker orange with black undertones -->
 {% if timeline %}
-<section class="py-20">
-    <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Our Journey</h2>
-        <div class="relative">
-            <!-- Timeline line -->
-            <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-primary"></div>
+<section class="timeline-section relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-black to-orange-950 z-0"></div>
+    <div class="container mx-auto px-6 relative z-10">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-orange-300">Our Journey</h2>
+        <div class="relative max-w-4xl mx-auto">
+            <!-- Timeline line - Bright orange for contrast -->
+            <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-orange-500/60"></div>
             
             <div class="space-y-12">
                 {% for item in timeline %}
-                <div class="relative flex items-center {% cycle 'justify-start' 'justify-end' %}">
+                <div class="timeline-item relative flex items-center {% cycle 'justify-start' 'justify-end' %}">
                     <div class="w-1/2 {% cycle 'pr-12 text-right' 'pl-12' %}">
-                        <div class="glass p-6">
-                            <span class="text-primary font-bold text-xl">{{ item.year }}</span>
-                            <h3 class="text-xl font-bold mb-2">{{ item.title }}</h3>
-                            <p class="text-gray-600 dark:text-gray-300">{{ item.description|safe }}</p>
+                        <div class="bg-orange-900/40 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+                            <span class="text-orange-400 font-bold text-xl">{{ item.year }}</span>
+                            <h3 class="text-xl font-bold mb-2 text-orange-300">{{ item.title }}</h3>
+                            <p class="text-orange-100/80">{{ item.description|safe }}</p>
                         </div>
                     </div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rounded-full"></div>
+                    <div class="timeline-dot"></div>
                 </div>
                 {% endfor %}
             </div>
@@ -102,19 +347,20 @@
 </section>
 {% endif %}
 
-<!-- Achievements -->
+<!-- Achievements - Dark orange theme -->
 {% if achievements %}
-<section class="py-20 bg-gray-50 dark:bg-gray-900">
-    <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Our Impact</h2>
+<section class="achievements-section relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-orange-950 to-orange-900 z-0"></div>
+    <div class="container mx-auto px-6 relative z-10">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-orange-300">Our Impact</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
             {% for achievement in achievements %}
-            <div class="text-center">
-                <div class="text-4xl text-primary mb-2">
+            <div class="bg-orange-900/30 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="text-4xl text-orange-400 mb-2">
                     <i class="fas fa-{{ achievement.icon }}"></i>
                 </div>
-                <div class="text-3xl font-bold text-primary mb-2">{{ achievement.value }}</div>
-                <div class="text-gray-600 dark:text-gray-300">{{ achievement.title }}</div>
+                <div class="text-3xl font-bold text-orange-400 mb-2">{{ achievement.value }}</div>
+                <div class="text-orange-200">{{ achievement.title }}</div>
             </div>
             {% endfor %}
         </div>
@@ -122,27 +368,28 @@
 </section>
 {% endif %}
 
-<!-- Team -->
+<!-- Team - Dark orange theme -->
 {% if team_leadership or team_founders %}
-<section class="py-20">
-    <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Meet Our Team</h2>
+<section class="team-section relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-orange-950 to-orange-900 z-0"></div>
+    <div class="container mx-auto px-6 relative z-10">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-orange-300">Meet Our Team</h2>
         
         {% if team_founders %}
         <div class="mb-12">
-            <h3 class="text-2xl font-bold text-center mb-8">Founders</h3>
+            <h3 class="text-2xl font-bold text-center mb-8 text-orange-300">Founders</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {% for member in team_founders %}
-                <div class="glass p-6 text-center group hover:scale-105 transition-transform">
+                <div class="bg-orange-900/30 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-6 text-center group hover:scale-105 transition-transform duration-300">
                     {% if member.photo %}
                     <img src="{{ member.photo.url }}" 
                          alt="{{ member.photo_alt }}"
-                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-orange-500/30">
                     {% endif %}
-                    <h3 class="text-xl font-bold">{{ member.name }}</h3>
-                    <p class="text-primary mb-2">{{ member.position }}</p>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ member.bio|truncatewords:20 }}</p>
-                    <a href="{{ member.get_absolute_url }}" class="text-primary hover:underline">
+                    <h3 class="text-xl font-bold mb-2 text-orange-300">{{ member.name }}</h3>
+                    <p class="text-orange-400 mb-2">{{ member.position }}</p>
+                    <p class="text-orange-200 text-sm mb-4">{{ member.bio|truncatewords:20 }}</p>
+                    <a href="{{ member.get_absolute_url }}" class="text-orange-400 hover:text-orange-300 inline-flex items-center">
                         Learn more <i class="fas fa-arrow-right ml-2"></i>
                     </a>
                 </div>
@@ -153,17 +400,17 @@
         
         {% if team_leadership %}
         <div>
-            <h3 class="text-2xl font-bold text-center mb-8">Leadership</h3>
+            <h3 class="text-2xl font-bold text-center mb-8 text-orange-300">Leadership</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {% for member in team_leadership %}
-                <div class="glass p-6 text-center group hover:scale-105 transition-transform">
+                <div class="bg-orange-900/30 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-6 text-center group hover:scale-105 transition-transform duration-300">
                     {% if member.photo %}
                     <img src="{{ member.photo.url }}" 
                          alt="{{ member.photo_alt }}"
-                         class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                         class="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-orange-500/30">
                     {% endif %}
-                    <h3 class="text-lg font-bold">{{ member.name }}</h3>
-                    <p class="text-primary text-sm">{{ member.position }}</p>
+                    <h3 class="text-lg font-bold mb-2 text-orange-300">{{ member.name }}</h3>
+                    <p class="text-orange-400 text-sm">{{ member.position }}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -171,7 +418,7 @@
         {% endif %}
         
         <div class="text-center mt-8">
-            <a href="{% url 'about:team' %}" class="text-primary hover:underline">
+            <a href="{% url 'about:team' %}" class="text-orange-400 hover:text-orange-300 inline-flex items-center text-lg font-semibold">
                 Meet the full team <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
@@ -179,32 +426,33 @@
 </section>
 {% endif %}
 
-<!-- Testimonials -->
+<!-- Testimonials - Dark orange theme -->
 {% if testimonials %}
-<section class="py-20 bg-gray-50 dark:bg-gray-900">
-    <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">What People Say</h2>
+<section class="testimonials-section relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-t from-orange-950 to-orange-900 z-0"></div>
+    <div class="container mx-auto px-6 relative z-10">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-orange-300">What People Say</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {% for testimonial in testimonials %}
-            <div class="glass p-6">
+            <div class="bg-orange-900/30 backdrop-blur-sm border border-orange-700/50 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
                 <div class="flex items-center mb-4">
                     {% if testimonial.author_image %}
                     <img src="{{ testimonial.author_image.url }}" 
                          alt="{{ testimonial.author_name }}"
-                         class="w-12 h-12 rounded-full mr-4 object-cover">
+                         class="w-12 h-12 rounded-full mr-4 object-cover border-2 border-orange-500/30">
                     {% endif %}
                     <div>
-                        <h3 class="font-bold">{{ testimonial.author_name }}</h3>
+                        <h3 class="font-bold text-orange-300">{{ testimonial.author_name }}</h3>
                         {% if testimonial.author_title %}
-                        <p class="text-sm text-gray-500">{{ testimonial.author_title }}</p>
+                        <p class="text-sm text-orange-200">{{ testimonial.author_title }}</p>
                         {% endif %}
                         {% if testimonial.author_organization %}
-                        <p class="text-sm text-primary">{{ testimonial.author_organization }}</p>
+                        <p class="text-sm text-orange-400">{{ testimonial.author_organization }}</p>
                         {% endif %}
                     </div>
                 </div>
-                <p class="text-gray-600 dark:text-gray-300 mb-4 italic">"{{ testimonial.content }}"</p>
-                <div class="flex text-yellow-400">
+                <p class="text-orange-100 mb-4 italic">"{{ testimonial.content }}"</p>
+                <div class="flex text-orange-400">
                     {% for i in "12345"|make_list %}
                         {% if forloop.counter <= testimonial.rating %}
                         <i class="fas fa-star"></i>
@@ -218,18 +466,19 @@
 </section>
 {% endif %}
 
-<!-- Partners -->
+<!-- Partners - Dark orange theme -->
 {% if partners %}
-<section class="py-20">
-    <div class="container mx-auto px-4">
-        <h2 class="text-4xl font-bold text-center mb-12">Our Partners</h2>
+<section class="partners-section relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-orange-950 to-orange-900 z-0"></div>
+    <div class="container mx-auto px-6 relative z-10">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-orange-300">Our Partners</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center">
             {% for partner in partners %}
             <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" 
-               class="glass p-4 hover:scale-105 transition-transform">
+               class="bg-orange-900/30 backdrop-blur-sm border border-orange-700/50 rounded-xl p-4 hover:scale-105 transition-all duration-300 group">
                 <img src="{{ partner.logo.url }}" 
                      alt="{{ partner.name }}"
-                     class="w-full h-auto grayscale hover:grayscale-0 transition-all">
+                     class="w-full h-auto grayscale group-hover:grayscale-0 transition-all duration-300">
             </a>
             {% endfor %}
         </div>

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block seo_title %}Comment Submitted · MfalmeBits{% endblock %}
+
+{% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #C9973A; --gold-light: #E8B855; --ink: #0E0C0A;
+    --ink-soft: #1C1814; --sand: #F2EDE4; --sand-dark: #E0D5C5;
+    --cream: #FDFAF5; --green: #3D9E6A; --red: #C0392B;
+  }
+
+  /* ─ Django messages (success/error toast) ─ */
+  .comment-messages { position: fixed; top: 5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .comment-msg {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 0.85rem 1.2rem; border-radius: 14px; font-size: 0.88rem; font-weight: 500;
+    font-family: 'DM Sans', sans-serif; box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    pointer-events: all; max-width: 360px;
+    animation: slideInMsg 0.35s ease forwards;
+  }
+  @keyframes slideInMsg {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .comment-msg.success { background: #0E0C0A; border: 1px solid rgba(61,158,106,0.4); color: rgba(255,255,255,0.85); }
+  .comment-msg.success .msg-icon { color: var(--green); }
+  .comment-msg.error   { background: #0E0C0A; border: 1px solid rgba(192,57,43,0.4); color: rgba(255,255,255,0.85); }
+  .comment-msg.error .msg-icon { color: var(--red); }
+  .msg-icon { font-size: 1.05rem; flex-shrink: 0; margin-top: 1px; }
+  .msg-text strong { display: block; font-weight: 700; margin-bottom: 2px; color: #fff; }
+  .msg-close {
+    margin-left: auto; background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.3); font-size: 0.9rem; padding: 0; flex-shrink: 0;
+    transition: color 0.2s; font-family: inherit;
+  }
+  .msg-close:hover { color: #fff; }
+
+  /* ─ Moderation card (standalone page) ─ */
+  .comment-status-page {
+    font-family: 'DM Sans', sans-serif; background: var(--cream);
+    min-height: 60vh; display: flex; align-items: center; justify-content: center;
+    padding: 5rem 1.5rem;
+  }
+  .comment-status-card {
+    background: var(--ink); border-radius: 28px; border: 1px solid rgba(201,151,58,0.2);
+    padding: 3rem 2.5rem; text-align: center; max-width: 520px; width: 100%;
+    position: relative; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(14,12,10,0.3);
+  }
+  .comment-status-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 65% 65% at 50% 50%, rgba(201,151,58,0.09) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cs-inner { position: relative; z-index: 2; }
+  .cs-icon-wrap {
+    width: 72px; height: 72px; border-radius: 20px; margin: 0 auto 1.75rem;
+    display: flex; align-items: center; justify-content: center; font-size: 1.9rem;
+  }
+  .cs-icon-wrap.success { background: rgba(61,158,106,0.18); color: var(--green); border: 1px solid rgba(61,158,106,0.3); }
+  .cs-icon-wrap.error   { background: rgba(192,57,43,0.18); color: var(--red); border: 1px solid rgba(192,57,43,0.3); }
+  .cs-icon-wrap.pending { background: rgba(201,151,58,0.18); color: var(--gold-light); border: 1px solid rgba(201,151,58,0.3); }
+  .cs-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 900; color: #fff; margin-bottom: 0.65rem; }
+  .cs-subtitle { font-size: 0.95rem; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 2rem; }
+  .cs-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 1.5rem 0; }
+
+  /* Comment preview */
+  .cs-preview {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 1rem 1.25rem; text-align: left; margin-bottom: 1.75rem;
+  }
+  .cs-preview-label { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold); margin-bottom: 0.5rem; }
+  .cs-preview-name { font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.8); margin-bottom: 4px; }
+  .cs-preview-text { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+  /* Steps */
+  .cs-steps { display: flex; gap: 0; margin-bottom: 2rem; }
+  .cs-step { flex: 1; text-align: center; }
+  .cs-step-dot {
+    width: 28px; height: 28px; border-radius: 50%; margin: 0 auto 6px;
+    display: flex; align-items: center; justify-content: center; font-size: 0.72rem;
+    border: 2px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.3);
+    transition: all 0.3s;
+  }
+  .cs-step.done .cs-step-dot { background: var(--green); border-color: var(--green); color: #fff; }
+  .cs-step.active .cs-step-dot { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .cs-step-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.3); }
+  .cs-step.done .cs-step-label, .cs-step.active .cs-step-label { color: rgba(255,255,255,0.7); }
+  .cs-step-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); align-self: center; margin-top: -16px; }
+
+  /* Buttons */
+  .cs-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .btn-cs-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold); color: var(--ink); padding: 0.75rem 1.6rem;
+    border-radius: 12px; font-weight: 700; font-size: 0.9rem; text-decoration: none;
+    transition: all 0.25s; box-shadow: 0 4px 16px rgba(201,151,58,0.3);
+  }
+  .btn-cs-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-cs-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.65);
+    padding: 0.75rem 1.6rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;
+    text-decoration: none; transition: all 0.25s; background: transparent;
+  }
+  .btn-cs-outline:hover { border-color: var(--gold-light); color: var(--gold-light); }
+</style>
+
+<!-- ── DJANGO MESSAGES (toast notifications) ── -->
+{% if messages %}
+<div class="comment-messages" id="comment-messages">
+  {% for message in messages %}
+  <div class="comment-msg {{ message.tags }}" id="msg-{{ forloop.counter }}">
+    <span class="msg-icon">
+      {% if 'success' in message.tags %}<i class="fas fa-check-circle"></i>
+      {% elif 'error' in message.tags %}<i class="fas fa-exclamation-circle"></i>
+      {% else %}<i class="fas fa-info-circle"></i>{% endif %}
+    </span>
+    <div class="msg-text">
+      <strong>
+        {% if 'success' in message.tags %}Comment Submitted{% elif 'error' in message.tags %}Submission Error{% else %}Notice{% endif %}
+      </strong>
+      {{ message }}
+    </div>
+    <button class="msg-close" onclick="this.closest('.comment-msg').remove()">✕</button>
+  </div>
+  {% endfor %}
+</div>
+<script>
+  // Auto-dismiss after 6 seconds
+  setTimeout(() => {
+    document.querySelectorAll('.comment-msg').forEach(el => {
+      el.style.transition = 'opacity 0.4s, transform 0.4s';
+      el.style.opacity = '0'; el.style.transform = 'translateX(30px)';
+      setTimeout(() => el.remove(), 400);
+    });
+  }, 6000);
+</script>
+{% endif %}
+
+<!-- ── MODERATION STATUS CARD ── -->
+{% if show_moderation_page %}
+<div class="comment-status-page">
+  <div class="comment-status-card">
+    <div class="cs-inner">
+
+      <!-- Icon -->
+      <div class="cs-icon-wrap pending">
+        <i class="fas fa-clock"></i>
+      </div>
+
+      <!-- Steps -->
+      <div class="cs-steps">
+        <div class="cs-step done">
+          <div class="cs-step-dot"><i class="fas fa-check"></i></div>
+          <div class="cs-step-label">Submitted</div>
+        </div>
+        <div class="cs-step-line"></div>
+        <div class="cs-step active">
+          <div class="cs-step-dot">2</div>
+          <div class="cs-step-label">Review</div>
+        </div>
+        <div class="cs-step-line"></div>
+        <div class="cs-step">
+          <div class="cs-step-dot">3</div>
+          <div class="cs-step-label">Published</div>
+        </div>
+      </div>
+
+      <h2 class="cs-title">Comment Under Review</h2>
+      <p class="cs-subtitle">Thank you for contributing to the discussion. Your comment has been received and is currently awaiting moderation. We'll publish it as soon as it's approved.</p>
+
+      <!-- Preview -->
+      {% if comment_preview %}
+      <div class="cs-preview">
+        <div class="cs-preview-label">Your Comment</div>
+        <div class="cs-preview-name">{{ comment_preview.name }}</div>
+        <div class="cs-preview-text">{{ comment_preview.content|truncatechars:160 }}</div>
+      </div>
+      {% endif %}
+
+      <div class="cs-divider"></div>
+
+      <div class="cs-actions">
+        {% if post %}
+        <a href="{{ post.get_absolute_url }}#comments" class="btn-cs-primary">
+          <i class="fas fa-arrow-left"></i> Back to Article
+        </a>
+        {% endif %}
+        <a href="{% url 'blog:index' %}" class="btn-cs-outline">
+          <i class="fas fa-newspaper"></i> Browse Blog
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

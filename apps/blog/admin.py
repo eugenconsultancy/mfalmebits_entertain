@@ -31,7 +31,7 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ['status', 'is_featured', 'category', 'author', 'published_date']
     search_fields = ['title', 'content', 'excerpt']
     prepopulated_fields = {'slug': ('title',)}
-    readonly_fields = ['views_count', 'created_at', 'updated_date', 'reading_time']  # Fixed: updated_date instead of updated_at
+    readonly_fields = ['views_count', 'created_at', 'updated_date', 'reading_time']
     list_editable = ['status', 'is_featured']
     inlines = [CommentInline]
     
@@ -49,7 +49,7 @@ class PostAdmin(admin.ModelAdmin):
             'fields': ('tags', 'reading_time', 'views_count')
         }),
         ('Dates', {
-            'fields': ('published_date', 'created_at', 'updated_date')  # Fixed: updated_date instead of updated_at
+            'fields': ('published_date', 'created_at', 'updated_date')
         }),
         ('Status', {
             'fields': ('status', 'is_featured', 'is_active', 'allow_comments')
@@ -60,17 +60,19 @@ class PostAdmin(admin.ModelAdmin):
     )
     
     def save_model(self, request, obj, form, change):
-        if not change:  # New post
+        if not change:
             if not obj.author_id:
                 obj.author = request.user
         super().save_model(request, obj, form, change)
+
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['name', 'email', 'post', 'created_at', 'is_approved', 'is_spam']
     list_filter = ['is_approved', 'is_spam', 'created_at']
     search_fields = ['name', 'email', 'content']
-    readonly_fields = ['ip_address', 'user_agent', 'created_at']
+    # FIX APPLIED HERE: Added updated_at to readonly_fields
+    readonly_fields = ['ip_address', 'user_agent', 'created_at', 'updated_at']
     list_editable = ['is_approved', 'is_spam']
     
     fieldsets = (
@@ -170,7 +172,6 @@ class BlogSettingsAdmin(admin.ModelAdmin):
     )
     
     def has_add_permission(self, request):
-        # Only allow one settings instance
         if self.model.objects.exists():
             return False
         return super().has_add_permission(request)

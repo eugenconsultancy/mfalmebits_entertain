@@ -5,7 +5,7 @@
 
 :root {
     /* Primary Colors - Vibrant & Contrasting */
-    --primary-gold: #D4AF37;
+    --primary-gold: #aa850c;
     --primary-gold-light: #E8C547;
     --primary-gold-dark: #B89628;
     
@@ -282,7 +282,7 @@
 
 /* Glass Navigation - Premium Header */
 .glass-nav {
-    background: rgba(13, 13, 13, 0.3);
+    background: rgba(77, 1, 80, 0.945);
     backdrop-filter: var(--blur-lg);
     -webkit-backdrop-filter: var(--blur-lg);
     border-bottom: var(--border-regular) solid rgba(212, 175, 55, 0.25);

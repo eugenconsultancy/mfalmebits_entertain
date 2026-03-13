@@ -1,215 +1,599 @@
 {% extends "base.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 
 {% block seo_title %}{{ seo_title }}{% endblock %}
 
 {% block content %}
-<!-- Header -->
-<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Request Institutional Information</h1>
-        <p class="text-xl max-w-2xl mx-auto">
-            Fill out the form below and our institutional team will contact you within 24 hours
-        </p>
-    </div>
-</section>
 
-<!-- Inquiry Form -->
-<section class="py-16">
-    <div class="container mx-auto px-4">
-        <div class="max-w-3xl mx-auto">
-            <div class="glass p-8">
-                <form method="post" enctype="multipart/form-data" class="space-y-6">
-                    {% csrf_token %}
-                    
-                    {% if form.non_field_errors %}
-                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
-                        {{ form.non_field_errors }}
-                    </div>
-                    {% endif %}
-                    
-                    <!-- Institution Information -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Institution Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                {{ form.institution_name.label_tag }}
-                                {{ form.institution_name }}
-                                {% if form.institution_name.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.institution_name.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.institution_type.label_tag }}
-                                {{ form.institution_type }}
-                                {% if form.institution_type.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.institution_type.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.website.label_tag }}
-                                {{ form.website }}
-                                {% if form.website.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.website.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.country.label_tag }}
-                                {{ form.country }}
-                                {% if form.country.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.country.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.city.label_tag }}
-                                {{ form.city }}
-                                {% if form.city.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.city.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div class="md:col-span-2">
-                                {{ form.address.label_tag }}
-                                {{ form.address }}
-                                {% if form.address.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.address.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Contact Information -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Contact Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                {{ form.contact_person.label_tag }}
-                                {{ form.contact_person }}
-                                {% if form.contact_person.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.contact_person.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.job_title.label_tag }}
-                                {{ form.job_title }}
-                                {% if form.job_title.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.job_title.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.email.label_tag }}
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.phone.label_tag }}
-                                {{ form.phone }}
-                                {% if form.phone.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.phone.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Inquiry Details -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Inquiry Details</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                {{ form.plan.label_tag }}
-                                {{ form.plan }}
-                                {% if form.plan.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.plan.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.number_of_users.label_tag }}
-                                {{ form.number_of_users }}
-                                {% if form.number_of_users.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.number_of_users.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div class="md:col-span-2">
-                                {{ form.content_types.label_tag }}
-                                {{ form.content_types }}
-                                {% if form.content_types.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.content_types.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div class="md:col-span-2">
-                                {{ form.message.label_tag }}
-                                {{ form.message }}
-                                {% if form.message.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.message.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div class="md:col-span-2">
-                                {{ form.additional_requirements.label_tag }}
-                                {{ form.additional_requirements }}
-                                {% if form.additional_requirements.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.additional_requirements.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Timeline & Budget -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Timeline & Budget</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                {{ form.start_date.label_tag }}
-                                {{ form.start_date }}
-                                {% if form.start_date.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.start_date.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {{ form.budget_range.label_tag }}
-                                {{ form.budget_range }}
-                                {% if form.budget_range.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.budget_range.errors.0 }}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Attachment -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200">Supporting Documents</h3>
-                        <div>
-                            {{ form.attachment.label_tag }}
-                            {{ form.attachment }}
-                            {% if form.attachment.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.attachment.errors.0 }}</p>
-                            {% endif %}
-                            <p class="text-sm text-gray-500 mt-1">
-                            <p class="text-sm text-gray-500 mt-1">Accepted formats: PDF, DOC, DOCX, TXT (Max size: 10MB)</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Submit Button -->
-                    <div class="text-center pt-6">
-                        <button type="submit" 
-                                class="bg-primary text-white px-12 py-4 rounded-full text-lg font-semibold 
-                                       hover:bg-opacity-90 transition-colors magnetic">
-                            Submit Inquiry
-                        </button>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Contact Info -->
-            <div class="mt-8 text-center text-gray-600 dark:text-gray-300">
-                <p class="mb-2">Prefer to contact us directly?</p>
-                <p>
-                    <i class="fas fa-envelope mr-2"></i> institutional@mfalmebits.com |
-                    <i class="fas fa-phone mr-2 ml-4"></i> +1 (234) 567-8900
-                </p>
-            </div>
-        </div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #C9973A;
+    --gold-light: #E8B855;
+    --gold-pale: #F5DFA0;
+    --ink: #0E0C0A;
+    --ink-soft: #1C1814;
+    --clay: #2A1F14;
+    --sand: #F2EDE4;
+    --sand-dark: #E0D5C5;
+    --cream: #FDFAF5;
+    --terracotta: #B85C38;
+    --green-ok: #3D9E6A;
+    --red-err: #C0392B;
+  }
+
+  .inq-page { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+  .inq-page h1, .inq-page h2, .inq-page h3 { font-family: 'Playfair Display', serif; }
+
+  /* ── Hero ── */
+  .inq-hero {
+    background: var(--ink); padding: 5rem 0 4rem;
+    position: relative; overflow: hidden;
+  }
+  .inq-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 65% 70% at 15% 50%, rgba(201,151,58,0.15) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 60% at 88% 25%, rgba(184,92,56,0.1) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .inq-hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(201,151,58,0.03) 60px),
+      repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(201,151,58,0.03) 60px);
+    pointer-events: none;
+  }
+  .inq-hero-inner { position: relative; z-index: 2; max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  @media (max-width: 840px) { .inq-hero-inner { grid-template-columns: 1fr; } .inq-hero-right { display: none; } }
+  .inq-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,151,58,0.15); border: 1px solid rgba(201,151,58,0.4);
+    color: var(--gold-light); padding: 6px 18px; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.25rem;
+  }
+  .inq-hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 0.75rem; }
+  .inq-hero h1 em { color: var(--gold-light); font-style: normal; }
+  .inq-hero p { font-size: 0.98rem; color: rgba(255,255,255,0.55); line-height: 1.7; max-width: 440px; }
+
+  /* Hero right — trust signals */
+  .inq-trust-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .inq-trust-item {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(201,151,58,0.18);
+    border-radius: 12px; padding: 0.75rem 1rem;
+  }
+  .inq-trust-icon {
+    width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+    background: rgba(201,151,58,0.15); display: flex; align-items: center; justify-content: center;
+    color: var(--gold-light); font-size: 0.85rem;
+  }
+  .inq-trust-text { font-size: 0.85rem; color: rgba(255,255,255,0.7); font-weight: 500; }
+
+  /* ── Main Layout ── */
+  .inq-body { padding: 4rem 0 5rem; }
+  .inq-wrapper { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+  .inq-grid { display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start; }
+  @media (max-width: 960px) { .inq-grid { grid-template-columns: 1fr; } }
+
+  /* ── Form Panel ── */
+  .inq-form-panel {
+    background: #fff; border-radius: 24px; border: 1.5px solid var(--sand-dark);
+    overflow: hidden; box-shadow: 0 4px 24px rgba(14,12,10,0.07);
+  }
+
+  /* Form Section */
+  .inq-fsection { padding: 2rem 2.25rem; border-bottom: 1px solid var(--sand-dark); }
+  .inq-fsection:last-of-type { border-bottom: none; }
+  .inq-fsection-head {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 900; color: var(--ink);
+    margin-bottom: 1.5rem; padding-bottom: 0.75rem;
+    border-bottom: 1.5px solid var(--sand-dark);
+  }
+  .inq-fsection-head::before { content: ''; width: 3px; height: 1rem; background: var(--gold); border-radius: 2px; display: block; flex-shrink: 0; }
+  .inq-fsection-head i { color: var(--gold); font-size: 0.88rem; }
+
+  /* Grid layouts */
+  .inq-fg-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .inq-fg-1 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (max-width: 600px) { .inq-fg-2 { grid-template-columns: 1fr; } }
+  .inq-col-span { grid-column: 1 / -1; }
+
+  /* Field */
+  .inq-field { display: flex; flex-direction: column; gap: 5px; }
+  .inq-label {
+    font-size: 0.76rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #4A3D30;
+  }
+  .inq-label .req { color: var(--gold); }
+
+  .inq-input, .inq-select, .inq-textarea {
+    width: 100%; padding: 0.8rem 1rem; border: 1.5px solid var(--sand-dark);
+    border-radius: 12px; background: var(--cream); color: var(--ink);
+    font-family: 'DM Sans', sans-serif; font-size: 0.92rem; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box;
+  }
+  .inq-input:focus, .inq-select:focus, .inq-textarea:focus {
+    border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,151,58,0.1); background: #fff;
+  }
+  .inq-input::placeholder, .inq-textarea::placeholder { color: #B8A898; }
+  .inq-select { appearance: none; -webkit-appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%23C9973A' d='M5 7L0 0h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+  .inq-textarea { resize: vertical; min-height: 110px; }
+  .inq-field-err { font-size: 0.78rem; color: var(--red-err); display: flex; align-items: center; gap: 5px; }
+  .inq-field-hint { font-size: 0.78rem; color: #8A7A68; }
+  .inq-input.has-err, .inq-select.has-err, .inq-textarea.has-err { border-color: var(--red-err); }
+
+  /* File input */
+  .inq-file-wrap {
+    border: 2px dashed var(--sand-dark); border-radius: 14px; padding: 1.5rem;
+    text-align: center; cursor: pointer; transition: all 0.2s; background: var(--cream);
+  }
+  .inq-file-wrap:hover { border-color: var(--gold); background: rgba(201,151,58,0.04); }
+  .inq-file-icon { font-size: 1.6rem; color: rgba(201,151,58,0.4); margin-bottom: 0.6rem; }
+  .inq-file-text { font-size: 0.88rem; color: #6B6052; font-weight: 500; }
+  .inq-file-text strong { color: var(--gold); }
+  .inq-file-hint { font-size: 0.75rem; color: #8A7A68; margin-top: 4px; }
+  .inq-file-input { display: none; }
+
+  /* Step indicator at top of form */
+  .inq-steps {
+    display: flex; background: var(--ink); padding: 1.25rem 2.25rem; gap: 0;
+    border-bottom: 1px solid rgba(201,151,58,0.15);
+  }
+  .inq-step { flex: 1; display: flex; align-items: center; gap: 0; }
+  .inq-step-dot {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(201,151,58,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 800; color: rgba(255,255,255,0.35); flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .inq-step.active .inq-step-dot { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .inq-step.done .inq-step-dot { background: var(--green-ok); border-color: var(--green-ok); color: #fff; }
+  .inq-step-label { font-size: 0.72rem; color: rgba(255,255,255,0.3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 8px; }
+  .inq-step.active .inq-step-label { color: var(--gold-light); }
+  .inq-step.done .inq-step-label { color: rgba(255,255,255,0.55); }
+  .inq-step-line { flex: 1; height: 1px; background: rgba(201,151,58,0.2); margin: 0 10px; }
+  .inq-step:last-child .inq-step-line { display: none; }
+
+  /* Submit area */
+  .inq-submit-area { padding: 2rem 2.25rem; background: var(--sand); }
+  .inq-non-field-err { background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.35); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 8px; font-size: 0.88rem; color: var(--red-err); }
+  .btn-inq-submit {
+    width: 100%; padding: 1rem; border: none; border-radius: 14px;
+    background: var(--gold); color: var(--ink);
+    font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 900;
+    cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 20px rgba(201,151,58,0.3); letter-spacing: 0.01em;
+  }
+  .btn-inq-submit:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,151,58,0.4); }
+  .inq-submit-note { text-align: center; font-size: 0.78rem; color: #8A7A68; margin-top: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .inq-submit-note i { color: var(--green-ok); }
+
+  /* ── Sidebar ── */
+  .inq-sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  /* Info Card */
+  .inq-info-card {
+    background: var(--ink); border-radius: 20px; padding: 1.75rem;
+    border: 1px solid rgba(201,151,58,0.2); overflow: hidden; position: relative;
+  }
+  .inq-info-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,151,58,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .inq-info-inner { position: relative; z-index: 1; }
+  .inq-info-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem; }
+  .inq-info-sub { font-size: 0.82rem; color: rgba(255,255,255,0.45); line-height: 1.6; margin-bottom: 1.25rem; }
+  .inq-contact-row { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
+  .inq-contact-icon { width: 32px; height: 32px; border-radius: 9px; background: rgba(201,151,58,0.15); display: flex; align-items: center; justify-content: center; color: var(--gold-light); font-size: 0.78rem; flex-shrink: 0; }
+  .inq-contact-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: rgba(255,255,255,0.35); }
+  .inq-contact-value { font-size: 0.85rem; color: rgba(255,255,255,0.75); font-weight: 500; }
+  .inq-response-badge {
+    display: flex; align-items: center; gap: 8px; margin-top: 1.25rem; padding: 0.7rem 0.9rem;
+    background: rgba(61,158,106,0.1); border: 1px solid rgba(61,158,106,0.25); border-radius: 10px;
+  }
+  .inq-response-badge i { color: #3D9E6A; font-size: 0.85rem; }
+  .inq-response-badge span { font-size: 0.8rem; color: rgba(255,255,255,0.6); font-weight: 500; }
+  .inq-response-badge strong { color: #3D9E6A; }
+
+  /* Checklist Card */
+  .inq-check-card { background: #fff; border-radius: 20px; border: 1.5px solid var(--sand-dark); padding: 1.75rem; }
+  .inq-check-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 900; color: var(--ink); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+  .inq-check-title i { color: var(--gold); font-size: 0.9rem; }
+  .inq-check-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .inq-check-item { display: flex; align-items: flex-start; gap: 9px; font-size: 0.85rem; color: #5A4A38; line-height: 1.5; }
+  .inq-check-item i { color: var(--green-ok); font-size: 0.75rem; margin-top: 3px; flex-shrink: 0; }
+
+  /* Related Links Card */
+  .inq-links-card { background: var(--sand); border-radius: 20px; border: 1.5px solid var(--sand-dark); padding: 1.5rem; }
+  .inq-links-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold); margin-bottom: 0.75rem; }
+  .inq-link-row { display: flex; align-items: center; gap: 8px; padding: 0.55rem 0; border-bottom: 1px solid var(--sand-dark); text-decoration: none; transition: gap 0.2s; }
+  .inq-link-row:last-child { border: none; }
+  .inq-link-row:hover { gap: 12px; }
+  .inq-link-row i { color: var(--gold); font-size: 0.75rem; }
+  .inq-link-row span { font-size: 0.85rem; color: #4A3D30; font-weight: 500; }
+</style>
+
+<div class="inq-page">
+
+  <!-- ── HERO ── -->
+  <section class="inq-hero">
+    <div class="inq-hero-grid"></div>
+    <div class="inq-hero-inner">
+      <div>
+        <div class="inq-badge"><i class="fas fa-file-signature"></i> Inquiry Form</div>
+        <h1>Request <em>Institutional</em> Information</h1>
+        <p>Fill out the form and our institutional team will respond within 24 hours with a customized proposal tailored to your organization.</p>
+      </div>
+      <div class="inq-hero-right">
+        <ul class="inq-trust-list">
+          <li class="inq-trust-item">
+            <div class="inq-trust-icon"><i class="fas fa-clock"></i></div>
+            <span class="inq-trust-text">Response within 24 hours, guaranteed</span>
+          </li>
+          <li class="inq-trust-item">
+            <div class="inq-trust-icon"><i class="fas fa-shield-alt"></i></div>
+            <span class="inq-trust-text">Your data is secure and never shared</span>
+          </li>
+          <li class="inq-trust-item">
+            <div class="inq-trust-icon"><i class="fas fa-handshake"></i></div>
+            <span class="inq-trust-text">No commitment — explore options freely</span>
+          </li>
+          <li class="inq-trust-item">
+            <div class="inq-trust-icon"><i class="fas fa-globe-africa"></i></div>
+            <span class="inq-trust-text">Serving 150+ institutions in 25 countries</span>
+          </li>
+        </ul>
+      </div>
     </div>
-</section>
+  </section>
+
+  <!-- ── BODY ── -->
+  <div class="inq-body">
+    <div class="inq-wrapper">
+      <div class="inq-grid">
+
+        <!-- ── FORM ── -->
+        <div class="inq-form-panel">
+
+          <!-- Step indicator -->
+          <div class="inq-steps">
+            <div class="inq-step active">
+              <div class="inq-step-dot">1</div>
+              <span class="inq-step-label">Institution</span>
+              <div class="inq-step-line"></div>
+            </div>
+            <div class="inq-step">
+              <div class="inq-step-dot">2</div>
+              <span class="inq-step-label">Contact</span>
+              <div class="inq-step-line"></div>
+            </div>
+            <div class="inq-step">
+              <div class="inq-step-dot">3</div>
+              <span class="inq-step-label">Requirements</span>
+              <div class="inq-step-line"></div>
+            </div>
+            <div class="inq-step">
+              <div class="inq-step-dot">4</div>
+              <span class="inq-step-label">Submit</span>
+              <div class="inq-step-line"></div>
+            </div>
+          </div>
+
+          <form method="post" enctype="multipart/form-data" id="inq-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="inq-fsection">
+              <div class="inq-non-field-err">
+                <i class="fas fa-exclamation-circle"></i>
+                <div>{{ form.non_field_errors }}</div>
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- ─ Section 1: Institution ─ -->
+            <div class="inq-fsection">
+              <div class="inq-fsection-head"><i class="fas fa-university"></i> Institution Information</div>
+              <div class="inq-fg-2">
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.institution_name.label }} <span class="req">*</span></label>
+                  {{ form.institution_name }}
+                  {% if form.institution_name.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.institution_name.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.institution_type.label }} <span class="req">*</span></label>
+                  {{ form.institution_type }}
+                  {% if form.institution_type.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.institution_type.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.website.label }}</label>
+                  {{ form.website }}
+                  {% if form.website.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.website.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.country.label }} <span class="req">*</span></label>
+                  {{ form.country }}
+                  {% if form.country.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.country.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.city.label }}</label>
+                  {{ form.city }}
+                  {% if form.city.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.city.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field inq-col-span">
+                  <label class="inq-label">{{ form.address.label }}</label>
+                  {{ form.address }}
+                  {% if form.address.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.address.errors.0 }}</div>{% endif %}
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ─ Section 2: Contact ─ -->
+            <div class="inq-fsection">
+              <div class="inq-fsection-head"><i class="fas fa-user-tie"></i> Contact Information</div>
+              <div class="inq-fg-2">
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.contact_person.label }} <span class="req">*</span></label>
+                  {{ form.contact_person }}
+                  {% if form.contact_person.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.contact_person.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.job_title.label }}</label>
+                  {{ form.job_title }}
+                  {% if form.job_title.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.job_title.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.email.label }} <span class="req">*</span></label>
+                  {{ form.email }}
+                  {% if form.email.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.email.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.phone.label }}</label>
+                  {{ form.phone }}
+                  {% if form.phone.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.phone.errors.0 }}</div>{% endif %}
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ─ Section 3: Inquiry Details ─ -->
+            <div class="inq-fsection">
+              <div class="inq-fsection-head"><i class="fas fa-clipboard-list"></i> Inquiry Details</div>
+              <div class="inq-fg-2">
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.plan.label }}</label>
+                  {{ form.plan }}
+                  {% if form.plan.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.plan.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.number_of_users.label }}</label>
+                  {{ form.number_of_users }}
+                  {% if form.number_of_users.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.number_of_users.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field inq-col-span">
+                  <label class="inq-label">{{ form.content_types.label }}</label>
+                  {{ form.content_types }}
+                  {% if form.content_types.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.content_types.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field inq-col-span">
+                  <label class="inq-label">{{ form.message.label }} <span class="req">*</span></label>
+                  {{ form.message }}
+                  {% if form.message.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.message.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field inq-col-span">
+                  <label class="inq-label">{{ form.additional_requirements.label }}</label>
+                  {{ form.additional_requirements }}
+                  {% if form.additional_requirements.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.additional_requirements.errors.0 }}</div>{% endif %}
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ─ Section 4: Timeline & Budget ─ -->
+            <div class="inq-fsection">
+              <div class="inq-fsection-head"><i class="fas fa-calendar-alt"></i> Timeline &amp; Budget</div>
+              <div class="inq-fg-2">
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.start_date.label }}</label>
+                  {{ form.start_date }}
+                  {% if form.start_date.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.start_date.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="inq-field">
+                  <label class="inq-label">{{ form.budget_range.label }}</label>
+                  {{ form.budget_range }}
+                  {% if form.budget_range.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.budget_range.errors.0 }}</div>{% endif %}
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ─ Section 5: Attachment ─ -->
+            <div class="inq-fsection">
+              <div class="inq-fsection-head"><i class="fas fa-paperclip"></i> Supporting Documents <span style="font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;color:#8A7A68;text-transform:none;letter-spacing:0;">(optional)</span></div>
+              <div class="inq-field">
+                <label class="inq-label">{{ form.attachment.label }}</label>
+                <div class="inq-file-wrap" onclick="document.getElementById('inq-file-input').click()" id="file-drop-zone">
+                  <div class="inq-file-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                  <div class="inq-file-text"><strong>Click to upload</strong> or drag and drop</div>
+                  <div class="inq-file-hint">PDF, DOC, DOCX, TXT — max 10 MB</div>
+                  <div id="file-chosen" style="display:none; margin-top:8px; font-size:0.82rem; color:var(--gold); font-weight:600;"></div>
+                </div>
+                {{ form.attachment }}
+                {% if form.attachment.errors %}<div class="inq-field-err"><i class="fas fa-exclamation-circle"></i>{{ form.attachment.errors.0 }}</div>{% endif %}
+              </div>
+            </div>
+
+            <!-- ─ Submit ─ -->
+            <div class="inq-submit-area">
+              <button type="submit" class="btn-inq-submit">
+                <i class="fas fa-paper-plane"></i>
+                Submit Inquiry
+              </button>
+              <div class="inq-submit-note">
+                <i class="fas fa-lock"></i>
+                Your information is encrypted and secure. No spam, ever.
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="inq-sidebar">
+
+          <!-- Contact Info Card -->
+          <div class="inq-info-card">
+            <div class="inq-info-inner">
+              <div class="inq-info-title">Prefer Direct Contact?</div>
+              <div class="inq-info-sub">Reach our institutional team through any of the channels below.</div>
+
+              <div class="inq-contact-row">
+                <div class="inq-contact-icon"><i class="fas fa-envelope"></i></div>
+                <div>
+                  <div class="inq-contact-label">Email</div>
+                  <div class="inq-contact-value">institutional@mfalmebits.com</div>
+                </div>
+              </div>
+              <div class="inq-contact-row">
+                <div class="inq-contact-icon"><i class="fas fa-phone"></i></div>
+                <div>
+                  <div class="inq-contact-label">Phone</div>
+                  <div class="inq-contact-value">+1 (234) 567-8900</div>
+                </div>
+              </div>
+              <div class="inq-contact-row">
+                <div class="inq-contact-icon"><i class="fas fa-clock"></i></div>
+                <div>
+                  <div class="inq-contact-label">Office Hours</div>
+                  <div class="inq-contact-value">Mon – Fri, 8 AM – 6 PM EAT</div>
+                </div>
+              </div>
+
+              <div class="inq-response-badge">
+                <i class="fas fa-check-circle"></i>
+                <span>Typical response: <strong>within 24 hours</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- What to Expect -->
+          <div class="inq-check-card">
+            <div class="inq-check-title"><i class="fas fa-list-check"></i> What Happens Next</div>
+            <ul class="inq-check-list">
+              <li class="inq-check-item"><i class="fas fa-check-circle"></i> We review your inquiry and match you with the right plan</li>
+              <li class="inq-check-item"><i class="fas fa-check-circle"></i> You receive a personalized quote within 24 hours</li>
+              <li class="inq-check-item"><i class="fas fa-check-circle"></i> Schedule a demo or consultation call if needed</li>
+              <li class="inq-check-item"><i class="fas fa-check-circle"></i> Onboarding and technical setup at no extra charge</li>
+              <li class="inq-check-item"><i class="fas fa-check-circle"></i> Dedicated support from day one</li>
+            </ul>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="inq-links-card">
+            <div class="inq-links-title">Helpful Resources</div>
+            <a href="{% url 'institutional:index' %}" class="inq-link-row">
+              <i class="fas fa-layer-group"></i> <span>View All Plans</span>
+            </a>
+            <a href="{% url 'institutional:calculator' %}" class="inq-link-row">
+              <i class="fas fa-calculator"></i> <span>Pricing Calculator</span>
+            </a>
+            <a href="{% url 'institutional:faq' %}" class="inq-link-row">
+              <i class="fas fa-question-circle"></i> <span>FAQ &amp; Help Center</span>
+            </a>
+            <a href="{% url 'institutional:case_studies' %}" class="inq-link-row">
+              <i class="fas fa-trophy"></i> <span>Case Studies</span>
+            </a>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Style Django form widgets
+  document.querySelectorAll('input[type=text], input[type=email], input[type=url], input[type=number], input[type=tel], input[type=date]').forEach(el => {
+    if (!el.id || el.id === 'inq-file-input') return;
+    el.classList.add('inq-input');
+  });
+  document.querySelectorAll('select').forEach(el => el.classList.add('inq-select'));
+  document.querySelectorAll('textarea').forEach(el => el.classList.add('inq-textarea'));
+  document.querySelectorAll('input[type=file]').forEach(el => {
+    el.id = 'inq-file-input'; el.classList.add('inq-file-input');
+  });
+
+  // File input label
+  const fileInput = document.getElementById('inq-file-input');
+  if (fileInput) {
+    fileInput.addEventListener('change', function() {
+      const chosen = document.getElementById('file-chosen');
+      if (this.files && this.files[0]) {
+        chosen.textContent = this.files[0].name;
+        chosen.style.display = 'block';
+      }
+    });
+  }
+
+  // Drag & drop zone
+  const dropZone = document.getElementById('file-drop-zone');
+  if (dropZone && fileInput) {
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = 'var(--gold)'; dropZone.style.background = 'rgba(201,151,58,0.06)'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = ''; dropZone.style.background = ''; });
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.style.borderColor = ''; dropZone.style.background = '';
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        const chosen = document.getElementById('file-chosen');
+        chosen.textContent = e.dataTransfer.files[0].name;
+        chosen.style.display = 'block';
+      }
+    });
+  }
+
+  // Step indicator progress (visual only)
+  const sections = document.querySelectorAll('.inq-fsection');
+  const steps    = document.querySelectorAll('.inq-step');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = [...sections].indexOf(entry.target);
+        steps.forEach((s, i) => {
+          s.classList.remove('active', 'done');
+          if (i < idx) s.classList.add('done');
+          else if (i === idx) s.classList.add('active');
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
 {% endblock %}

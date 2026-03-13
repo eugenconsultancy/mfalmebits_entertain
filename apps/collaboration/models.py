@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from utils.seo import SEOMetaGenerator
 from utils.slug_utils import generate_seo_slug
 import uuid
@@ -83,7 +83,7 @@ class CollaborationProject(models.Model):
     creator_location = models.CharField(max_length=100, blank=True)
     
     # Project Details
-    description = RichTextField()
+    description = CKEditor5Field('Description', config_name='extends')
     short_description = models.CharField(max_length=300)
     goals = models.TextField(help_text="What do you hope to achieve?")
     inspiration = models.TextField(blank=True, help_text="What inspired this project?")
@@ -227,9 +227,13 @@ class CollaborationTestimonial(models.Model):
 class CollaborationFAQ(models.Model):
     """Frequently asked questions about collaboration"""
     question = models.CharField(max_length=200)
-    answer = RichTextField()
+    
+    # Updated to CKEditor5Field
+    answer = CKEditor5Field('Answer', config_name='extends')
+    
     order = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
+
     
     class Meta:
         ordering = ['order']

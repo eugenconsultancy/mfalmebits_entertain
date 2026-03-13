@@ -11,252 +11,491 @@
 {% endblock %}
 
 {% block content %}
-<!-- Breadcrumbs -->
-<nav class="container mx-auto px-4 py-4 text-sm" aria-label="Breadcrumb">
-    <ol class="flex items-center space-x-2">
-        <li><a href="/" class="text-gray-500 hover:text-primary">Home</a></li>
-        <li><span class="text-gray-400 mx-2">/</span></li>
-        <li><a href="{% url 'institutional:index' %}" class="text-gray-500 hover:text-primary">Institutional</a></li>
-        <li><span class="text-gray-400 mx-2">/</span></li>
-        <li class="text-primary">{{ plan.name }}</li>
-    </ol>
-</nav>
 
-<!-- Plan Header -->
-<section class="py-12">
-    <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-8">
-                <span class="inline-block bg-primary text-white px-4 py-2 rounded-full text-sm mb-4">
-                    {{ plan.get_plan_type_display }}
-                </span>
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ plan.name }}</h1>
-                <p class="text-xl text-gray-600 dark:text-gray-300">{{ plan.short_description }}</p>
-            </div>
-            
-            <div class="glass p-8 mb-8">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                        <div class="text-4xl font-bold text-primary mb-2">{{ plan.get_yearly_price_display }}</div>
-                        <p class="text-gray-500">per year{% if plan.setup_fee > 0 %} + ${{ plan.setup_fee }} setup fee{% endif %}</p>
-                    </div>
-                    <div>
-                        <div class="text-lg mb-1">
-                            <i class="fas fa-users text-primary mr-2"></i>
-                            {{ plan.get_user_range }}
-                        </div>
-                        <div class="text-lg">
-                            <i class="fas fa-clock text-primary mr-2"></i>
-                            {{ plan.get_support_level_display }}
-                        </div>
-                    </div>
-                    <a href="{% url 'institutional:inquiry' %}?plan={{ plan.id }}" 
-                       class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
-                              hover:bg-opacity-90 transition-colors magnetic">
-                        Request Quote
-                    </a>
-                </div>
-            </div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #C9973A;
+    --gold-light: #E8B855;
+    --ink: #0E0C0A;
+    --ink-soft: #1C1814;
+    --clay: #2A1F14;
+    --sand: #F2EDE4;
+    --cream: #FDFAF5;
+    --sand-dark: #E0D5C5;
+    --terracotta: #B85C38;
+    --forest: #2D4A3E;
+    --green-check: #3D9E6A;
+  }
+
+  .pd-page { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+  .pd-page h1, .pd-page h2, .pd-page h3, .pd-page h4 { font-family: 'Playfair Display', serif; }
+
+  /* Breadcrumb */
+  .pd-breadcrumb { background: #fff; border-bottom: 1px solid var(--sand-dark); padding: 0.75rem 0; }
+  .pd-breadcrumb ol { display: flex; align-items: center; gap: 6px; list-style: none; padding: 0; margin: 0; font-size: 0.82rem; }
+  .pd-breadcrumb a { color: #7A6A58; text-decoration: none; transition: color 0.2s; }
+  .pd-breadcrumb a:hover { color: var(--gold); }
+  .pd-breadcrumb .sep { color: #C5B9AB; }
+  .pd-breadcrumb .current { color: var(--gold); font-weight: 600; }
+
+  /* Header */
+  .pd-header { background: var(--ink); padding: 4rem 0 3rem; position: relative; overflow: hidden; }
+  .pd-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 10% 50%, rgba(201,151,58,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 60% at 90% 20%, rgba(184,92,56,0.1) 0%, transparent 50%);
+  }
+  .pd-header-inner { position: relative; z-index: 2; }
+  .pd-plan-badge {
+    display: inline-block; background: rgba(201,151,58,0.2); border: 1px solid rgba(201,151,58,0.45);
+    color: var(--gold-light); padding: 5px 16px; border-radius: 100px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .pd-plan-title { font-size: clamp(2rem,5vw,3.25rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 0.75rem; }
+  .pd-plan-subtitle { font-size: 1.05rem; color: rgba(255,255,255,0.6); line-height: 1.7; max-width: 560px; }
+
+  /* Summary Card */
+  .pd-summary {
+    background: #fff; border-radius: 24px; border: 1.5px solid var(--sand-dark);
+    padding: 2rem 2.25rem; margin: 2.5rem 0;
+    box-shadow: 0 4px 24px rgba(14,12,10,0.07);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 2rem;
+  }
+  .pd-price-block { flex: 1; min-width: 200px; }
+  .pd-price-main { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--gold); line-height: 1; }
+  .pd-price-sub { font-size: 0.85rem; color: #7A6A58; margin-top: 4px; }
+  .pd-price-setup { color: var(--terracotta); font-weight: 600; }
+  .pd-quick-meta { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+  .pd-meta-row { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4A3D30; font-weight: 500; }
+  .pd-meta-row i { width: 18px; color: var(--gold); }
+  .pd-cta-block { flex-shrink: 0; }
+  .btn-pd-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold); color: var(--ink); padding: 0.85rem 1.75rem;
+    border-radius: 100px; font-weight: 700; font-size: 0.95rem;
+    text-decoration: none; transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(201,151,58,0.3);
+  }
+  .btn-pd-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,151,58,0.4); }
+  .btn-pd-primary i { font-size: 0.85rem; transition: transform 0.2s; }
+  .btn-pd-primary:hover i { transform: translateX(3px); }
+
+  /* Content Layout */
+  .pd-content { background: var(--sand); padding: 4rem 0; }
+  .pd-content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; }
+  @media (max-width: 900px) { .pd-content-grid { grid-template-columns: 1fr; } }
+
+  .pd-section-head {
+    font-size: 1.4rem; font-weight: 900; color: var(--ink); padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--sand-dark); margin-bottom: 1.75rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pd-section-head::before { content: ''; width: 3px; height: 1.2rem; background: var(--gold); border-radius: 2px; display: block; }
+
+  /* Feature List */
+  .pd-features-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+  .pd-feature-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 0.9rem 1rem; border-radius: 14px;
+    transition: background 0.2s;
+  }
+  .pd-feature-item:hover { background: rgba(201,151,58,0.06); }
+  .pd-feature-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pd-feature-icon.green { background: rgba(61,158,106,0.12); color: var(--green-check); }
+  .pd-feature-icon.gold { background: rgba(201,151,58,0.12); color: var(--gold); }
+  .pd-feature-text-title { font-weight: 700; font-size: 0.95rem; color: var(--ink); display: block; margin-bottom: 2px; }
+  .pd-feature-text-sub { font-size: 0.82rem; color: #7A6A58; line-height: 1.5; }
+
+  /* Additional features grid */
+  .pd-add-features { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 1.25rem; }
+  .pd-add-feat-item {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border: 1.5px solid var(--sand-dark); border-radius: 10px;
+    padding: 0.6rem 0.85rem; font-size: 0.82rem; font-weight: 500; color: #4A3D30;
+    transition: border-color 0.2s;
+  }
+  .pd-add-feat-item:hover { border-color: var(--gold); }
+  .pd-add-feat-item i { color: var(--gold); font-size: 0.8rem; }
+
+  /* Description */
+  .pd-description { background: #fff; border-radius: 20px; padding: 2rem; border: 1.5px solid var(--sand-dark); margin-bottom: 1.75rem; line-height: 1.8; color: #4A3D30; font-size: 0.95rem; }
+
+  /* Quote Form Card */
+  .pd-quote-card { background: var(--ink); border-radius: 20px; padding: 2rem; color: #fff; }
+  .pd-quote-card h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; margin-bottom: 0.35rem; }
+  .pd-quote-card p { font-size: 0.88rem; color: rgba(255,255,255,0.55); margin-bottom: 1.5rem; line-height: 1.6; }
+  .pd-form-label { display: block; font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .pd-form-input {
+    width: 100%; padding: 0.8rem 1rem; border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 12px; background: rgba(255,255,255,0.06); color: #fff;
+    font-size: 0.92rem; outline: none; transition: border-color 0.2s; box-sizing: border-box;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .pd-form-input:focus { border-color: var(--gold); background: rgba(201,151,58,0.05); }
+  .pd-form-input::placeholder { color: rgba(255,255,255,0.3); }
+  .pd-form-hint { font-size: 0.78rem; color: rgba(255,255,255,0.35); margin-top: 5px; }
+  .pd-form-mb { margin-bottom: 1.25rem; }
+  .btn-pd-form {
+    width: 100%; padding: 0.9rem; background: var(--gold); color: var(--ink);
+    border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+    cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-pd-form:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* Testimonials */
+  .pd-testimonials { background: #fff; padding: 4rem 0; }
+  .pd-testi-card {
+    background: var(--cream); border: 1.5px solid var(--sand-dark); border-radius: 20px;
+    padding: 1.75rem; border-top: 3px solid var(--gold);
+    transition: all 0.25s;
+  }
+  .pd-testi-card:hover { box-shadow: 0 8px 30px rgba(14,12,10,0.08); transform: translateY(-3px); }
+  .pd-testi-initials {
+    width: 44px; height: 44px; border-radius: 12px; background: rgba(201,151,58,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 0.72rem; font-weight: 900; color: var(--gold);
+    letter-spacing: 0.05em; flex-shrink: 0;
+  }
+  .pd-testi-text { font-size: 0.92rem; color: #4A3D30; line-height: 1.75; font-style: italic; margin-bottom: 1.25rem; }
+  .pd-testi-name { font-weight: 700; font-size: 0.95rem; color: var(--ink); }
+  .pd-testi-pos { font-size: 0.78rem; color: #7A6A58; }
+  .pd-testi-inst { font-size: 0.78rem; color: var(--gold); font-weight: 600; }
+  .pd-stars { color: var(--gold-light); font-size: 0.8rem; display: flex; gap: 2px; margin-top: 0.75rem; }
+
+  /* Similar plans */
+  .pd-similar { background: var(--sand); padding: 4rem 0; }
+  .pd-similar-card {
+    background: #fff; border-radius: 20px; border: 1.5px solid var(--sand-dark);
+    padding: 1.75rem; transition: all 0.25s;
+  }
+  .pd-similar-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(14,12,10,0.1); }
+  .pd-similar-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .pd-similar-desc { font-size: 0.85rem; color: #7A6A58; line-height: 1.6; margin-bottom: 0.75rem; }
+  .pd-similar-price { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; color: var(--gold); margin-bottom: 1rem; }
+  .pd-similar-link { display: flex; align-items: center; gap: 6px; color: var(--gold); font-weight: 700; font-size: 0.88rem; text-decoration: none; transition: gap 0.2s; }
+  .pd-similar-link:hover { gap: 10px; }
+
+  /* CTA */
+  .pd-cta { background: var(--clay); padding: 4.5rem 0; position: relative; overflow: hidden; }
+  .pd-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(201,151,58,0.1) 0%, transparent 70%);
+  }
+  .btn-cta-white {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: var(--ink); padding: 0.9rem 2rem;
+    border-radius: 100px; font-weight: 700; font-size: 1rem;
+    text-decoration: none; transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .btn-cta-white:hover { background: var(--gold); transform: translateY(-2px); }
+  .btn-cta-white i { transition: transform 0.2s; }
+  .btn-cta-white:hover i { transform: translateX(3px); }
+
+  /* Utils */
+  .container-pd { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+  .grid-3-pd { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+  .text-center { text-align: center; }
+  .mb-section { margin-bottom: 2.5rem; }
+</style>
+
+<div class="pd-page">
+
+  <!-- ═══ BREADCRUMB ═══ -->
+  <div class="pd-breadcrumb">
+    <div class="container-pd">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="sep">/</span></li>
+        <li><a href="{% url 'institutional:index' %}">Institutional</a></li>
+        <li><span class="sep">/</span></li>
+        <li class="current">{{ plan.name }}</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ═══ -->
+  <section class="pd-header">
+    <div class="container-pd pd-header-inner">
+      <div class="pd-plan-badge">{{ plan.get_plan_type_display }}</div>
+      <h1 class="pd-plan-title">{{ plan.name }}</h1>
+      <p class="pd-plan-subtitle">{{ plan.short_description }}</p>
+
+      <!-- Summary Card -->
+      <div class="pd-summary">
+        <div class="pd-price-block">
+          <div class="pd-price-main">{{ plan.get_yearly_price_display }}</div>
+          <div class="pd-price-sub">
+            per year
+            {% if plan.setup_fee > 0 %}
+            &nbsp;+&nbsp;<span class="pd-price-setup">${{ plan.setup_fee }} setup fee</span>
+            {% endif %}
+          </div>
         </div>
-    </div>
-</section>
-
-<!-- Plan Details -->
-<section class="py-12 bg-gray-50 dark:bg-gray-900">
-    <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <!-- Features -->
-                <div>
-                    <h2 class="text-2xl font-bold mb-6">What's Included</h2>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">Up to {{ plan.get_user_range }}</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Concurrent users with institutional access</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">{% if plan.max_downloads == -1 %}Unlimited{% else %}{{ plan.max_downloads }}{% endif %} Downloads</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Per month across all users</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">{{ plan.get_support_level_display }}</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ plan.support_hours }} with {{ plan.response_time }} response</p>
-                            </div>
-                        </li>
-                        {% if plan.api_access %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">API Access</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ plan.api_rate_limit }} requests per minute</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if plan.training_included %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">Training Included</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">{{ plan.training_hours }} hours of staff training</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if plan.webinar_access %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">Webinar Access</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Quarterly educational webinars</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if plan.custom_reports %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">Custom Reports</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Tailored usage reports available</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if plan.analytics_dashboard %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">Analytics Dashboard</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Real-time usage analytics</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if plan.usage_statistics %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">Usage Statistics</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Monthly usage reports</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if plan.white_label %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">White Label</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Remove MfalmeBits branding</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if plan.custom_branding %}
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <div>
-                                <span class="font-semibold">Custom Branding</span>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">Add your institution's logo</p>
-                            </div>
-                        </li>
-                        {% endif %}
-                    </ul>
-                    
-                    <!-- Additional features from JSON -->
-                    {% if plan.features.items %}
-                    <h3 class="text-xl font-bold mt-8 mb-4">Additional Features</h3>
-                    <ul class="space-y-2">
-                        {% for feature in plan.get_feature_list %}
-                        <li class="flex items-center">
-                            <i class="fas fa-star text-yellow-400 mr-2"></i>
-                            {{ feature }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-                
-                <!-- Description -->
-                <div>
-                    <h2 class="text-2xl font-bold mb-6">Detailed Description</h2>
-                    <div class="prose prose-lg dark:prose-invert">
-                        {{ plan.description|safe }}
-                    </div>
-                    
-                    <!-- Quick Quote Form -->
-                    <div class="mt-8 glass p-6">
-                        <h3 class="text-xl font-bold mb-4">Quick Quote</h3>
-                        <form action="{% url 'institutional:inquiry' %}" method="get">
-                            <input type="hidden" name="plan" value="{{ plan.id }}">
-                            
-                            <div class="mb-4">
-                                <label class="block mb-2">Number of Users</label>
-                                <input type="number" 
-                                       name="users" 
-                                       min="{{ plan.min_users }}" 
-                                       max="{% if plan.max_users == -1 %}10000{% else %}{{ plan.max_users }}{% endif %}"
-                                       value="{{ plan.min_users }}"
-                                       class="w-full px-4 py-2 border rounded-lg dark:bg-gray-800">
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label class="block mb-2">Your Email</label>
-                                <input type="email" 
-                                       name="email" 
-                                       placeholder="you@institution.edu"
-                                       class="w-full px-4 py-2 border rounded-lg dark:bg-gray-800"
-                                       required>
-                            </div>
-                            
-                            <button type="submit" 
-                                    class="w-full bg-primary text-white px-6 py-3 rounded-lg 
-                                           hover:bg-opacity-90 transition-colors">
-                                Get Quick Quote
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="pd-quick-meta">
+          <div class="pd-meta-row"><i class="fas fa-users"></i> {{ plan.get_user_range }}</div>
+          <div class="pd-meta-row"><i class="fas fa-headset"></i> {{ plan.get_support_level_display }}</div>
+          <div class="pd-meta-row"><i class="fas fa-download"></i>
+            {% if plan.max_downloads == -1 %}Unlimited{% else %}{{ plan.max_downloads }}{% endif %} downloads / month
+          </div>
         </div>
-    </div>
-</section>
-
-<!-- Similar Plans -->
-{% if similar_plans %}
-<section class="py-16">
-    <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Other Plans You Might Consider</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {% for plan in similar_plans %}
-            <div class="glass p-6">
-                <h3 class="text-xl font-bold mb-2">{{ plan.name }}</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ plan.short_description }}</p>
-                <div class="text-2xl font-bold text-primary mb-4">{{ plan.get_yearly_price_display }}</div>
-                <a href="{{ plan.get_absolute_url }}" 
-                   class="text-primary hover:underline inline-flex items-center">
-                    View Details
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
-            {% endfor %}
+        <div class="pd-cta-block">
+          <a href="{% url 'institutional:inquiry' %}?plan={{ plan.id }}" class="btn-pd-primary">
+            Request Quote <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
+      </div>
     </div>
-</section>
-{% endif %}
+  </section>
 
-<!-- CTA -->
-<section class="py-16 bg-primary text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold mb-4">Need a Custom Solution?</h2>
-        <p class="text-xl mb-8">Contact our team for a tailored plan for your institution</p>
-        <a href="{% url 'institutional:inquiry' %}?plan={{ plan.id }}" 
-           class="bg-white text-primary px-8 py-4 rounded-full text-lg font-semibold 
-                  hover:bg-opacity-90 transition-colors inline-block magnetic">
-            Contact Us
-        </a>
+  <!-- ═══ CONTENT GRID ═══ -->
+  <section class="pd-content">
+    <div class="container-pd">
+      <div class="pd-content-grid">
+
+        <!-- Left: Features -->
+        <div>
+          <h2 class="pd-section-head">What's Included</h2>
+          <ul class="pd-features-list">
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon green"><i class="fas fa-users"></i></div>
+              <div>
+                <span class="pd-feature-text-title">{{ plan.get_user_range }}</span>
+                <span class="pd-feature-text-sub">Concurrent users with full institutional access</span>
+              </div>
+            </li>
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon green"><i class="fas fa-download"></i></div>
+              <div>
+                <span class="pd-feature-text-title">{% if plan.max_downloads == -1 %}Unlimited{% else %}{{ plan.max_downloads }}{% endif %} Downloads</span>
+                <span class="pd-feature-text-sub">Per month across all authorized users</span>
+              </div>
+            </li>
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon green"><i class="fas fa-headset"></i></div>
+              <div>
+                <span class="pd-feature-text-title">{{ plan.get_support_level_display }}</span>
+                <span class="pd-feature-text-sub">{{ plan.support_hours }} support · {{ plan.response_time }} response time</span>
+              </div>
+            </li>
+            {% if plan.api_access %}
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon gold"><i class="fas fa-code"></i></div>
+              <div>
+                <span class="pd-feature-text-title">API Access</span>
+                <span class="pd-feature-text-sub">{{ plan.api_rate_limit }} requests/min · full documentation included</span>
+              </div>
+            </li>
+            {% endif %}
+            {% if plan.training_included %}
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon gold"><i class="fas fa-chalkboard-teacher"></i></div>
+              <div>
+                <span class="pd-feature-text-title">Training Included</span>
+                <span class="pd-feature-text-sub">{{ plan.training_hours }} hours of dedicated staff training sessions</span>
+              </div>
+            </li>
+            {% endif %}
+            {% if plan.webinar_access %}
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon gold"><i class="fas fa-video"></i></div>
+              <div>
+                <span class="pd-feature-text-title">Webinar Access</span>
+                <span class="pd-feature-text-sub">Quarterly educational webinars with experts</span>
+              </div>
+            </li>
+            {% endif %}
+            {% if plan.custom_reports %}
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon green"><i class="fas fa-chart-bar"></i></div>
+              <div>
+                <span class="pd-feature-text-title">Custom Reports</span>
+                <span class="pd-feature-text-sub">Tailored usage reports and analytics dashboards</span>
+              </div>
+            </li>
+            {% endif %}
+            {% if plan.analytics_dashboard %}
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon green"><i class="fas fa-chart-pie"></i></div>
+              <div>
+                <span class="pd-feature-text-title">Analytics Dashboard</span>
+                <span class="pd-feature-text-sub">Real-time usage analytics and insights</span>
+              </div>
+            </li>
+            {% endif %}
+            {% if plan.white_label %}
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon gold"><i class="fas fa-tag"></i></div>
+              <div>
+                <span class="pd-feature-text-title">White Label</span>
+                <span class="pd-feature-text-sub">Remove MfalmeBits branding entirely</span>
+              </div>
+            </li>
+            {% endif %}
+            {% if plan.custom_branding %}
+            <li class="pd-feature-item">
+              <div class="pd-feature-icon gold"><i class="fas fa-paint-brush"></i></div>
+              <div>
+                <span class="pd-feature-text-title">Custom Branding</span>
+                <span class="pd-feature-text-sub">Add your institution's logo and color palette</span>
+              </div>
+            </li>
+            {% endif %}
+          </ul>
+
+          {% if plan.features.items %}
+          <div style="margin-top:2rem;">
+            <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--ink); margin-bottom:0.75rem;">Additional Features</h3>
+            <div class="pd-add-features">
+              {% for feature in plan.get_feature_list %}
+              <div class="pd-add-feat-item">
+                <i class="fas fa-star"></i> {{ feature }}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Right: Description + Quote Form -->
+        <div>
+          <h2 class="pd-section-head">About This Plan</h2>
+          <div class="pd-description">
+            {{ plan.description|safe }}
+          </div>
+
+          <!-- Quote Form -->
+          <div class="pd-quote-card">
+            <h3>Get a Quick Quote</h3>
+            <p>Instant estimate — no commitment required</p>
+            <form action="{% url 'institutional:inquiry' %}" method="get">
+              <input type="hidden" name="plan" value="{{ plan.id }}">
+              <div class="pd-form-mb">
+                <label class="pd-form-label">Number of Users</label>
+                <input type="number" name="users"
+                       min="{{ plan.min_users }}"
+                       max="{% if plan.max_users == -1 %}10000{% else %}{{ plan.max_users }}{% endif %}"
+                       value="{{ plan.min_users }}"
+                       class="pd-form-input">
+                <div class="pd-form-hint">Minimum {{ plan.min_users }} users for this plan</div>
+              </div>
+              <div class="pd-form-mb">
+                <label class="pd-form-label">Your Email</label>
+                <input type="email" name="email" placeholder="you@institution.edu" class="pd-form-input" required>
+              </div>
+              <button type="submit" class="btn-pd-form">
+                <i class="fas fa-calculator"></i> Get Quote
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
     </div>
-</section>
+  </section>
+
+  <!-- ═══ TESTIMONIALS ═══ -->
+  <section class="pd-testimonials">
+    <div class="container-pd">
+      <div class="text-center mb-section">
+        <p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--gold);margin-bottom:0.5rem;">
+          Trusted Partners
+        </p>
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:900;color:var(--ink);">
+          Trusted by Institutions Worldwide
+        </h2>
+      </div>
+      <div class="grid-3-pd">
+        <div class="pd-testi-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+            <div class="pd-testi-initials">UoN</div>
+            <div>
+              <div class="pd-testi-name">Dr. Jane Kamau</div>
+              <div class="pd-testi-pos">Head of African Studies</div>
+              <div class="pd-testi-inst">University of Nairobi</div>
+            </div>
+          </div>
+          <p class="pd-testi-text">"MfalmeBits has transformed our African Studies department with comprehensive, well-curated resources."</p>
+          <div class="pd-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+        </div>
+        <div class="pd-testi-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+            <div class="pd-testi-initials">ALA</div>
+            <div>
+              <div class="pd-testi-name">Peter Mwangi</div>
+              <div class="pd-testi-pos">Academic Director</div>
+              <div class="pd-testi-inst">African Leadership Academy</div>
+            </div>
+          </div>
+          <p class="pd-testi-text">"The curriculum kits are exceptional and have significantly enhanced our students' learning experience."</p>
+          <div class="pd-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+        </div>
+        <div class="pd-testi-card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+            <div class="pd-testi-initials">NLK</div>
+            <div>
+              <div class="pd-testi-name">Sarah Odhiambo</div>
+              <div class="pd-testi-pos">Chief Librarian</div>
+              <div class="pd-testi-inst">National Library of Kenya</div>
+            </div>
+          </div>
+          <p class="pd-testi-text">"Our patrons now have access to an unparalleled collection of African knowledge and heritage materials."</p>
+          <div class="pd-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SIMILAR PLANS ═══ -->
+  {% if similar_plans %}
+  <section class="pd-similar">
+    <div class="container-pd">
+      <div class="text-center mb-section">
+        <p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--gold);margin-bottom:0.5rem;">Other Options</p>
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:900;color:var(--ink);">You Might Also Consider</h2>
+      </div>
+      <div class="grid-3-pd">
+        {% for similar in similar_plans %}
+        <div class="pd-similar-card">
+          <div class="pd-similar-name">{{ similar.name }}</div>
+          <p class="pd-similar-desc">{{ similar.short_description }}</p>
+          <div class="pd-similar-price">{{ similar.get_yearly_price_display }}</div>
+          <a href="{{ similar.get_absolute_url }}" class="pd-similar-link">
+            View Details <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ═══ CTA ═══ -->
+  <section class="pd-cta">
+    <div class="container-pd text-center" style="position:relative;z-index:2;">
+      <p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--gold-light);margin-bottom:0.75rem;">Custom Solutions</p>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.75rem);font-weight:900;color:#fff;margin-bottom:0.75rem;line-height:1.15;">
+        Need a Tailored Plan?
+      </h2>
+      <p style="color:rgba(255,255,255,0.55);max-width:480px;margin:0 auto 2rem;line-height:1.7;font-size:0.95rem;">
+        Our team will design a licensing package specifically for your institution's unique requirements.
+      </p>
+      <a href="{% url 'institutional:inquiry' %}?plan={{ plan.id }}" class="btn-cta-white">
+        Contact Us Today <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+</div>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import RegexValidator
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 class ContactMessage(models.Model):
     """Contact form submissions"""
@@ -92,7 +92,7 @@ class FAQ(models.Model):
     )
     
     question = models.CharField(max_length=200)
-    answer = RichTextField()
+    answer = CKEditor5Field('Answer', config_name='extends')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='general')
     order = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -276,7 +276,7 @@ class ContactSettings(models.Model):
     # Auto-responses
     enable_auto_reply = models.BooleanField(default=True)
     auto_reply_subject = models.CharField(max_length=200, default='Thank you for contacting MfalmeBits')
-    auto_reply_message = RichTextField(blank=True)
+    auto_reply_message = CKEditor5Field('Auto Reply Message', config_name='extends', blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

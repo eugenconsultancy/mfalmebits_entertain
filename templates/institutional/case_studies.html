@@ -2,79 +2,274 @@
 {% load static %}
 
 {% block seo_title %}{{ seo_title }}{% endblock %}
-{% block seo_description %}{{ seo_description }}{% endblock %}
 
 {% block content %}
-<!-- Header -->
-<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Case Studies</h1>
-        <p class="text-xl max-w-2xl mx-auto">
-            See how institutions around the world are using MfalmeBits
-        </p>
-    </div>
-</section>
 
-<!-- Case Studies Grid -->
-<section class="py-16">
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {% for study in case_studies %}
-            <div class="glass-card group overflow-hidden">
-                <div class="relative h-48 overflow-hidden">
-                    <img src="{% static 'images/case-studies/'|add:study.image %}" 
-                         alt="{{ study.title }}"
-                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-sm text-primary">{{ study.institution }}</span>
-                        <span class="text-sm text-gray-500">{{ study.country }}</span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
-                        {{ study.title }}
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                        <span class="font-semibold">Challenge:</span> {{ study.challenge }}
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                        <span class="font-semibold">Solution:</span> {{ study.solution }}
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                        <span class="font-semibold">Results:</span> {{ study.results }}
-                    </p>
-                    
-                    {% if study.quote %}
-                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <p class="text-sm italic">"{{ study.quote }}"</p>
-                        <p class="text-xs text-gray-500 mt-2">— {{ study.author }}</p>
-                    </div>
-                    {% endif %}
-                    
-                    {% if study.link != '#' %}
-                    <a href="{{ study.link }}" 
-                       class="mt-4 inline-flex items-center text-primary hover:underline">
-                        Read Full Case Study
-                        <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                    {% endif %}
-                </div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #C9973A;
+    --gold-light: #E8B855;
+    --ink: #0E0C0A;
+    --ink-soft: #1C1814;
+    --clay: #2A1F14;
+    --sand: #F2EDE4;
+    --sand-dark: #E0D5C5;
+    --cream: #FDFAF5;
+    --terracotta: #B85C38;
+    --terracotta-light: #D4704E;
+  }
+
+  .cs-page { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+  .cs-page h1, .cs-page h2, .cs-page h3, .cs-page h4 { font-family: 'Playfair Display', serif; }
+
+  /* Hero */
+  .cs-hero {
+    background: var(--ink); padding: 6rem 0 5rem;
+    position: relative; overflow: hidden; text-align: center;
+  }
+  .cs-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 70% at 30% 40%, rgba(201,151,58,0.15) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 60% at 80% 70%, rgba(184,92,56,0.1) 0%, transparent 55%);
+  }
+  .cs-hero-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(201,151,58,0.03) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(201,151,58,0.03) 80px);
+  }
+  .cs-hero-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; padding: 0 1.5rem; }
+  .cs-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,151,58,0.15); border: 1px solid rgba(201,151,58,0.4);
+    color: var(--gold-light); padding: 6px 18px; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .cs-hero h1 { font-size: clamp(2.5rem,7vw,4.5rem); font-weight: 900; color: #fff; line-height: 1.05; margin-bottom: 1rem; }
+  .cs-hero h1 em { color: var(--gold-light); font-style: normal; }
+  .cs-hero p { font-size: 1.05rem; color: rgba(255,255,255,0.6); line-height: 1.75; }
+
+  /* Wrapper */
+  .cs-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* Section title */
+  .cs-section-head { text-align: center; padding: 4.5rem 0 3rem; }
+  .cs-section-eyebrow { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); margin-bottom: 0.6rem; }
+  .cs-section-title { font-size: clamp(1.8rem,4vw,2.75rem); font-weight: 900; color: var(--ink); line-height: 1.1; margin-bottom: 0.5rem; }
+  .cs-title-line { width: 40px; height: 3px; background: var(--gold); margin: 0.9rem auto 0; border-radius: 2px; }
+
+  /* Case Study Cards */
+  .cs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2.5rem; padding-bottom: 5rem; }
+  @media (max-width: 768px) { .cs-grid { grid-template-columns: 1fr; } }
+
+  .cs-card { background: #fff; border-radius: 24px; border: 1.5px solid var(--sand-dark); overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s ease; box-shadow: 0 2px 16px rgba(14,12,10,0.06); }
+  .cs-card:hover { border-color: var(--gold); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(14,12,10,0.12); }
+
+  /* Image area */
+  .cs-card-img-wrap { position: relative; height: 220px; overflow: hidden; }
+  .cs-card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+  .cs-card:hover .cs-card-img { transform: scale(1.05); }
+  .cs-card-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(14,12,10,0.7) 0%, transparent 60%);
+  }
+  .cs-card-country {
+    position: absolute; top: 1rem; right: 1rem;
+    background: rgba(14,12,10,0.65); backdrop-filter: blur(8px);
+    border: 1px solid rgba(201,151,58,0.4); border-radius: 100px;
+    color: var(--gold-light); font-size: 0.72rem; font-weight: 700;
+    padding: 4px 12px; display: flex; align-items: center; gap: 5px;
+    letter-spacing: 0.05em;
+  }
+  .cs-card-institution {
+    position: absolute; bottom: 1rem; left: 1rem;
+    font-family: 'Playfair Display', serif; font-size: 0.85rem; font-weight: 700;
+    color: #fff; display: flex; align-items: center; gap: 6px;
+  }
+  .cs-card-institution i { color: var(--gold-light); font-size: 0.8rem; }
+
+  /* Card Body */
+  .cs-card-body { padding: 1.75rem; display: flex; flex-direction: column; flex: 1; }
+  .cs-card-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 900; color: var(--ink); margin-bottom: 1.25rem; line-height: 1.3; }
+
+  .cs-detail-block { margin-bottom: 0.9rem; }
+  .cs-detail-label {
+    font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .cs-detail-text { font-size: 0.88rem; color: #5A4A38; line-height: 1.65; }
+
+  /* Results quote */
+  .cs-results-block {
+    background: var(--sand); border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0;
+    padding: 0.9rem 1.1rem; margin-top: 0.5rem; margin-bottom: 1.25rem;
+  }
+  .cs-results-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink); margin-bottom: 4px; }
+  .cs-results-text { font-size: 0.9rem; color: var(--ink); font-weight: 600; font-style: italic; line-height: 1.55; }
+
+  .cs-card-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--gold); font-weight: 700; font-size: 0.88rem; text-decoration: none;
+    transition: gap 0.2s, color 0.2s; margin-top: auto; padding-top: 0.5rem;
+    border-top: 1px solid var(--sand-dark);
+  }
+  .cs-card-link:hover { gap: 10px; color: var(--terracotta); }
+
+  /* Empty state */
+  .cs-empty { text-align: center; padding: 5rem 1rem; color: #8A7A68; }
+  .cs-empty i { font-size: 3rem; color: var(--sand-dark); display: block; margin-bottom: 1.25rem; }
+  .cs-empty h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #8A7A68; margin-bottom: 0.5rem; }
+
+  /* CTA Section */
+  .cs-cta { background: var(--ink); padding: 6rem 0; position: relative; overflow: hidden; text-align: center; }
+  .cs-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,151,58,0.1) 0%, transparent 65%);
+  }
+  .cs-cta-inner { position: relative; z-index: 2; max-width: 640px; margin: 0 auto; padding: 0 1.5rem; }
+  .cs-cta h2 { font-size: clamp(2rem,5vw,3.25rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 1rem; }
+  .cs-cta h2 em { color: var(--gold-light); font-style: normal; }
+  .cs-cta p { font-size: 1rem; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 2.5rem; }
+  .cs-cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+  .btn-cta-gold {
+    background: var(--gold); color: var(--ink); padding: 0.9rem 2rem;
+    border-radius: 100px; font-weight: 700; font-size: 0.95rem; text-decoration: none;
+    transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 20px rgba(201,151,58,0.3);
+  }
+  .btn-cta-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,151,58,0.45); }
+  .btn-cta-outline {
+    border: 1.5px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.8);
+    padding: 0.9rem 2rem; border-radius: 100px; font-weight: 600; font-size: 0.95rem;
+    text-decoration: none; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+    background: transparent;
+  }
+  .btn-cta-outline:hover { border-color: var(--gold-light); color: var(--gold-light); background: rgba(201,151,58,0.08); }
+
+  /* Stats bar */
+  .cs-stats-bar { border-top: 1px solid rgba(201,151,58,0.2); padding-top: 3rem; display: flex; justify-content: center; gap: 5rem; flex-wrap: wrap; }
+  .cs-stat { text-align: center; }
+  .cs-stat-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 4px; }
+  .cs-stat-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold); }
+</style>
+
+<div class="cs-page">
+
+  <!-- ═══ HERO ═══ -->
+  <section class="cs-hero">
+    <div class="cs-hero-pattern"></div>
+    <div class="cs-hero-inner">
+      <div class="cs-badge"><i class="fas fa-trophy"></i> Success Stories</div>
+      <h1>Case <em>Studies</em></h1>
+      <p>Discover how institutions across Africa and beyond are leveraging MfalmeBits to transform their access to African knowledge resources.</p>
+    </div>
+  </section>
+
+  <!-- ═══ CASE STUDIES ═══ -->
+  <section style="background: var(--cream);">
+    <div class="cs-wrapper">
+      <div class="cs-section-head">
+        <div class="cs-section-eyebrow">Real Impact</div>
+        <h2 class="cs-section-title">Featured Success Stories</h2>
+        <div class="cs-title-line"></div>
+      </div>
+
+      {% if case_studies %}
+      <div class="cs-grid">
+        {% for study in case_studies %}
+        <article class="cs-card">
+          <div class="cs-card-img-wrap">
+            <img
+              src="{% static 'images/case-studies/'|add:study.image %}"
+              alt="{{ study.title }}"
+              class="cs-card-img"
+              onerror="this.onerror=null;this.src='https://placehold.co/600x400/C9973A/0E0C0A?text={{ study.institution|urlencode }}';"
+            >
+            <div class="cs-card-img-overlay"></div>
+            <div class="cs-card-country">
+              <i class="fas fa-map-marker-alt"></i> {{ study.country }}
             </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
+            <div class="cs-card-institution">
+              <i class="fas fa-university"></i> {{ study.institution }}
+            </div>
+          </div>
+          <div class="cs-card-body">
+            <h3 class="cs-card-title">{{ study.title }}</h3>
 
-<!-- CTA -->
-<section class="py-16 bg-primary text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold mb-4">Ready to Transform Your Institution?</h2>
-        <p class="text-xl mb-8">Join these institutions in bringing African knowledge to your community</p>
-        <a href="{% url 'institutional:inquiry' %}" 
-           class="bg-white text-primary px-8 py-4 rounded-full text-lg font-semibold 
-                  hover:bg-opacity-90 transition-colors inline-block magnetic">
-            Get Started Today
-        </a>
+            <div class="cs-detail-block">
+              <div class="cs-detail-label">Challenge</div>
+              <div class="cs-detail-text">{{ study.challenge }}</div>
+            </div>
+
+            <div class="cs-detail-block">
+              <div class="cs-detail-label">Solution</div>
+              <div class="cs-detail-text">{{ study.solution }}</div>
+            </div>
+
+            <div class="cs-results-block">
+              <div class="cs-results-label">Results</div>
+              <div class="cs-results-text">"{{ study.results }}"</div>
+            </div>
+
+            {% if study.link != '#' %}
+            <a href="{{ study.link }}" class="cs-card-link">
+              Read Full Story <i class="fas fa-arrow-right"></i>
+            </a>
+            {% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      {% else %}
+      <div class="cs-empty">
+        <i class="fas fa-folder-open"></i>
+        <h3>No Case Studies Found</h3>
+        <p style="font-size:0.9rem; max-width:320px; margin:0 auto; line-height:1.65;">
+          Check back soon — we're documenting new institutional success stories.
+        </p>
+      </div>
+      {% endif %}
     </div>
-</section>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cs-cta">
+    <div class="cs-cta-inner">
+      <p class="cs-section-eyebrow" style="color:var(--gold);margin-bottom:0.75rem;">Join Our Network</p>
+      <h2>Ready to Transform Your <em>Institution?</em></h2>
+      <p>Join hundreds of institutions across Africa and beyond that are bringing world-class knowledge resources to their communities.</p>
+      <div class="cs-cta-actions">
+        <a href="{% url 'institutional:inquiry' %}" class="btn-cta-gold">
+          <i class="fas fa-paper-plane"></i> Get Started Today
+        </a>
+        <a href="{% url 'institutional:calculator' %}" class="btn-cta-outline">
+          <i class="fas fa-calculator"></i> Pricing Calculator
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="cs-stats-bar">
+        <div class="cs-stat">
+          <div class="cs-stat-num">{{ statistics.institutions|default:150 }}+</div>
+          <div class="cs-stat-label">Institutions Served</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-num">{{ statistics.users|default:50000 }}+</div>
+          <div class="cs-stat-label">Active Users</div>
+        </div>
+        <div class="cs-stat">
+          <div class="cs-stat-num">{{ statistics.countries|default:25 }}</div>
+          <div class="cs-stat-label">Countries</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
 {% endblock %}

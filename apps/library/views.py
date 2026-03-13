@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
 from decimal import Decimal
+from django.utils import timezone
 import stripe
 import hashlib
 import hmac
@@ -16,6 +17,8 @@ import json
 from .models import DigitalProduct, ProductCategory, Purchase, Review, Wishlist
 from utils.seo import SEOMetaGenerator, SEOAnalyzer
 from utils.schema import get_product_schema, get_breadcrumb_schema
+
+from django.db.models import Q, Count, F  # Make sure F is imported
 
 class LibraryIndexView(ListView):
     """Main library listing page"""
@@ -44,9 +47,9 @@ class LibraryIndexView(ListView):
             queryset = queryset.filter(category__slug=category)
         
         # Format filter
-        format = self.request.GET.get('format')
-        if format:
-            queryset = queryset.filter(format=format)
+        product_format = self.request.GET.get('format')
+        if product_format:
+            queryset = queryset.filter(format=product_format)
         
         # Price range
         min_price = self.request.GET.get('min_price')
@@ -60,9 +63,9 @@ class LibraryIndexView(ListView):
         if self.request.GET.get('free'):
             queryset = queryset.filter(is_free=True)
         
-        # On sale
+        # On sale - FIXED: models.F changed to F
         if self.request.GET.get('sale'):
-            queryset = queryset.filter(sale_price__isnull=False, sale_price__lt=models.F('price'))
+            queryset = queryset.filter(sale_price__isnull=False, sale_price__lt=F('price'))
         
         # Sorting
         sort = self.request.GET.get('sort', '-created_at')

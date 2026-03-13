@@ -3,11 +3,11 @@ Main URL configuration for MfalmeBits project.
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, RedirectView
 
 # Import sitemaps
 from .sitemaps import (
@@ -26,6 +26,9 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
     
+    # ===== ADDED: Admin Tools URLs (required for dashboard preferences) =====
+    path('admin_tools/', include('admin_tools.urls')),
+    
     # SEO URLs
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, 
          name='django.contrib.sitemaps.views.sitemap'),
@@ -41,15 +44,25 @@ urlpatterns = [
     path('blog/', include('apps.blog.urls')),
     path('about/', include('apps.about.urls')),
     path('contact/', include('apps.contact.urls')),
-    path('accounts/', include('apps.accounts.urls')),
     path('newsletter/', include('apps.newsletter.urls')),
     
-    # Authentication
-    path('accounts/', include('allauth.urls')),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
+    # ===== FIXED: Accounts URLs (only once) =====
+    path('accounts/', include('apps.accounts.urls')),
+    
+    # CKEditor
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
+    
+    # ===== CONVENIENCE REDIRECTS =====
+    # Redirect common URLs to accounts
+    path('login/', RedirectView.as_view(url='/accounts/login/', permanent=False)),
+    path('logout/', RedirectView.as_view(url='/accounts/logout/', permanent=False)),
+    path('register/', RedirectView.as_view(url='/accounts/register/', permanent=False)),
+    path('signup/', RedirectView.as_view(url='/accounts/register/', permanent=False)),
+    path('profile/', RedirectView.as_view(url='/accounts/profile/', permanent=False)),
+    path('dashboard/', RedirectView.as_view(url='/accounts/dashboard/', permanent=False)),
 ]
 
-# Debug toolbar
+# Debug toolbar and media files
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += [

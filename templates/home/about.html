@@ -136,8 +136,15 @@
 </section>
 
 <!-- ===== Our Story with Timeline ===== -->
-<section class="section bg-light">
-    <div class="container-custom">
+<section class="section bg-light" style="position: relative; overflow: hidden;">
+    <!-- Background Image -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.1;">
+        <img src="{% static 'images/apple-touch-icon.png' %}" 
+             alt="Background Pattern"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+    
+    <div class="container-custom" style="position: relative; z-index: 1;">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
                 <div class="story-content">

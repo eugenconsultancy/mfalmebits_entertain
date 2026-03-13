@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from utils.seo import SEOMetaGenerator
 from utils.slug_utils import generate_seo_slug
 import uuid
@@ -60,7 +60,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     
     # Content
-    content = RichTextField()
+    content = CKEditor5Field('Content', config_name='extends')
     excerpt = models.TextField(max_length=300, help_text="Short summary for listings")
     
     # Media
@@ -191,7 +191,7 @@ class Series(models.Model):
     """Blog post series"""
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
-    description = RichTextField()
+    description = CKEditor5Field('Description', config_name='extends')
     image = models.ImageField(upload_to='blog/series/', blank=True, null=True)
     posts = models.ManyToManyField(Post, related_name='series', blank=True)
     order = models.IntegerField(default=0)
@@ -238,7 +238,7 @@ class NewsletterSubscription(models.Model):
 class Author(models.Model):
     """Extended author information"""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = RichTextField(blank=True)
+    bio = CKEditor5Field('Bio', config_name='extends', blank=True)
     avatar = models.ImageField(upload_to='blog/authors/', blank=True, null=True)
     position = models.CharField(max_length=100, blank=True)
     

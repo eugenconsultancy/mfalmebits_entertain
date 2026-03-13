@@ -20,7 +20,7 @@
             <div class="col-lg-8 mx-auto">
                 <nav aria-label="breadcrumb" class="mb-4">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
                         <li class="breadcrumb-item"><a href="{% url 'blog:index' %}">Blog</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Tag: {{ tag.name }}</li>
                     </ol>

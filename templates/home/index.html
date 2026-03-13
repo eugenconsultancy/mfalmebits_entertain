@@ -1,1385 +1,419 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_description %}{{ seo_description }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{{ breadcrumb_schema|safe }}
+</script>
+{% endblock %}
+
 {% block content %}
-<!-- ===== Hero Section with Animated Glassmorphism Carousel ===== -->
-{% if hero_slides %}
-<section class="hero-section position-relative min-vh-100 overflow-hidden">
-    <!-- Animated Background Elements -->
-    <div class="hero-background">
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
-            <div class="shape shape-5"></div>
-            <div class="shape shape-6"></div>
-        </div>
-        <div class="particles" id="heroParticles"></div>
-    </div>
-    
-    <!-- Hero Carousel -->
-    <div class="hero-carousel-container">
-        {% for slide in hero_slides %}
-        <div class="hero-slide position-absolute top-0 start-0 w-100 h-100 opacity-0 transition-opacity duration-1000"
-             data-duration="{{ slide.animation_duration|default:6000 }}">
-            <!-- Background Image with Overlay -->
-            <div class="slide-background">
-                {% if slide.background_video %}
-                <video autoplay muted loop playsinline class="slide-video">
-                    <source src="{{ slide.background_video.url }}" type="video/mp4">
-                </video>
-                {% elif slide.image %}
-                <img src="{{ slide.image.url }}" 
-                     alt="{{ slide.image_alt }}"
-                     class="slide-image"
-                     onerror="this.onerror=null; this.src='https://placehold.co/1920x1080/1a1e24/ff6b4a?text=MfalmeBits';">
-                {% endif %}
-                <div class="overlay-gradient"></div>
-            </div>
-            
-            <!-- Content -->
-            <div class="container h-100 d-flex align-items-center position-relative z-index-2">
-                <div class="row justify-content-center">
-                    <div class="col-lg-10 col-xl-8">
-                        <div class="hero-content glass-card-hero p-5 text-center">
-                            {% if slide.pre_title %}
-                            <span class="hero-pre-title glass-badge mb-4 animate-fade-in-up">
-                                <i class="fas fa-{{ slide.pre_title_icon|default:'star' }} me-2"></i>
-                                {{ slide.pre_title }}
-                            </span>
-                            {% endif %}
-                            
-                            <h1 class="hero-title display-2 fw-bold mb-4 animate-slide-in-left" style="color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
-                                {{ slide.title }}
-                                {% if slide.highlight_text %}
-                                <span class="text-gradient-highlight">{{ slide.highlight_text }}</span>
-                                {% endif %}
-                            </h1>
-                            
-                            <p class="hero-subtitle display-6 mb-5 animate-slide-in-right" style="color: #f0f0f0; font-weight: 500; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
-                                {{ slide.subtitle }}
-                            </p>
-                            
-                            {% if slide.description %}
-                            <p class="hero-description lead mb-5 animate-fade-in-up" style="color: #e0e0e0; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);" data-delay="200">
-                                {{ slide.description }}
-                            </p>
-                            {% endif %}
-                            
-                            <div class="hero-cta d-flex flex-wrap gap-3 justify-content-center animate-fade-in-up" data-delay="400">
-                                {% if slide.primary_button_text and slide.primary_button_url %}
-                                <a href="{{ slide.primary_button_url }}" 
-                                   class="btn-hero-primary btn-lg magnetic" 
-                                   data-tilt>
-                                    {{ slide.primary_button_text }}
-                                    <i class="fas fa-arrow-right ms-2"></i>
-                                </a>
-                                {% endif %}
-                                
-                                {% if slide.secondary_button_text and slide.secondary_button_url %}
-                                <a href="{{ slide.secondary_button_url }}" 
-                                   class="btn-hero-secondary btn-lg magnetic" 
-                                   data-tilt>
-                                    {{ slide.secondary_button_text }}
-                                </a>
-                                {% endif %}
-                            </div>
-                            
-                            <!-- Floating Stats -->
-                            {% if slide.show_stats %}
-                            <div class="hero-stats d-flex justify-content-center gap-4 mt-5">
-                                <div class="stat-item glass-stat">
-                                    <span class="stat-number display-4 fw-bold counter" data-target="{{ slide.stat_1_value|default:'500' }}" style="color: #ffffff;">0</span>
-                                    <span class="stat-label lead" style="color: #e0e0e0;">{{ slide.stat_1_label|default:'Archive Items' }}</span>
-                                </div>
-                                <div class="stat-item glass-stat">
-                                    <span class="stat-number display-4 fw-bold counter" data-target="{{ slide.stat_2_value|default:'1000' }}" style="color: #ffffff;">0</span>
-                                    <span class="stat-label lead" style="color: #e0e0e0;">{{ slide.stat_2_label|default:'Community Members' }}</span>
-                                </div>
-                                <div class="stat-item glass-stat">
-                                    <span class="stat-number display-4 fw-bold counter" data-target="{{ slide.stat_3_value|default:'50' }}" style="color: #ffffff;">0</span>
-                                    <span class="stat-label lead" style="color: #e0e0e0;">{{ slide.stat_3_label|default:'Countries' }}</span>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    
-    <!-- Carousel Controls -->
-    <div class="carousel-controls position-absolute bottom-0 start-0 end-0 d-flex justify-content-center gap-3 pb-5">
-        {% for slide in hero_slides %}
-        <button class="carousel-dot" data-index="{{ forloop.counter0 }}">
-            <span class="dot-progress"></span>
-        </button>
-        {% endfor %}
-    </div>
-    
-    <!-- Scroll Indicator -->
-    <div class="scroll-indicator-wrapper position-absolute bottom-0 start-50 translate-middle-x mb-4">
-        <div class="scroll-indicator" id="scrollIndicator">
-            <div class="mouse">
-                <div class="wheel"></div>
-            </div>
-            <div class="scroll-text lead" style="color: #ffffff;">Scroll</div>
-            <div class="arrow-down">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </div>
-</section>
-{% endif %}
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  INSTITUTIONAL HERO - FULLY CENTERED                           -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="hero-section" style="min-height: 80vh; display: flex; align-items: center;">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-particles" id="heroParticles"></div>
 
-<!-- ===== Knowledge Archive Themes Section ===== -->
-<section class="themes-section py-6 position-relative overflow-hidden">
-    <div class="section-background">
+  <div class="hero-inner" style="width: 100%; display: flex; align-items: center; justify-content: center;">
+    <div class="hero-content-box" style="max-width: 960px; width: 100%; text-align: center; margin: 0 auto;">
+      <div class="hero-pre-title" style="justify-content: center; display: flex;">
+        <span class="dot"></span>
+        <i class="fas fa-building"></i> Institutional Licensing
+      </div>
+      <h1 class="hero-title" style="text-align: center; width: 100%;">
+        Empower Your <span class="grad-text">Institution</span>
+      </h1>
+      <p class="hero-subtitle" style="max-width: 680px; margin: 0 auto 1.5rem; text-align: center;">
+        Bring African knowledge to your institution with comprehensive licensing plans for schools, universities, libraries, and organizations
+      </p>
+      <div class="hero-cta" style="justify-content: center; display: flex; gap: 1rem;">
+        <a href="#plans" class="btn-terra magnetic">
+          View Plans <i class="fas fa-arrow-right"></i>
+        </a>
+        <a href="{% url 'institutional:inquiry' %}" class="btn-ghost magnetic">
+          Request Information
+        </a>
+      </div>
+    </div>
+  </div>
 
-    </div>
-    
-    <div class="container position-relative z-index-2">
-        <div class="section-header text-center mb-5">
-            <span class="badge glass-badge mb-3 animate-fade-in-up">
-                <i class="fas fa-archive me-2"></i>Knowledge Archive
-            </span>
-            <h2 class="display-3 fw-bold mb-3 animate-slide-in-left" style="color: #1a1a1a; text-shadow: 2px 2px 4px rgba(255,255,255,0.5);">
-                Explore by <span class="text-gradient-highlight" style="font-weight: 800;">Theme</span>
-            </h2>
-            <p class="lead display-7 animate-slide-in-right" style="color: #2d2d2d; font-weight: 600; text-shadow: 1px 1px 2px rgba(255,255,255,0.3);">
-                Dive into our curated collections organized by themes that tell the African story
-            </p>
-        </div>
-        
-        <div class="row g-4">
-            <!-- Identity Theme - Purple Accent -->
-            <div class="col-lg-4 col-md-6">
-                <a href="{% url 'archive:by_theme' 'identity' %}" class="theme-card-link">
-                    <div class="theme-card theme-identity p-4 hover-lift" data-tilt>
-                        <div class="theme-icon-wrapper identity-bg">
-                            <div class="theme-icon display-3">
-                                <i class="fas fa-fingerprint"></i>
-                            </div>
-                        </div>
-                        <h3 class="display-5 fw-bold mb-3" style="color: #ffffff;">Identity</h3>
-                        <p class="lead mb-4" style="color: #e0e0e0;">Exploring the multifaceted nature of African identity, from personal to collective consciousness.</p>
-                        <div class="theme-meta d-flex justify-content-between align-items-center">
-                            <span class="theme-count display-7 fw-bold" style="color: #ffffff;">248 entries</span>
-                            <span class="theme-link">Explore <i class="fas fa-arrow-right ms-2"></i></span>
-                        </div>
-                        <div class="theme-progress">
-                            <div class="progress-bar identity-progress" style="width: 75%"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- History Theme - Gold Accent -->
-            <div class="col-lg-4 col-md-6">
-                <a href="{% url 'archive:by_theme' 'history' %}" class="theme-card-link">
-                    <div class="theme-card theme-history p-4 hover-lift" data-tilt>
-                        <div class="theme-icon-wrapper history-bg">
-                            <div class="theme-icon display-3">
-                                <i class="fas fa-landmark"></i>
-                            </div>
-                        </div>
-                        <h3 class="display-5 fw-bold mb-3" style="color: #ffffff;">History</h3>
-                        <p class="lead mb-4" style="color: #e0e0e0;">Chronicles of African civilizations, kingdoms, and movements that shaped the continent.</p>
-                        <div class="theme-meta d-flex justify-content-between align-items-center">
-                            <span class="theme-count display-7 fw-bold" style="color: #ffffff;">312 entries</span>
-                            <span class="theme-link">Explore <i class="fas fa-arrow-right ms-2"></i></span>
-                        </div>
-                        <div class="theme-progress">
-                            <div class="progress-bar history-progress" style="width: 85%"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- Culture Theme - Green Accent -->
-            <div class="col-lg-4 col-md-6">
-                <a href="{% url 'archive:by_theme' 'culture' %}" class="theme-card-link">
-                    <div class="theme-card theme-culture p-4 hover-lift" data-tilt>
-                        <div class="theme-icon-wrapper culture-bg">
-                            <div class="theme-icon display-3">
-                                <i class="fas fa-mask"></i>
-                            </div>
-                        </div>
-                        <h3 class="display-5 fw-bold mb-3" style="color: #ffffff;">Culture</h3>
-                        <p class="lead mb-4" style="color: #e0e0e0;">Celebrating the rich diversity of African traditions, arts, languages, and customs.</p>
-                        <div class="theme-meta d-flex justify-content-between align-items-center">
-                            <span class="theme-count display-7 fw-bold" style="color: #ffffff;">456 entries</span>
-                            <span class="theme-link">Explore <i class="fas fa-arrow-right ms-2"></i></span>
-                        </div>
-                        <div class="theme-progress">
-                            <div class="progress-bar culture-progress" style="width: 92%"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- Systems & Power Theme - Orange Accent -->
-            <div class="col-lg-4 col-md-6">
-                <a href="{% url 'archive:by_theme' 'systems-power' %}" class="theme-card-link">
-                    <div class="theme-card theme-power p-4 hover-lift" data-tilt>
-                        <div class="theme-icon-wrapper power-bg">
-                            <div class="theme-icon display-3">
-                                <i class="fas fa-scale-balanced"></i>
-                            </div>
-                        </div>
-                        <h3 class="display-5 fw-bold mb-3" style="color: #ffffff;">Systems & Power</h3>
-                        <p class="lead mb-4" style="color: #e0e0e0;">Examining political structures, economic systems, and power dynamics across Africa.</p>
-                        <div class="theme-meta d-flex justify-content-between align-items-center">
-                            <span class="theme-count display-7 fw-bold" style="color: #ffffff;">187 entries</span>
-                            <span class="theme-link">Explore <i class="fas fa-arrow-right ms-2"></i></span>
-                        </div>
-                        <div class="theme-progress">
-                            <div class="progress-bar power-progress" style="width: 63%"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- Resistance Theme - Red Accent -->
-            <div class="col-lg-4 col-md-6">
-                <a href="{% url 'archive:by_theme' 'resistance' %}" class="theme-card-link">
-                    <div class="theme-card theme-resistance p-4 hover-lift" data-tilt>
-                        <div class="theme-icon-wrapper resistance-bg">
-                            <div class="theme-icon display-3">
-                                <i class="fas fa-fist-raised"></i>
-                            </div>
-                        </div>
-                        <h3 class="display-5 fw-bold mb-3" style="color: #ffffff;">Resistance</h3>
-                        <p class="lead mb-4" style="color: #e0e0e0;">Documenting movements of liberation, protest, and resilience against oppression.</p>
-                        <div class="theme-meta d-flex justify-content-between align-items-center">
-                            <span class="theme-count display-7 fw-bold" style="color: #ffffff;">203 entries</span>
-                            <span class="theme-link">Explore <i class="fas fa-arrow-right ms-2"></i></span>
-                        </div>
-                        <div class="theme-progress">
-                            <div class="progress-bar resistance-progress" style="width: 71%"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- Future Thinking Theme - Teal Accent -->
-            <div class="col-lg-4 col-md-6">
-                <a href="{% url 'archive:by_theme' 'future-thinking' %}" class="theme-card-link">
-                    <div class="theme-card theme-future p-4 hover-lift" data-tilt>
-                        <div class="theme-icon-wrapper future-bg">
-                            <div class="theme-icon display-3">
-                                <i class="fas fa-rocket"></i>
-                            </div>
-                        </div>
-                        <h3 class="display-5 fw-bold mb-3" style="color: #ffffff;">Future Thinking</h3>
-                        <p class="lead mb-4" style="color: #e0e0e0;">Imagining and building African futures through innovation, technology, and vision.</p>
-                        <div class="theme-meta d-flex justify-content-between align-items-center">
-                            <span class="theme-count display-7 fw-bold" style="color: #ffffff;">156 entries</span>
-                            <span class="theme-link">Explore <i class="fas fa-arrow-right ms-2"></i></span>
-                        </div>
-                        <div class="theme-progress">
-                            <div class="progress-bar future-progress" style="width: 58%"></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        
-        <div class="text-center mt-5">
-            <a href="{% url 'archive:index' %}" class="btn-explore-all btn-lg magnetic">
-                Explore Full Archive <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-    </div>
+
 </section>
 
-<!-- ===== Featured Essay / Highlighted Content ===== -->
-{% if featured_essay %}
-<section class="featured-essay-section py-6 position-relative overflow-hidden">
-    <div class="essay-background">
-        <img src="{{ featured_essay.background_image.url }}" alt="" class="essay-bg-img"
-             onerror="this.onerror=null; this.src='https://placehold.co/1920x1080/1e2429/ff6b4a?text=Featured+Essay';">
-        <div class="overlay-dark"></div>
-    </div>
-    
-    <div class="container position-relative z-index-2">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6">
-                <div class="essay-content glass-card-2 p-5 animate-slide-in-left">
-                    <span class="featured-badge mb-4 display-7" style="color: #ffffff;">
-                        <i class="fas fa-star me-2"></i>Featured Essay
-                    </span>
-                    <h2 class="display-3 fw-bold mb-4" style="color: #ffffff;">{{ featured_essay.title }}</h2>
-                    <p class="lead display-6 mb-4" style="color: #e0e0e0;">{{ featured_essay.excerpt }}</p>
-                    <div class="essay-meta d-flex align-items-center mb-4">
-                        <div class="author-avatar me-3">
-                            {% if featured_essay.author.avatar %}
-                            <img src="{{ featured_essay.author.avatar.url }}" alt="{{ featured_essay.author.name }}"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/100x100/ff6b4a/white?text={{ featured_essay.author.name|first|upper }}';">
-                            {% else %}
-                            <div class="avatar-placeholder display-6" style="color: #ffffff;">
-                                {{ featured_essay.author.name|first|upper }}
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <span class="author-name display-7 fw-bold" style="color: #ffffff;">{{ featured_essay.author.name }}</span>
-                            <span class="author-title d-block lead" style="color: #e0e0e0;">{{ featured_essay.author.title }}</span>
-                        </div>
-                    </div>
-                    <a href="{{ featured_essay.get_absolute_url }}" class="btn-read-essay btn-lg magnetic">
-                        Read Full Essay <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="essay-image-wrapper animate-slide-in-right">
-                    <img src="{{ featured_essay.featured_image.url }}" alt="{{ featured_essay.title }}" class="essay-image"
-                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/ff6b4a/white?text={{ featured_essay.title }}';">
-                    <div class="floating-card reading-time lead" style="color: #ffffff; background: rgba(0,0,0,0.7);">
-                        <i class="far fa-clock me-2"></i>{{ featured_essay.reading_time }} min read
-                    </div>
-                </div>
-            </div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  STATISTICS                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="stats-section" style="border-top: none;">
+  <div class="container">
+    <div class="row g-0">
+      <div class="col-md-3 col-6 reveal">
+        <div class="stat-block">
+          <div class="stat-icon-ring si-archive"><i class="fas fa-university"></i></div>
+          <span class="stat-num counter" data-target="{{ statistics.institutions|default:150 }}">0</span>
+          <span class="stat-lbl">Institutions Served</span>
         </div>
-    </div>
-</section>
-{% endif %}
-
-<!-- ===== Explore Sections ===== -->
-<section class="explore-sections py-6">
-    <div class="container">
-        <div class="section-header text-center mb-5">
-            <span class="badge glass-badge mb-3 animate-fade-in-up">
-                <i class="fas fa-compass me-2"></i>Discover
-            </span>
-            <h2 class="display-3 fw-bold mb-3 animate-slide-in-left" style="color: #1a1a1a; text-shadow: 2px 2px 4px rgba(255,255,255,0.5);">
-                Explore <span class="text-gradient-highlight">MfalmeBits</span>
-            </h2>
-            <p class="lead display-7 animate-slide-in-right" style="color: #2d2d2d; font-weight: 600; text-shadow: 1px 1px 2px rgba(255,255,255,0.3);">
-                Journey through our digital ecosystem of knowledge and creativity
-            </p>
+      </div>
+      <div class="col-md-3 col-6 reveal">
+        <div class="stat-block">
+          <div class="stat-icon-ring si-community"><i class="fas fa-users"></i></div>
+          <span class="stat-num counter" data-target="{{ statistics.users|default:50000 }}">0</span>
+          <span class="stat-lbl">Active Users</span>
         </div>
-        
-        <div class="row g-4">
-            <!-- Archive Card -->
-            <div class="col-lg-3 col-md-6">
-                <div class="explore-card glass-card-2 p-4 text-center hover-lift" data-tilt>
-                    <div class="explore-icon-wrapper explore-archive">
-                        <div class="explore-icon display-3">
-                            <i class="fas fa-archive"></i>
-                        </div>
-                    </div>
-                    <h3 class="display-6 fw-bold mb-3" style="color: #ffffff;">Knowledge Archive</h3>
-                    <p class="lead mb-4" style="color: #e0e0e0;">Delve into our collection of historical documents, oral histories, and cultural artifacts.</p>
-                    <a href="{% url 'archive:index' %}" class="explore-link lead">
-                        Explore Archive <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Digital Library Card -->
-            <div class="col-lg-3 col-md-6">
-                <div class="explore-card glass-card-2 p-4 text-center hover-lift" data-tilt>
-                    <div class="explore-icon-wrapper explore-library">
-                        <div class="explore-icon display-3">
-                            <i class="fas fa-book"></i>
-                        </div>
-                    </div>
-                    <h3 class="display-6 fw-bold mb-3" style="color: #ffffff;">Digital Library</h3>
-                    <p class="lead mb-4" style="color: #e0e0e0;">Access eBooks, audiobooks, curriculum kits, and educational resources.</p>
-                    <a href="{% url 'library:index' %}" class="explore-link lead">
-                        Browse Library <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Institutional Partnerships Card -->
-            <div class="col-lg-3 col-md-6">
-                <div class="explore-card glass-card-2 p-4 text-center hover-lift" data-tilt>
-                    <div class="explore-icon-wrapper explore-institutional">
-                        <div class="explore-icon display-3">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                    </div>
-                    <h3 class="display-6 fw-bold mb-3" style="color: #ffffff;">Institutional</h3>
-                    <p class="lead mb-4" style="color: #e0e0e0;">Partner with us to bring African knowledge to your institution.</p>
-                    <a href="{% url 'institutional:index' %}" class="explore-link lead">
-                        Learn More <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Blog Card -->
-            <div class="col-lg-3 col-md-6">
-                <div class="explore-card glass-card-2 p-4 text-center hover-lift" data-tilt>
-                    <div class="explore-icon-wrapper explore-blog">
-                        <div class="explore-icon display-3">
-                            <i class="fas fa-newspaper"></i>
-                        </div>
-                    </div>
-                    <h3 class="display-6 fw-bold mb-3" style="color: #ffffff;">News & Insights</h3>
-                    <p class="lead mb-4" style="color: #e0e0e0;">Stay updated with the latest news, announcements, and thought leadership.</p>
-                    <a href="{% url 'blog:index' %}" class="explore-link lead">
-                        Read Blog <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
+      </div>
+      <div class="col-md-3 col-6 reveal">
+        <div class="stat-block">
+          <div class="stat-icon-ring si-download"><i class="fas fa-layer-group"></i></div>
+          <span class="stat-num counter" data-target="{{ statistics.resources|default:10000 }}">0</span>
+          <span class="stat-lbl">Resources</span>
         </div>
+      </div>
+      <div class="col-md-3 col-6 reveal">
+        <div class="stat-block">
+          <div class="stat-icon-ring si-globe"><i class="fas fa-globe-africa"></i></div>
+          <span class="stat-num counter" data-target="{{ statistics.countries|default:25 }}">0</span>
+          <span class="stat-lbl">Countries</span>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<!-- ===== Digital Publications Preview ===== -->
-{% if recent_publications %}
-<section class="publications-section py-6 bg-deep-charcoal">
-    <div class="container">
-        <div class="section-header d-flex flex-wrap justify-content-between align-items-end mb-5">
-            <div>
-                <span class="badge glass-badge mb-3 animate-fade-in-up">
-                    <i class="fas fa-book-open me-2"></i>Latest Publications
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  FEATURED PLANS - IMPROVED SPACING                             -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section id="plans" class="themes-section py-section">
+  <div class="container">
+    <div class="sec-header text-center reveal" style="margin-bottom: 3.5rem;">
+      <span class="sec-badge"><i class="fas fa-tags"></i> Featured Plans</span>
+      <h2 class="sec-title" style="margin-bottom: 1rem;">Choose Your <span class="grad-text">Plan</span></h2>
+      <p class="sec-sub mx-auto" style="max-width: 600px;">Select the perfect licensing option for your institution's needs</p>
+    </div>
+
+    <div class="row g-4" style="margin-bottom: 2rem;">
+      {% for plan in featured_plans %}
+      <div class="col-lg-4 col-md-6 reveal">
+        <div class="theme-card-link">
+          <div class="theme-card {% if forloop.counter == 2 %}theme-identity{% elif forloop.counter == 3 %}theme-culture{% else %}theme-history{% endif %}" style="padding: 2rem 1.8rem;">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="theme-count" style="font-size: 0.9rem; color: var(--tc);">
+                <i class="fas fa-tag me-1"></i> {{ plan.get_plan_type_display }}
+              </span>
+              {% if forloop.counter == 2 %}
+              <span class="theme-count" style="background: var(--tc); color: #fff; padding: 4px 12px; border-radius: 99px;">MOST POPULAR</span>
+              {% endif %}
+            </div>
+            <h3 class="theme-name" style="font-size: 1.8rem; margin-bottom: 1rem;">{{ plan.name }}</h3>
+            <p class="theme-desc" style="margin-bottom: 1.5rem;">{{ plan.short_description }}</p>
+            
+            <div class="mb-4">
+              <span class="h-stat-num" style="font-size: 2.4rem;">{{ plan.get_yearly_price_display }}</span>
+            </div>
+
+            <div class="mb-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="fas fa-users" style="color: var(--tc); width: 28px;"></i>
+                <span class="theme-desc" style="color: #eed3d3; margin-bottom: 0;">{{ plan.get_user_range }}</span>
+              </div>
+              <div class="d-flex align-items-center mb-3">
+                <i class="fas fa-download" style="color: var(--tc); width: 28px;"></i>
+                <span class="theme-desc" style="color: #fff; margin-bottom: 0;">
+                  {% if plan.max_downloads == -1 %}Unlimited downloads{% else %}{{ plan.max_downloads }} downloads{% endif %}
                 </span>
-                <h2 class="display-3 fw-bold mb-3 animate-slide-in-left" style="color: #ffffff;">Digital <span class="text-gradient-highlight">Publications</span></h2>
-                <p class="lead display-7 animate-slide-in-right" style="color: #e0e0e0;">Newly released eBooks, journals, and resources</p>
+              </div>
+              <div class="d-flex align-items-center">
+                <i class="fas fa-headset" style="color: var(--tc); width: 28px;"></i>
+                <span class="theme-desc" style="color: #fff; margin-bottom: 0;">{{ plan.get_support_level_display }}</span>
+              </div>
             </div>
-            <a href="{% url 'library:index' %}" class="view-all-link d-none d-md-block lead">
-                View All <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-        
-        <div class="publications-carousel owl-carousel owl-theme">
-            {% for publication in recent_publications %}
-            <div class="publication-card">
-                <div class="publication-image">
-                    <img src="{{ publication.cover_image.url }}" alt="{{ publication.title }}"
-                         onerror="this.onerror=null; this.src='https://placehold.co/300x400/ff6b4a/white?text={{ publication.title|first }}';">
-                    {% if publication.is_premium %}
-                    <span class="premium-badge lead">Premium</span>
-                    {% endif %}
-                </div>
-                <div class="publication-info">
-                    <h4 class="publication-title display-7 fw-bold" style="color: #ffffff;">{{ publication.title|truncatechars:40 }}</h4>
-                    <p class="publication-author lead" style="color: #e0e0e0;">{{ publication.author }}</p>
-                    <div class="publication-footer">
-                        <span class="publication-price display-7 fw-bold" style="color: #ffffff;">
-                            {% if publication.is_free %}
-                            <span class="free" style="color: #2ecc71;">FREE</span>
-                            {% elif publication.is_on_sale %}
-                            <span class="old-price" style="color: #999; text-decoration: line-through;">${{ publication.price }}</span>
-                            <span class="current-price text-accent">${{ publication.sale_price }}</span>
-                            {% else %}
-                            ${{ publication.price }}
-                            {% endif %}
-                        </span>
-                        <a href="{{ publication.get_absolute_url }}" class="btn-preview lead">
-                            Preview <i class="fas fa-eye ms-1"></i>
-                        </a>
-                    </div>
-                </div>
+
+            <div class="theme-footer">
+              <a href="{% url 'institutional:plan_detail' plan.slug %}" class="btn-terra btn-sm" style="padding: 0.7rem 2rem;">
+                Learn More <i class="fas fa-arrow-right ms-2"></i>
+              </a>
             </div>
-            {% endfor %}
+          </div>
         </div>
-        
-        <!-- Mobile View All -->
-        <div class="text-center mt-4 d-md-none">
-            <a href="{% url 'library:index' %}" class="btn-explore-all btn-lg">
-                View All Publications <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
+      </div>
+      {% endfor %}
     </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  ALL PLANS BY TYPE - IMPROVED SPACING                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="py-section" style="background: var(--ink);">
+  <div class="container">
+    <div class="sec-header text-center reveal" style="margin-bottom: 3.5rem;">
+      <span class="sec-badge"><i class="fas fa-layer-group"></i> Complete Catalog</span>
+      <h2 class="sec-title" style="margin-bottom: 1rem;">All <span class="grad-text">Licensing Plans</span></h2>
+      <p class="sec-sub mx-auto" style="max-width: 600px;">Find the right plan for your institution type</p>
+    </div>
+
+    {% for plan_type, plans in grouped_plans.items %}
+    <div class="mb-5 reveal">
+      <h3 class="theme-name mb-4" style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+        {{ plans.0.get_plan_type_display }} Plans
+      </h3>
+      <div class="row g-4">
+        {% for plan in plans %}
+        <div class="col-lg-4 col-md-6">
+          <div class="explore-card" style="text-align: left; padding: 1.8rem;">
+            <h4 class="theme-name" style="font-size: 1.3rem; margin-bottom: 0.5rem;">{{ plan.name }}</h4>
+            <p class="theme-desc mb-3">{{ plan.short_description }}</p>
+            <div class="mb-3">
+              <span class="h-stat-num" style="font-size: 1.8rem;">{{ plan.get_yearly_price_display }}</span>
+            </div>
+            <div class="mb-3">
+              <div class="d-flex align-items-center mb-1">
+                <i class="fas fa-check-circle" style="color: var(--tc, var(--terra)); width: 20px;"></i>
+                <span class="theme-desc" style="color: #fff; margin-bottom: 0; font-size: 0.85rem;">{{ plan.get_user_range }}</span>
+              </div>
+              <div class="d-flex align-items-center mb-1">
+                <i class="fas fa-check-circle" style="color: var(--tc, var(--terra)); width: 20px;"></i>
+                <span class="theme-desc" style="color: #fff; margin-bottom: 0; font-size: 0.85rem;">{{ plan.get_support_level_display }}</span>
+              </div>
+              {% if plan.api_access %}
+              <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle" style="color: var(--tc, var(--terra)); width: 20px;"></i>
+                <span class="theme-desc" style="color: #fff; margin-bottom: 0; font-size: 0.85rem;">API Access</span>
+              </div>
+              {% endif %}
+            </div>
+            <a href="{% url 'institutional:plan_detail' plan.slug %}" class="explore-link-pill" style="margin-top: 0.5rem;">
+              View Details <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TESTIMONIALS - IMPROVED SPACING                               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="featured-essay-section py-section">
+  <div class="container position-relative" style="z-index:2;">
+    <div class="sec-header text-center reveal" style="color: #fff; margin-bottom: 3.5rem;">
+      <span class="sec-badge" style="background: rgba(232,168,56,.12); color: var(--ochre);">
+        <i class="fas fa-star"></i> Trusted Worldwide
+      </span>
+      <h2 class="sec-title" style="color: #fff; margin-bottom: 1rem;">What Institutions <span class="grad-text">Say</span></h2>
+    </div>
+
+    <div class="row g-4">
+      {% for testimonial in testimonials %}
+      <div class="col-lg-4 col-md-6 reveal">
+        <div class="activity-panel" style="padding: 2rem;">
+          <i class="fas fa-quote-left" style="color: var(--ochre); font-size: 2rem; opacity: 0.3; margin-bottom: 1rem;"></i>
+          <p class="theme-desc" style="color: rgba(255,255,255,0.8); font-style: italic; margin-bottom: 1.5rem;">
+            "{{ testimonial.quote }}"
+          </p>
+          <div class="d-flex align-items-center">
+            <div class="contrib-avatar me-3">
+              <div class="avatar-initial" style="background: var(--ochre);">{{ testimonial.author|first|upper }}</div>
+            </div>
+            <div>
+              <div class="contrib-name">{{ testimonial.author }}</div>
+              <div class="contrib-count">{{ testimonial.position }}</div>
+              <div class="contrib-count" style="color: var(--ochre);">{{ testimonial.institution }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  CTA SECTION - ENHANCED BUTTONS                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="cta-section py-section">
+  <div class="cta-glow"></div>
+  <div class="container position-relative" style="z-index:2;">
+    <div class="cta-box reveal" style="max-width: 800px;">
+      <span class="sec-badge mb-3 d-inline-flex"><i class="fas fa-rocket"></i> Get Started</span>
+      <h2 class="cta-title">Ready to <span class="grad-text">Partner</span> With Us?</h2>
+      <p class="cta-sub">Contact our institutional team for a customized quote or to schedule a demo</p>
+      <div class="d-flex flex-wrap gap-4 justify-content-center" style="margin-top: 2rem;">
+        <a href="{% url 'institutional:inquiry' %}" class="btn-terra magnetic" style="padding: 1rem 2.5rem; font-size: 1.1rem; box-shadow: 0 10px 25px rgba(193,58,16,0.4);">
+          <i class="fas fa-envelope me-2"></i>Request Information
+        </a>
+        <a href="{% url 'institutional:calculator' %}" class="btn-ochre magnetic" style="padding: 1rem 2.5rem; font-size: 1.1rem; box-shadow: 0 10px 25px rgba(212,146,42,0.4);">
+          <i class="fas fa-calculator me-2"></i>Try Pricing Calculator
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  BROCHURES - IMPROVED SPACING                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+{% if brochures %}
+<section class="recent-activity py-section">
+  <div class="container">
+    <div class="sec-header text-center reveal" style="margin-bottom: 3.5rem;">
+      <span class="sec-badge"><i class="fas fa-download"></i> Resources</span>
+      <h2 class="sec-title" style="margin-bottom: 1rem;">Download <span class="grad-text">Brochures</span></h2>
+      <p class="sec-sub mx-auto" style="max-width: 600px;">Get detailed information about our licensing options</p>
+    </div>
+
+    <div class="row g-4">
+      {% for brochure in brochures %}
+      <div class="col-lg-4 col-md-6 reveal">
+        <div class="pub-card">
+          {% if brochure.cover_image %}
+          <div class="pub-img" style="height: 200px;">
+            <img src="{{ brochure.cover_image.url }}" alt="{{ brochure.title }}"
+                 onerror="this.onerror=null;this.src='https://placehold.co/300x200/d44214/fff?text=Brochure';">
+          </div>
+          {% endif %}
+          <div class="pub-body">
+            <div class="pub-title">{{ brochure.title }}</div>
+            <div class="pub-author">{{ brochure.description|truncatechars:80 }}</div>
+            <div class="pub-footer">
+              <span class="pub-price">{{ brochure.file.size|filesizeformat }}</span>
+              <a href="{% url 'institutional:brochure_download' brochure.id %}" class="btn-ghost btn-sm">
+                <i class="fas fa-download me-1"></i> Download
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </section>
 {% endif %}
 
-<!-- ===== Call to Explore the Archive ===== -->
-<section class="explore-cta-section py-6 position-relative overflow-hidden">
-    <div class="cta-background">
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  ADDITIONAL STYLES (inherits all from base + home)            -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<style>
+  /* Any institutional-specific overrides can go here */
+  .theme-card {
+    --tc: var(--terra);
+  }
+  .theme-card.theme-identity { --tc: var(--c-identity); }
+  .theme-card.theme-history  { --tc: var(--c-history); }
+  .theme-card.theme-culture  { --tc: var(--c-culture); }
+  .theme-card.theme-power    { --tc: var(--c-power); }
+  .theme-card.theme-resistance { --tc: var(--c-resistance); }
+  .theme-card.theme-future   { --tc: var(--c-future); }
+  
+  /* Enhanced button styles */
+  .btn-terra, .btn-ochre {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-terra:hover, .btn-ochre:hover {
+    transform: translateY(-3px);
+  }
+  
+  /* Section spacing improvements */
+  .sec-header {
+    margin-bottom: 3rem;
+  }
+  .py-section {
+    padding: 5rem 0;
+  }
+  @media (max-width: 768px) {
+    .py-section {
+      padding: 3rem 0;
+    }
+  }
+</style>
 
-    </div>
-    
-    <div class="container position-relative z-index-2">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <div class="cta-content glass-card-1 p-5">
-                    <h2 class="display-3 fw-bold mb-4" style="color: #1a1a1a; text-shadow: 2px 2px 4px rgba(255,255,255,0.8);">Begin Your Journey</h2>
-                    <p class="lead display-6 mb-5" style="color: #2d2d2d; font-weight: 500; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">Explore thousands of digitized artifacts, manuscripts, and resources that tell the African story.</p>
-                    
-                    <div class="search-container mb-5">
-                        <form action="{% url 'archive:index' %}" method="get" class="search-form-large">
-                            <div class="search-wrapper">
-                                <i class="fas fa-search search-icon" style="color: #333;"></i>
-                                <input type="text" 
-                                       name="q" 
-                                       placeholder="Search the archive..." 
-                                       class="search-input lead"
-                                       style="color: #1a1a1a; background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1);">
-                                <button type="submit" class="search-button" style="background: #ff6b4a; color: white;">
-                                    <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <div class="explore-actions d-flex flex-wrap gap-3 justify-content-center">
-                        <a href="{% url 'archive:index' %}" class="btn-explore-primary btn-lg magnetic" data-tilt style="background: #ff6b4a; color: white;">
-                            <i class="fas fa-archive me-2"></i>Browse Archive
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== Recent Activity Grid ===== -->
-<section class="recent-activity py-6">
-    <div class="container">
-        <div class="section-header text-center mb-5">
-            <span class="badge glass-badge mb-3 animate-fade-in-up">
-                <i class="fas fa-bolt me-2"></i>Recent Activity
-            </span>
-            <h2 class="display-3 fw-bold mb-3 animate-slide-in-left" style="color: #1a1a1a; text-shadow: 2px 2px 4px rgba(255,255,255,0.5);">
-                What's <span class="text-gradient-highlight">New</span>
-            </h2>
-            <p class="lead display-7 animate-slide-in-right" style="color: #2d2d2d; font-weight: 600; text-shadow: 1px 1px 2px rgba(255,255,255,0.3);">
-                Latest additions to our knowledge ecosystem
-            </p>
-        </div>
-        
-        <div class="row g-4">
-            <!-- Recent Archive Entries -->
-            <div class="col-md-6 col-lg-3">
-                <div class="activity-card glass-card-2 h-100 p-4">
-                    <div class="activity-header d-flex align-items-center mb-4">
-                        <div class="activity-icon archive-activity">
-                            <i class="fas fa-archive"></i>
-                        </div>
-                        <h3 class="display-6 fw-bold mb-0 ms-3" style="color: #ffffff;">Archive</h3>
-                    </div>
-                    
-                    <div class="activity-list">
-                        {% for entry in recent_archive %}
-                        <div class="activity-item hover-lift">
-                            <a href="{{ entry.get_absolute_url }}" class="text-decoration-none">
-                                <span class="activity-title d-block display-7 fw-bold mb-1" style="color: #ffffff;">{{ entry.title|truncatechars:30 }}</span>
-                                <span class="activity-meta lead" style="color: #e0e0e0;">
-                                    <i class="fas fa-tag me-1"></i>{{ entry.theme.name }}
-                                    <i class="fas fa-clock ms-2 me-1"></i>{{ entry.created_at|timesince }} ago
-                                </span>
-                            </a>
-                        </div>
-                        {% empty %}
-                        <p class="lead" style="color: #e0e0e0; text-align: center; padding: 1rem 0;">No recent entries</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Recent Library Products -->
-            <div class="col-md-6 col-lg-3">
-                <div class="activity-card glass-card-2 h-100 p-4">
-                    <div class="activity-header d-flex align-items-center mb-4">
-                        <div class="activity-icon library-activity">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <h3 class="display-6 fw-bold mb-0 ms-3" style="color: #ffffff;">Library</h3>
-                    </div>
-                    
-                    <div class="activity-list">
-                        {% for product in recent_products %}
-                        <div class="activity-item hover-lift">
-                            <a href="{{ product.get_absolute_url }}" class="text-decoration-none">
-                                <span class="activity-title d-block display-7 fw-bold mb-1" style="color: #ffffff;">{{ product.title|truncatechars:30 }}</span>
-                                <span class="activity-meta lead" style="color: #e0e0e0;">
-                                    <i class="fas fa-user me-1"></i>{{ product.author }}
-                                    <span class="ms-2 text-accent">${{ product.price }}</span>
-                                </span>
-                            </a>
-                        </div>
-                        {% empty %}
-                        <p class="lead" style="color: #e0e0e0; text-align: center; padding: 1rem 0;">No recent products</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Recent Blog Posts -->
-            <div class="col-md-6 col-lg-3">
-                <div class="activity-card glass-card-2 h-100 p-4">
-                    <div class="activity-header d-flex align-items-center mb-4">
-                        <div class="activity-icon blog-activity">
-                            <i class="fas fa-newspaper"></i>
-                        </div>
-                        <h3 class="display-6 fw-bold mb-0 ms-3" style="color: #ffffff;">Blog</h3>
-                    </div>
-                    
-                    <div class="activity-list">
-                        {% for post in recent_posts %}
-                        <div class="activity-item hover-lift">
-                            <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
-                                <span class="activity-title d-block display-7 fw-bold mb-1" style="color: #ffffff;">{{ post.title|truncatechars:30 }}</span>
-                                <span class="activity-meta lead" style="color: #e0e0e0;">
-                                    <i class="fas fa-user me-1"></i>{{ post.author.username }}
-                                    <i class="fas fa-clock ms-2 me-1"></i>{{ post.published_date|date:"M d" }}
-                                </span>
-                            </a>
-                        </div>
-                        {% empty %}
-                        <p class="lead" style="color: #e0e0e0; text-align: center; padding: 1rem 0;">No recent posts</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Community Stats -->
-            <div class="col-md-6 col-lg-3">
-                <div class="stats-card glass-card-2 h-100 p-4">
-                    <h3 class="display-6 fw-bold mb-4" style="color: #ffffff;">Community</h3>
-                    
-                    <div class="stats-list">
-                        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
-                            <span class="stat-label lead" style="color: #e0e0e0;">Active Members</span>
-                            <span class="stat-value display-7 fw-bold text-accent counter" data-target="5482" style="color: #ff6b4a;">0</span>
-                        </div>
-                        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
-                            <span class="stat-label lead" style="color: #e0e0e0;">Total Downloads</span>
-                            <span class="stat-value display-7 fw-bold text-accent counter" data-target="15283" style="color: #ff6b4a;">0</span>
-                        </div>
-                        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
-                            <span class="stat-label lead" style="color: #e0e0e0;">Archive Views</span>
-                            <span class="stat-value display-7 fw-bold text-accent counter" data-target="89234" style="color: #ff6b4a;">0</span>
-                        </div>
-                        <div class="stat-item d-flex justify-content-between align-items-center mb-3">
-                            <span class="stat-label lead" style="color: #e0e0e0;">Countries</span>
-                            <span class="stat-value display-7 fw-bold text-accent counter" data-target="67" style="color: #ff6b4a;">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="contributor-spotlight mt-4">
-                        <h4 class="lead fw-bold mb-3" style="color: #ffffff;">Top Contributor</h4>
-                        <div class="contributor d-flex align-items-center">
-                            <div class="contributor-avatar me-3">
-                                <img src="{% static 'images/contributor.jpg' %}" alt="Dr. Kwame Asante"
-                                     onerror="this.onerror=null; this.src='https://placehold.co/50x50/ff6b4a/white?text=KA';">
-                            </div>
-                            <div>
-                                <span class="contributor-name display-7 fw-bold d-block" style="color: #ffffff;">Dr. Kwame Asante</span>
-                                <span class="contributor-stats lead" style="color: #e0e0e0;">48 contributions</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== Stats Counter Section ===== -->
-<section class="stats-section py-5 position-relative overflow-hidden">
-    <div class="stats-background">
-        <div class="particles" id="statsParticles"></div>
-    </div>
-    
-    <div class="container position-relative z-index-2">
-        <div class="row g-4">
-            <div class="col-md-3 col-6">
-                <div class="stat-card glass-card-1 p-4 text-center">
-                    <div class="stat-icon archive-stat">
-                        <i class="fas fa-archive display-4"></i>
-                    </div>
-                    <h3 class="stat-number display-3 fw-bold counter" data-target="{{ total_archive_entries|default:1500 }}" style="color: #ffffff;">0</h3>
-                    <p class="stat-label lead" style="color: #e0e0e0;">Archive Entries</p>
-                </div>
-            </div>
-            
-            <div class="col-md-3 col-6">
-                <div class="stat-card glass-card-1 p-4 text-center">
-                    <div class="stat-icon community-stat">
-                        <i class="fas fa-users display-4"></i>
-                    </div>
-                    <h3 class="stat-number display-3 fw-bold counter" data-target="{{ total_users|default:5000 }}" style="color: #ffffff;">0</h3>
-                    <p class="stat-label lead" style="color: #e0e0e0;">Community Members</p>
-                </div>
-            </div>
-            
-            <div class="col-md-3 col-6">
-                <div class="stat-card glass-card-1 p-4 text-center">
-                    <div class="stat-icon download-stat">
-                        <i class="fas fa-download display-4"></i>
-                    </div>
-                    <h3 class="stat-number display-3 fw-bold counter" data-target="{{ total_downloads|default:15000 }}" style="color: #ffffff;">0</h3>
-                    <p class="stat-label lead" style="color: #e0e0e0;">Total Downloads</p>
-                </div>
-            </div>
-            
-            <div class="col-md-3 col-6">
-                <div class="stat-card glass-card-1 p-4 text-center">
-                    <div class="stat-icon globe-stat">
-                        <i class="fas fa-globe-africa display-4"></i>
-                    </div>
-                    <h3 class="stat-number display-3 fw-bold counter" data-target="{{ total_countries|default:67 }}" style="color: #ffffff;">0</h3>
-                    <p class="stat-label lead" style="color: #e0e0e0;">Countries</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- JSON-LD Schema -->
+<!-- JSON-LD -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "MfalmeBits",
-    "url": "{{ request.build_absolute_uri|slice:':-1' }}",
-    "description": "African Knowledge, Identity, and Future Thinking",
-    "potentialAction": {
-        "@type": "SearchAction",
-        "target": "{{ request.build_absolute_uri|slice:':-1' }}/archive/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-    }
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "MfalmeBits Institutional Licensing",
+  "description": "Comprehensive licensing plans for schools, universities, libraries, and organizations",
+  "brand": "MfalmeBits",
+  "offers": {
+    "@type": "AggregateOffer",
+    "offerCount": "{{ featured_plans|length }}",
+    "availability": "https://schema.org/InStock"
+  }
 }
 </script>
 
-<!-- ===== Enhanced CSS with High Contrast & Multi-Color Palette ===== -->
-<style>
-    :root {
-        --primary-accent: #ff6b4a;
-        --secondary-accent: #ff8a6f;
-        --tertiary-accent: #ffaa8a;
-        --deep-charcoal: #0a0c0f;
-        --medium-charcoal: #1a1e24;
-        --light-charcoal: #2a2f36;
-        --text-primary: #ffffff;
-        --text-secondary: #e0e0e0;
-        --text-muted: #b0b0b0;
-        
-        /* Theme Colors */
-        --identity: #9b59b6;      /* Purple */
-        --history: #f1c40f;        /* Gold */
-        --culture: #2ecc71;         /* Green */
-        --power: #e67e22;           /* Orange */
-        --resistance: #e74c3c;      /* Red */
-        --future: #1abc9c;          /* Teal */
-        
-        /* Section Gradients */
-        --gradient-archive: linear-gradient(135deg, #ff6b4a, #ff8a6f);
-        --gradient-library: linear-gradient(135deg, #3498db, #9b59b6);
-        --gradient-institutional: linear-gradient(135deg, #2ecc71, #27ae60);
-        --gradient-blog: linear-gradient(135deg, #f39c12, #e67e22);
-    }
-
-    /* Typography Scale */
-    .display-1 { font-size: 5.5rem; line-height: 1.1; }
-    .display-2 { font-size: 5rem; line-height: 1.1; }
-    .display-3 { font-size: 4.5rem; line-height: 1.2; }
-    .display-4 { font-size: 4rem; line-height: 1.2; }
-    .display-5 { font-size: 3.5rem; line-height: 1.3; }
-    .display-6 { font-size: 3rem; line-height: 1.3; }
-    .display-7 { font-size: 2.5rem; line-height: 1.4; }
-    .lead { font-size: 1.5rem; line-height: 1.5; }
-
-    /* Text Colors */
-    .text-white { color: #ffffff !important; }
-    .text-light-emphasis { color: #e0e0e0 !important; }
-    .text-accent { color: var(--primary-accent) !important; }
-
-    .text-gradient-highlight {
-        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent), var(--tertiary-accent));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-
-    /* Background Colors */
-    .bg-deep-charcoal { background: var(--deep-charcoal); }
-
-    /* Hero Section */
-    .hero-section {
-        position: relative;
-        min-height: 100vh;
-        background: linear-gradient(135deg, var(--deep-charcoal) 0%, var(--medium-charcoal) 100%);
-        overflow: hidden;
-    }
-
-    .glass-card-hero {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 107, 74, 0.3);
-        border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(255, 107, 74, 0.2);
-    }
-
-    .hero-title {
-        color: white;
-        text-shadow: 0 2px 20px rgba(255, 107, 74, 0.3);
-    }
-
-    .btn-hero-primary {
-        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
-        color: white;
-        padding: 1.25rem 3rem;
-        border-radius: 60px;
-        font-size: 1.5rem;
-        font-weight: 700;
-        text-decoration: none;
-        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.4);
-        transition: all 0.3s ease;
-    }
-
-    .btn-hero-primary:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 15px 40px rgba(255, 107, 74, 0.6);
-        color: white;
-    }
-
-    /* Theme Cards with Distinct Colors */
-    .theme-card {
-        background: var(--medium-charcoal);
-        border: 2px solid transparent;
-        border-radius: 30px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        height: 100%;
-        padding: 2rem;
-    }
-
-    .theme-identity { border-color: var(--identity); }
-    .theme-history { border-color: var(--history); }
-    .theme-culture { border-color: var(--culture); }
-    .theme-power { border-color: var(--power); }
-    .theme-resistance { border-color: var(--resistance); }
-    .theme-future { border-color: var(--future); }
-
-    .theme-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .theme-icon-wrapper {
-        width: 80px;
-        height: 80px;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 2rem;
-        transition: all 0.3s ease;
-    }
-
-    .identity-bg { background: var(--identity); }
-    .history-bg { background: var(--history); }
-    .culture-bg { background: var(--culture); }
-    .power-bg { background: var(--power); }
-    .resistance-bg { background: var(--resistance); }
-    .future-bg { background: var(--future); }
-
-    .theme-icon {
-        color: white;
-        font-size: 3rem;
-    }
-
-    .theme-link {
-        color: var(--primary-accent);
-        font-size: 1.5rem;
-        font-weight: 600;
-        transition: transform 0.3s ease;
-    }
-
-    .theme-card:hover .theme-link {
-        transform: translateX(5px);
-    }
-
-    .theme-progress {
-        height: 6px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 3px;
-        margin-top: 1rem;
-        overflow: hidden;
-    }
-
-    .progress-bar {
-        height: 100%;
-        border-radius: 3px;
-        transition: width 1s ease;
-    }
-
-    .identity-progress { background: var(--identity); }
-    .history-progress { background: var(--history); }
-    .culture-progress { background: var(--culture); }
-    .power-progress { background: var(--power); }
-    .resistance-progress { background: var(--resistance); }
-    .future-progress { background: var(--future); }
-
-    /* Explore Cards */
-    .explore-card {
-        background: var(--medium-charcoal);
-        border: 2px solid rgba(255, 107, 74, 0.2);
-        border-radius: 30px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-        height: 100%;
-    }
-
-    .explore-card:hover {
-        transform: translateY(-10px);
-        border-color: var(--primary-accent);
-        box-shadow: 0 20px 40px rgba(255, 107, 74, 0.2);
-    }
-
-    .explore-icon-wrapper {
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 1.5rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-
-    .explore-archive { background: var(--gradient-archive); }
-    .explore-library { background: linear-gradient(135deg, #3498db, #9b59b6); }
-    .explore-institutional { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-    .explore-blog { background: linear-gradient(135deg, #f39c12, #e67e22); }
-
-    .explore-icon {
-        color: white;
-        font-size: 3rem;
-    }
-
-    .explore-link {
-        color: var(--primary-accent);
-        font-size: 1.5rem;
-        font-weight: 600;
-        transition: transform 0.3s ease;
-    }
-
-    .explore-link:hover {
-        color: var(--secondary-accent);
-        transform: translateX(5px);
-    }
-
-    /* Activity Cards */
-    .activity-card {
-        background: var(--medium-charcoal);
-        border: 2px solid rgba(255, 107, 74, 0.2);
-        border-radius: 30px;
-    }
-
-    .activity-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: white;
-    }
-
-    .archive-activity { background: var(--gradient-archive); }
-    .library-activity { background: linear-gradient(135deg, #3498db, #9b59b6); }
-    .blog-activity { background: linear-gradient(135deg, #f39c12, #e67e22); }
-
-    .activity-item {
-        padding: 0.75rem;
-        border-radius: 15px;
-        transition: all 0.3s ease;
-        margin-bottom: 0.5rem;
-        border-left: 3px solid transparent;
-    }
-
-    .activity-item:hover {
-        background: rgba(255, 107, 74, 0.1);
-        border-left-color: var(--primary-accent);
-    }
-
-    .activity-item a {
-        color: var(--text-secondary);
-    }
-
-    .activity-title:hover {
-        color: var(--primary-accent) !important;
-    }
-
-    .activity-meta {
-        color: var(--text-muted);
-    }
-
-    /* Stats Cards */
-    .stat-card {
-        background: var(--medium-charcoal);
-        border: 2px solid rgba(255, 107, 74, 0.2);
-        border-radius: 30px;
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--primary-accent);
-        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.2);
-    }
-
-    .stat-icon {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto 1.5rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 2rem;
-    }
-
-    .archive-stat { background: var(--gradient-archive); }
-    .community-stat { background: linear-gradient(135deg, #3498db, #9b59b6); }
-    .download-stat { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-    .globe-stat { background: linear-gradient(135deg, #f39c12, #e67e22); }
-
-    .stat-number {
-        color: white;
-        font-size: 4rem;
-        font-weight: 800;
-    }
-
-    .stat-label {
-        color: var(--text-secondary);
-        font-size: 1.5rem;
-    }
-
-    /* Publication Cards */
-    .publication-card {
-        background: var(--medium-charcoal);
-        border: 2px solid rgba(255, 107, 74, 0.2);
-        border-radius: 20px;
-        overflow: hidden;
-        margin: 0.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .publication-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--primary-accent);
-        box-shadow: 0 15px 30px rgba(255, 107, 74, 0.2);
-    }
-
-    .premium-badge {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: linear-gradient(135deg, #f1c40f, #e67e22);
-        color: var(--deep-charcoal);
-        padding: 0.25rem 1rem;
-        border-radius: 50px;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-
-    .publication-title {
-        color: white;
-        font-size: 1.5rem;
-    }
-
-    .publication-author {
-        color: var(--text-muted);
-        font-size: 1.1rem;
-    }
-
-    .current-price {
-        color: var(--primary-accent);
-        font-size: 1.3rem;
-        font-weight: 700;
-    }
-
-    .btn-preview {
-        background: transparent;
-        border: 2px solid var(--primary-accent);
-        color: var(--primary-accent);
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-preview:hover {
-        background: var(--primary-accent);
-        color: white;
-    }
-
-    /* Buttons */
-    .btn-explore-all {
-        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
-        color: white;
-        padding: 1.5rem 3rem;
-        border-radius: 60px;
-        font-size: 1.75rem;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-explore-all:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 15px 40px rgba(255, 107, 74, 0.4);
-    }
-
-    .btn-explore-primary {
-        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
-        color: white;
-        padding: 1.5rem 3rem;
-        border-radius: 60px;
-        font-size: 1.75rem;
-        font-weight: 700;
-        text-decoration: none;
-    }
-
-    .btn-explore-primary:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 15px 40px rgba(255, 107, 74, 0.4);
-    }
-
-    .view-all-link {
-        color: var(--primary-accent);
-        font-size: 1.5rem;
-        font-weight: 600;
-        border-bottom: 2px solid var(--primary-accent);
-    }
-
-    .view-all-link:hover {
-        color: var(--secondary-accent);
-        border-bottom-color: var(--secondary-accent);
-    }
-
-    /* Glass Badge */
-    .glass-badge {
-        background: rgba(255, 107, 74, 0.2);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 107, 74, 0.3);
-        color: white;
-        font-size: 1.25rem;
-        padding: 0.75rem 2rem;
-    }
-
-    /* Wave Divider */
-    .wave-divider .shape-fill {
-        fill: var(--deep-charcoal);
-    }
-
-    /* Particles */
-    .particle {
-        position: absolute;
-        border-radius: 50%;
-        pointer-events: none;
-    }
-
-    @keyframes floatParticle {
-        from { transform: translateY(100vh) rotate(0deg); }
-        to { transform: translateY(-100vh) rotate(360deg); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .display-1 { font-size: 3.5rem; }
-        .display-2 { font-size: 3rem; }
-        .display-3 { font-size: 2.5rem; }
-        .display-4 { font-size: 2.25rem; }
-        .display-5 { font-size: 2rem; }
-        .display-6 { font-size: 1.75rem; }
-        .display-7 { font-size: 1.5rem; }
-        .lead { font-size: 1.25rem; }
-
-        .btn-hero-primary,
-        .btn-hero-secondary,
-        .btn-explore-all,
-        .btn-explore-primary {
-            font-size: 1.25rem;
-            padding: 1rem 2rem;
-        }
-    }
-</style>
-
-<!-- JavaScript for Interactive Features -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Hero Carousel
-        const slides = document.querySelectorAll('.hero-slide');
-        const dots = document.querySelectorAll('.carousel-dot');
-        let currentSlide = 0;
-        let slideInterval;
-
-        if (slides.length > 0) {
-            function showSlide(index) {
-                slides.forEach(slide => slide.classList.remove('active'));
-                dots.forEach(dot => dot.classList.remove('active'));
-                
-                slides[index].classList.add('active');
-                dots[index].classList.add('active');
-                
-                clearInterval(slideInterval);
-                const duration = parseInt(slides[index].dataset.duration) || 6000;
-                slideInterval = setInterval(() => {
-                    currentSlide = (currentSlide + 1) % slides.length;
-                    showSlide(currentSlide);
-                }, duration);
-            }
-            
-            dots.forEach((dot, index) => {
-                dot.addEventListener('click', () => {
-                    currentSlide = index;
-                    showSlide(index);
-                });
-            });
-            
-            showSlide(0);
-        }
-
-        // Counter Animation
-        const counters = document.querySelectorAll('.counter');
-        const speed = 200;
-
-        const animateCounter = (counter) => {
-            const target = parseInt(counter.getAttribute('data-target'));
-            const count = parseInt(counter.innerText);
-            const increment = Math.ceil(target / speed);
-            
-            if (count < target) {
-                counter.innerText = Math.min(count + increment, target);
-                setTimeout(() => animateCounter(counter), 10);
-            } else {
-                counter.innerText = target;
-            }
-        };
-
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounter(entry.target);
-                    counterObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        counters.forEach(counter => counterObserver.observe(counter));
-
-        // Magnetic Buttons
-        const magneticElements = document.querySelectorAll('.magnetic');
-        
-        magneticElements.forEach(element => {
-            element.addEventListener('mousemove', function(e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                
-                this.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-            });
-            
-            element.addEventListener('mouseleave', function() {
-                this.style.transform = 'translate(0px, 0px)';
-            });
-        });
-
-        // Tilt Effect
-        const tiltElements = document.querySelectorAll('[data-tilt]');
-        
-        tiltElements.forEach(element => {
-            element.addEventListener('mousemove', function(e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const angleX = (y - centerY) / 25;
-                const angleY = (centerX - x) / 25;
-                
-                this.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.02)`;
-            });
-            
-            element.addEventListener('mouseleave', function() {
-                this.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-            });
-        });
-
-        // Scroll Indicator
-        const scrollIndicator = document.getElementById('scrollIndicator');
-        if (scrollIndicator) {
-            scrollIndicator.addEventListener('click', () => {
-                window.scrollTo({
-                    top: window.innerHeight,
-                    behavior: 'smooth'
-                });
-            });
-        }
-
-        // Particle Background
-        function createParticles(containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                const size = Math.random() * 5 + 2;
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                const delay = Math.random() * 5;
-                const duration = Math.random() * 10 + 10;
-                
-                particle.style.cssText = `
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: ${posX}%;
-                    top: ${posY}%;
-                    background: rgba(255, 107, 74, ${Math.random() * 0.3});
-                    box-shadow: 0 0 ${size * 2}px rgba(255, 107, 74, 0.3);
-                    animation: floatParticle ${duration}s linear infinite;
-                    animation-delay: -${delay}s;
-                `;
-                
-                container.appendChild(particle);
-            }
-        }
-
-        createParticles('heroParticles');
-        createParticles('statsParticles');
-    });
-</script>
-
-<!-- Owl Carousel for Publications -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+<!-- Same scripts as home page -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $(".publications-carousel").owlCarousel({
-            loop: true,
-            margin: 20,
-            nav: false,
-            dots: true,
-            autoplay: true,
-            autoplayTimeout: 5000,
-            autoplayHoverPause: true,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                600: {
-                    items: 2
-                },
-                1000: {
-                    items: 4
-                }
-            }
-        });
+document.addEventListener('DOMContentLoaded', function () {
+  /* ── Scroll indicator ──────────────────── */
+  const si = document.getElementById('scrollIndicator');
+  if (si) si.addEventListener('click', () => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' }));
+
+  /* ── Scroll reveal ─────────────────────── */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
     });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * .08 + 's';
+    io.observe(el);
+  });
+
+  /* ── Counter animation ─────────────────── */
+  const cIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, target = +el.dataset.target;
+      let count = 0;
+      const step = Math.ceil(target / 120);
+      const t = setInterval(() => {
+        count = Math.min(count + step, target);
+        el.textContent = count.toLocaleString();
+        if (count >= target) clearInterval(t);
+      }, 14);
+      cIO.unobserve(el);
+    });
+  }, { threshold: .5 });
+  document.querySelectorAll('.counter').forEach(el => cIO.observe(el));
+
+  /* ── Magnetic buttons ──────────────────── */
+  document.querySelectorAll('.magnetic').forEach(el => {
+    el.addEventListener('mousemove', function (e) {
+      const r = this.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width  / 2) * .25;
+      const y = (e.clientY - r.top  - r.height / 2) * .25;
+      this.style.transform = `translate(${x}px,${y}px)`;
+    });
+    el.addEventListener('mouseleave', function () { this.style.transform = ''; });
+  });
+
+  /* ── Particles ─────────────────────────── */
+  const pc = document.getElementById('heroParticles');
+  if (pc) {
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('div');
+      const s = Math.random() * 4 + 2;
+      Object.assign(p.style, {
+        position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
+        width: s + 'px', height: s + 'px',
+        left: Math.random() * 100 + '%', top: Math.random() * 100 + '%',
+        background: `rgba(${Math.random()>.5?'212,66,20':'232,168,56'},${Math.random()*.25})`,
+        animation: `floatP ${Math.random()*14+10}s linear infinite`,
+        animationDelay: `-${Math.random()*10}s`
+      });
+      pc.appendChild(p);
+    }
+  }
+});
 </script>
 {% endblock %}

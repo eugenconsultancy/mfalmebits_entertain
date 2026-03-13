@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from utils.seo import SEOMetaGenerator
 from utils.slug_utils import generate_seo_slug
 
@@ -19,7 +19,10 @@ class AboutSection(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     section_type = models.CharField(max_length=20, choices=SECTION_TYPES)
-    content = RichTextField()
+    
+    # Updated to CKEditor5Field
+    content = CKEditor5Field('Content', config_name='extends')
+    
     image = models.ImageField(upload_to='about/sections/', blank=True, null=True)
     image_alt = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(default=0)
@@ -40,8 +43,10 @@ class AboutSection(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.slug:
+            # Note: Ensure generate_seo_slug is imported
             self.slug = generate_seo_slug(self.title, AboutSection)
         if not self.seo_title:
+            # Note: Ensure SEOMetaGenerator is imported
             self.seo_title = SEOMetaGenerator.generate_title(self)
         super().save(*args, **kwargs)
 
@@ -51,7 +56,9 @@ class TeamMember(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     position = models.CharField(max_length=100)
-    bio = RichTextField()
+    
+    # Updated to CKEditor5Field
+    bio = CKEditor5Field('Bio', config_name='extends')
     
     # Image
     photo = models.ImageField(upload_to='about/team/')
@@ -97,7 +104,10 @@ class Timeline(models.Model):
     """Company timeline/ history"""
     year = models.CharField(max_length=20)
     title = models.CharField(max_length=200)
-    description = RichTextField()
+    
+    # Updated to CKEditor5Field
+    description = CKEditor5Field('Description', config_name='extends')
+    
     image = models.ImageField(upload_to='about/timeline/', blank=True, null=True)
     order = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)

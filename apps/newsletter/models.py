@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.core.validators import validate_email
 from django.core.mail import send_mail
 from django.conf import settings
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from utils.seo import SEOMetaGenerator
 from utils.slug_utils import generate_seo_slug
 import uuid
@@ -130,7 +130,7 @@ class NewsletterCampaign(models.Model):
     subject = models.CharField(max_length=200)
     preview_text = models.CharField(max_length=200, blank=True, help_text="Preview text shown in inbox")
     template = models.ForeignKey(NewsletterTemplate, on_delete=models.SET_NULL, null=True, blank=True)
-    html_content = RichTextField()
+    html_content = CKEditor5Field('HTML Content', config_name='extends')
     text_content = models.TextField(blank=True)
     
     # Targeting
@@ -312,7 +312,7 @@ class NewsletterArticle(models.Model):
     
     # Content
     excerpt = models.TextField(max_length=300)
-    content = RichTextField()
+    content = CKEditor5Field('Content', config_name='extends')
     
     # Media
     featured_image = models.ImageField(upload_to='newsletter/articles/')
@@ -357,11 +357,12 @@ class NewsletterSettings(models.Model):
     sender_email = models.EmailField(default='newsletter@mfalmebits.com')
     reply_to = models.EmailField(default='noreply@mfalmebits.com')
     
+    # 3. Subscription Settings Model
     # Subscription settings
     require_confirmation = models.BooleanField(default=True)
     double_opt_in = models.BooleanField(default=True)
     welcome_email_subject = models.CharField(max_length=200, default='Welcome to MfalmeBits Newsletter')
-    welcome_email_content = RichTextField(blank=True)
+    welcome_email_content = CKEditor5Field('Welcome Email Content', config_name='extends', blank=True) # Updated
     
     # Unsubscribe settings
     unsubscribe_landing_page = models.TextField(blank=True)

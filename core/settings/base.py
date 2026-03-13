@@ -1,28 +1,30 @@
 """
 Django base settings for MfalmeBits project.
+Configured with Jazzmin as the exclusive Admin UI and Dashboard provider.
 """
 
 from pathlib import Path
 import os
 from decouple import config
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# ─────────────────────────────────────────────────────────────────────
+# BASE
+# ─────────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Quick-start development settings - unsuitable for production
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-default-key-change-this')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
-
 ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
-# Application definition
+# ─────────────────────────────────────────────────────────────────────
+# INSTALLED APPS
+# Jazzmin MUST be at the top, before django.contrib.admin
+# ─────────────────────────────────────────────────────────────────────
 DJANGO_APPS = [
-    # 'admin_tools',  # DISABLED - causing template errors
-    # 'admin_tools.theming',
-    # 'admin_tools.menu',
-    # 'admin_tools.dashboard',
+    # Jazzmin - Primary Admin UI (must come before admin)
+    'jazzmin',
+    
+    # Core Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,8 +42,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount',
     'taggit',
     'robots',
-    'ckeditor',
-    'ckeditor_uploader',
+    'django_ckeditor_5',
     'crispy_forms',
     'crispy_bootstrap5',
     'stripe',
@@ -56,8 +57,6 @@ THIRD_PARTY_APPS = [
     'storages',
     'import_export',
     'django_admin_listfilter_dropdown',
-    'admin_interface',
-    'colorfield',
     'rangefilter',
 ]
 
@@ -78,6 +77,9 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 SITE_ID = 1
 
+# ─────────────────────────────────────────────────────────────────────
+# MIDDLEWARE
+# ─────────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -90,18 +92,21 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    # 'admin_tools.middleware.AdminToolsMiddleware',  # DISABLED
 ]
 
 ROOT_URLCONF = 'core.urls'
 
+# ─────────────────────────────────────────────────────────────────────
+# TEMPLATES
+# Clean configuration with standard Django loaders
+# ─────────────────────────────────────────────────────────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
         ],
-        'APP_DIRS': True,
+        'APP_DIRS': True,  # Standard template loading
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -110,7 +115,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.seo_settings',
                 'core.context_processors.organization_schema',
-                # 'admin_tools.context_processors.admin_tools',  # DISABLED
             ],
         },
     },
@@ -118,67 +122,70 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Password validation
+# ─────────────────────────────────────────────────────────────────────
+# DATABASE  (overridden per environment in development.py / production.py)
+# ─────────────────────────────────────────────────────────────────────
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# ─────────────────────────────────────────────────────────────────────
+# PASSWORD VALIDATION
+# ─────────────────────────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
+# ─────────────────────────────────────────────────────────────────────
+# INTERNATIONALISATION
+# ─────────────────────────────────────────────────────────────────────
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Africa/Nairobi'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# ─────────────────────────────────────────────────────────────────────
+# STATIC & MEDIA
+# ─────────────────────────────────────────────────────────────────────
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# FIXED: Use CompressedStaticFilesStorage to avoid source map errors
-# This storage compresses files but doesn't fail on missing source maps
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# Optional: Configure compressor to ignore missing source maps
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 ]
 
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = False  # Set to True in production after fixing source map issues
-
-# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Default primary key field type
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = False   # Set True in production after collectstatic
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Crispy Forms
+# ─────────────────────────────────────────────────────────────────────
+# CRISPY FORMS
+# ─────────────────────────────────────────────────────────────────────
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-# Authentication backends
+# ─────────────────────────────────────────────────────────────────────
+# AUTHENTICATION
+# ─────────────────────────────────────────────────────────────────────
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# Django AllAuth settings
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -186,22 +193,32 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
-# Email settings
+# ─────────────────────────────────────────────────────────────────────
+# EMAIL
+# ─────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='MfalmeBits <noreply@mfalmebits.com>')
+DEFAULT_FROM_EMAIL = config(
+    'DEFAULT_FROM_EMAIL', default='MfalmeBits <noreply@mfalmebits.com>'
+)
 
-# Cache settings
+# ─────────────────────────────────────────────────────────────────────
+# CACHE
+# ─────────────────────────────────────────────────────────────────────
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 
-# Stripe
-STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY', '')
-STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY', '')
+# ─────────────────────────────────────────────────────────────────────
+# STRIPE
+# ─────────────────────────────────────────────────────────────────────
+STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY', default='')
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY', default='')
 
-# Logging
+# ─────────────────────────────────────────────────────────────────────
+# LOGGING
+# ─────────────────────────────────────────────────────────────────────
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -223,34 +240,183 @@ LOGGING = {
     },
 }
 
-# CKEditor Configuration
-CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
-CKEDITOR_IMAGE_BACKEND = 'pillow'
-CKEDITOR_THUMBNAIL_SIZE = (300, 300)
-CKEDITOR_IMAGE_QUALITY = 40
-CKEDITOR_BROWSE_SHOW_DIRS = True
+# ─────────────────────────────────────────────────────────────────────
+# CKEDITOR 5 (MODERN CONFIGURATION)
+# ─────────────────────────────────────────────────────────────────────
+# Path for uploaded files (Relative to MEDIA_ROOT)
+CKEDITOR_5_UPLOAD_FILE_VIEW_NAME = "ckeditor_5_upload_file"
+CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage" # Or S3Boto3Storage for production
 
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': '100%',
-        'extraPlugins': ','.join([
-            'uploadimage',
-            'div',
-            'autolink',
-            'autoembed',
-            'embedsemantic',
-            'autogrow',
-            'widget',
-            'lineutils',
-            'clipboard',
-            'dialog',
-            'dialogui',
-            'elementspath'
-        ]),
+        'toolbar': [
+            'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 
+            'blockQuote', 'imageUpload', 'mediaEmbed', 'insertTable', 'undo', 'redo'
+        ],
+    },
+    'extends': {
+        'blockToolbar': [
+            'paragraph', 'heading1', 'heading2', 'heading3',
+            '|', 'bulletedList', 'numberedList',
+            '|', 'blockQuote',
+        ],
+        'toolbar': [
+            'heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
+            'code', 'subscript', 'superscript', 'highlight', '|', 'bulletedList', 'numberedList', 'todoList', 
+            '|',  'blockQuote', 'imageUpload', 'mediaEmbed', 'insertTable', 'sourceEditing', 'undo', 'redo'
+        ],
+        'image': {
+            'toolbar': [
+                'imageTextAlternative', '|', 'imageStyle:alignLeft', 
+                'imageStyle:alignCenter', 'imageStyle:alignRight', '|', 'imageStyle:full', 'imageStyle:side'
+            ],
+            'styles': [
+                'full', 'side', 'alignLeft', 'alignCenter', 'alignRight'
+            ]
+        },
+        'table': {
+            'contentToolbar': [ 'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties' ],
+        },
+        'heading': {
+            'options': [
+                { 'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph' },
+                { 'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1' },
+                { 'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2' },
+                { 'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3' }
+            ]
+        }
     },
 }
 
-CKEDITOR_ALLOW_NONIMAGE_FILES = True
-CKEDITOR_RESTRICT_BY_USER = False
+# Optional: Add custom CSS to match your MfalmeBits frontend
+CKEDITOR_5_CUSTOM_CSS = 'admin/css/mfalmebits_admin.css'
+
+# ═════════════════════════════════════════════════════════════════════
+# JAZZMIN — Premium Django Admin UI (Exclusive Dashboard Provider)
+# Docs: https://django-jazzmin.readthedocs.io/
+# ═════════════════════════════════════════════════════════════════════
+JAZZMIN_SETTINGS = {
+    # ── Branding ─────────────────────────────────────────────────────
+    "site_title": "MfalmeBits Admin",
+    "site_header": "MfalmeBits",
+    "site_brand": "MfalmeBits",
+    "site_logo": "images/logo.png",
+    "site_logo_classes": "img-circle",
+    "site_icon": "images/favicon.ico",
+    "welcome_sign": "Welcome to MfalmeBits Dashboard",
+    "copyright": "MfalmeBits © 2025",
+
+    # ── Search ───────────────────────────────────────────────────────
+    "search_model": ["auth.user", "blog.Post", "archive.Entry"],
+
+    "user_avatar": None,
+
+    # ── Top-bar links ─────────────────────────────────────────────────
+    "topmenu_links": [
+        {"name": "Home",      "url": "admin:index",  "permissions": ["auth.view_user"]},
+        {"name": "View Site", "url": "/",            "new_window": True},
+        {"name": "Archive",   "url": "/archive/",    "new_window": True},
+        {"name": "Library",   "url": "/library/",    "new_window": True},
+        {"model": "auth.User"},
+    ],
+
+    # ── User-menu links ───────────────────────────────────────────────
+    "usermenu_links": [
+        {"name": "View Site", "url": "/", "new_window": True},
+        {"model": "auth.user"},
+    ],
+
+    # ── Sidebar ───────────────────────────────────────────────────────
+    "show_sidebar":        True,
+    "navigation_expanded": True,
+    "hide_apps":           [],
+    "hide_models":         [],
+
+    "order_with_respect_to": [
+        "auth", "accounts", "home", "archive", "library",
+        "blog", "newsletter", "institutional", "collaboration",
+        "contact", "about",
+    ],
+
+    # ── Icons (Font Awesome 5 free) ───────────────────────────────────
+    "icons": {
+        "auth":                               "fas fa-users-cog",
+        "auth.user":                          "fas fa-user",
+        "auth.Group":                         "fas fa-users",
+        "archive.Entry":                      "fas fa-archive",
+        "archive.Theme":                      "fas fa-tags",
+        "archive.Collection":                  "fas fa-layer-group",
+        "library.Product":                     "fas fa-book",
+        "library.Category":                    "fas fa-th-large",
+        "blog.Post":                           "fas fa-newspaper",
+        "blog.Category":                       "fas fa-folder",
+        "blog.Tag":                            "fas fa-tag",
+        "newsletter.Subscriber":               "fas fa-envelope",
+        "newsletter.Campaign":                 "fas fa-paper-plane",
+        "home.HeroSlide":                      "fas fa-images",
+        "home.FeaturedEssay":                  "fas fa-star",
+        "institutional.Partner":               "fas fa-handshake",
+        "collaboration.Project":               "fas fa-project-diagram",
+        "contact.Message":                     "fas fa-comments",
+        "accounts.Profile":                    "fas fa-id-card",
+        "sites.Site":                          "fas fa-globe-africa",
+        "django_celery_beat.CrontabSchedule":  "fas fa-clock",
+        "django_celery_beat.PeriodicTask":     "fas fa-tasks",
+    },
+
+    "default_icon_parents":  "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+
+    "related_modal_active": True,
+
+    # ── Custom assets (place files in static/admin/) ──────────────────
+    "custom_css": "admin/css/mfalmebits_admin.css",
+    "custom_js":  "admin/js/mfalmebits_admin.js",
+
+    # ── Misc ──────────────────────────────────────────────────────────
+    "use_google_fonts_cdn":    True,
+    "show_ui_builder":         False,
+    "changeform_format":       "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user":  "collapsible",
+        "auth.group": "vertical_tabs",
+    },
+    "language_chooser": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme":           "darkly",
+    "dark_mode_theme": "darkly",
+
+    # Navbar
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text":   False,
+    "brand_small_text":  False,
+    "brand_colour":      "navbar-danger",
+    "accent":            "accent-danger",
+    "navbar":            "navbar-dark",
+    "no_navbar_border":  True,
+    "navbar_fixed":      True,
+
+    # Sidebar
+    "sidebar":                    "sidebar-dark-danger",
+    "sidebar_nav_small_text":     False,
+    "sidebar_disable_expand":     False,
+    "sidebar_nav_child_indent":   True,
+    "sidebar_nav_compact_style":  False,
+    "sidebar_nav_legacy_style":   False,
+    "sidebar_nav_flat_style":     True,
+
+    # Buttons
+    "button_classes": {
+        "primary":   "btn-primary",
+        "secondary": "btn-outline-secondary",
+        "info":      "btn-outline-info",
+        "warning":   "btn-warning",
+        "danger":    "btn-danger",
+        "success":   "btn-success",
+    },
+
+    "actions_sticky_top": True,
+}

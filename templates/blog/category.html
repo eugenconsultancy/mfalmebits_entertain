@@ -1,181 +1,383 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load blog_tags %}
 
 {% block title %}{{ seo_title }}{% endblock %}
 {% block description %}{{ seo_description }}{% endblock %}
 
 {% block content %}
-<!-- Category Header -->
-<section class="category-header py-5 bg-primary text-white">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                {% if category.image %}
-                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="rounded-circle mb-4" style="width: 100px; height: 100px; object-fit: cover;">
-                {% endif %}
-                <h1 class="display-4 fw-bold mb-3">{{ category.name }}</h1>
-                {% if category.description %}
-                <p class="lead mb-0">{{ category.description }}</p>
-                {% endif %}
-            </div>
-        </div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #C9973A; --gold-light: #E8B855; --ink: #0E0C0A;
+    --ink-soft: #1C1814; --clay: #2A1F14; --sand: #F2EDE4;
+    --sand-dark: #E0D5C5; --cream: #FDFAF5; --terracotta: #B85C38;
+    --green: #3D9E6A;
+  }
+
+  .cat-page { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+  .cat-page h1, .cat-page h2, .cat-page h3, .cat-page h4 { font-family: 'Playfair Display', serif; }
+
+  /* ── Hero ── */
+  .cat-hero { background: var(--ink); padding: 5rem 0 4rem; position: relative; overflow: hidden; }
+  .cat-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 15% 50%, rgba(201,151,58,0.15) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 55% at 90% 25%, rgba(184,92,56,0.09) 0%, transparent 55%);
+  }
+  .cat-hero-grid {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(201,151,58,0.03) 60px),
+                      repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(201,151,58,0.03) 60px);
+  }
+  .cat-hero-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; padding: 0 1.5rem; text-align: center; }
+  .cat-hero-img-wrap {
+    width: 80px; height: 80px; border-radius: 20px; overflow: hidden; margin: 0 auto 1.5rem;
+    border: 2px solid rgba(201,151,58,0.3);
+    background: rgba(201,151,58,0.12);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cat-hero-img { width: 100%; height: 100%; object-fit: cover; }
+  .cat-hero-icon { font-size: 2rem; color: var(--gold-light); }
+  .cat-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,151,58,0.15); border: 1px solid rgba(201,151,58,0.4);
+    color: var(--gold-light); padding: 5px 16px; border-radius: 100px;
+    font-size: 0.73rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.25rem;
+  }
+  .cat-hero h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 0.85rem; }
+  .cat-hero p { font-size: 1rem; color: rgba(255,255,255,0.55); line-height: 1.7; max-width: 520px; margin: 0 auto 1.5rem; }
+  .cat-post-count {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px; padding: 5px 16px; font-size: 0.8rem; color: rgba(255,255,255,0.5); font-weight: 500;
+  }
+  .cat-post-count i { color: var(--gold); }
+
+  /* ── Breadcrumb ── */
+  .cat-breadcrumb { background: var(--ink-soft); border-bottom: 1px solid rgba(201,151,58,0.12); padding: 0.65rem 0; }
+  .cat-breadcrumb ol { display: flex; align-items: center; gap: 4px; list-style: none; padding: 0; margin: 0; font-size: 0.79rem; flex-wrap: wrap; }
+  .cat-breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+  .cat-breadcrumb a:hover { color: var(--gold-light); }
+  .cat-breadcrumb .sep { color: rgba(255,255,255,0.18); }
+  .cat-breadcrumb .cur { color: var(--gold-light); font-weight: 600; }
+
+  /* ── Layout ── */
+  .cat-body { padding: 3.5rem 0 5rem; }
+  .cat-wrapper { max-width: 1160px; margin: 0 auto; padding: 0 1.5rem; }
+  .cat-layout { display: grid; grid-template-columns: 1fr 290px; gap: 3.5rem; align-items: start; }
+  @media (max-width: 960px) { .cat-layout { grid-template-columns: 1fr; } .cat-sidebar { order: -1; } }
+
+  /* ── Sort Bar ── */
+  .cat-sort-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2rem; padding: 0.85rem 1.25rem;
+    background: #fff; border-radius: 14px; border: 1.5px solid var(--sand-dark);
+    gap: 1rem; flex-wrap: wrap;
+  }
+  .cat-sort-label { font-size: 0.82rem; font-weight: 600; color: #6B6052; }
+  .cat-sort-label strong { color: var(--ink); }
+  .cat-sort-select {
+    padding: 0.5rem 1rem; border: 1.5px solid var(--sand-dark); border-radius: 10px;
+    background: var(--cream); color: var(--ink); font-size: 0.83rem; font-family: 'DM Sans',sans-serif;
+    outline: none; cursor: pointer; transition: border-color 0.2s;
+  }
+  .cat-sort-select:focus { border-color: var(--gold); }
+
+  /* ── Post List Item ── */
+  .cat-post-list { display: flex; flex-direction: column; gap: 1.25rem; }
+  .cat-post-item {
+    background: #fff; border-radius: 20px; border: 1.5px solid var(--sand-dark);
+    overflow: hidden; display: flex; gap: 0;
+    transition: all 0.25s; box-shadow: 0 2px 12px rgba(14,12,10,0.05);
+  }
+  .cat-post-item:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 14px 36px rgba(14,12,10,0.1); }
+
+  .cat-post-img-link { flex-shrink: 0; width: 220px; display: block; }
+  .cat-post-img-wrap { width: 100%; height: 100%; min-height: 160px; overflow: hidden; position: relative; background: var(--ink-soft); }
+  .cat-post-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s ease; }
+  .cat-post-item:hover .cat-post-img { transform: scale(1.07); }
+  .cat-post-img-placeholder { width: 100%; min-height: 160px; display: flex; align-items: center; justify-content: center; background: var(--clay); font-size: 2rem; color: rgba(201,151,58,0.25); }
+  @media (max-width: 640px) { .cat-post-img-link { display: none; } }
+
+  .cat-post-body { padding: 1.35rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+  .cat-post-meta { display: flex; align-items: center; gap: 12px; font-size: 0.76rem; color: #8A7A68; margin-bottom: 0.6rem; flex-wrap: wrap; }
+  .cat-post-meta i { color: var(--gold); margin-right: 3px; }
+  .cat-post-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 900; color: var(--ink); line-height: 1.35; margin-bottom: 0.55rem; }
+  .cat-post-title a { text-decoration: none; color: inherit; transition: color 0.2s; }
+  .cat-post-title a:hover { color: var(--gold); }
+  .cat-post-excerpt { font-size: 0.87rem; color: #6B6052; line-height: 1.7; margin-bottom: 1rem; flex: 1; }
+  .cat-post-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 0.85rem; border-top: 1px solid var(--sand-dark); flex-wrap: wrap; gap: 0.5rem; }
+  .cat-post-author { display: flex; align-items: center; gap: 7px; font-size: 0.8rem; color: #6B6052; font-weight: 500; }
+  .cat-post-author-icon { font-size: 1rem; color: var(--gold); }
+  .cat-post-stats { display: flex; gap: 10px; font-size: 0.76rem; color: #8A7A68; }
+  .cat-post-stats i { color: var(--gold); margin-right: 3px; }
+  .btn-read-more {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--gold); color: var(--ink); padding: 6px 14px;
+    border-radius: 100px; font-weight: 700; font-size: 0.78rem; text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-read-more:hover { background: var(--gold-light); }
+
+  /* ── Pagination ── */
+  .cat-pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 2.5rem; flex-wrap: wrap; }
+  .pag-btn {
+    width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--sand-dark); background: #fff; color: #4A3D30; font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .pag-btn:hover { border-color: var(--gold); background: var(--sand); }
+  .pag-btn.active { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .pag-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+  /* ── Empty ── */
+  .cat-empty { text-align: center; padding: 4rem 1rem; }
+  .cat-empty i { font-size: 3rem; color: var(--sand-dark); display: block; margin-bottom: 1.25rem; }
+  .cat-empty h3 { font-family: 'Playfair Display',serif; font-size: 1.4rem; font-weight: 900; color: #8A7A68; margin-bottom: 0.5rem; }
+  .cat-empty p { font-size: 0.9rem; color: #8A7A68; }
+
+  /* ── Sidebar ── */
+  .cat-sidebar { position: sticky; top: 2rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  @media (max-width: 960px) { .cat-sidebar { position: static; } }
+  .cat-scard { background: #fff; border-radius: 18px; border: 1.5px solid var(--sand-dark); padding: 1.4rem; }
+  .cat-scard-dark { background: var(--ink); border-color: rgba(201,151,58,0.2); }
+  .cat-scard-title { font-family: 'Playfair Display',serif; font-size: 0.95rem; font-weight: 900; color: var(--ink); margin-bottom: 0.9rem; display: flex; align-items: center; gap: 8px; }
+  .cat-scard-dark .cat-scard-title { color: #fff; }
+  .cat-scard-title::before { content: ''; width: 3px; height: 0.85rem; background: var(--gold); border-radius: 2px; }
+
+  /* About card */
+  .cat-about-stat { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0; border-bottom: 1px solid var(--sand-dark); font-size: 0.83rem; }
+  .cat-about-stat:last-child { border: none; }
+  .cat-about-stat-key { color: #6B6052; }
+  .cat-about-stat-val { font-weight: 700; color: var(--ink); }
+
+  /* Categories list */
+  .cat-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3px; }
+  .cat-list-item a {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.55rem 0.75rem; border-radius: 9px; font-size: 0.83rem;
+    color: #5A4A38; text-decoration: none; transition: all 0.2s; font-weight: 500;
+  }
+  .cat-list-item a:hover { background: rgba(201,151,58,0.1); color: var(--gold); }
+  .cat-list-item.active-cat a { background: rgba(201,151,58,0.12); color: var(--gold); font-weight: 700; }
+  .cat-count-badge { font-size: 0.7rem; background: var(--sand); color: #8A7A68; border-radius: 100px; padding: 1px 8px; font-weight: 600; }
+
+  /* Tags */
+  .cat-tags-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cat-tag { background: var(--sand); border: 1.5px solid var(--sand-dark); color: #5A4A38; padding: 4px 11px; border-radius: 100px; font-size: 0.78rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+  .cat-tag:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+
+  /* Dark card content */
+  .cat-scard-dark .cat-about-stat-key { color: rgba(255,255,255,0.45); }
+  .cat-scard-dark .cat-about-stat-val { color: rgba(255,255,255,0.85); }
+  .cat-scard-dark .cat-about-stat { border-color: rgba(255,255,255,0.08); }
+</style>
+
+<div class="cat-page">
+
+  <!-- ── BREADCRUMB ── -->
+  <div class="cat-breadcrumb">
+    <div class="cat-wrapper">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><span class="sep">/</span></li>
+        <li><a href="{% url 'blog:index' %}">Blog</a></li>
+        <li><span class="sep">/</span></li>
+        <li class="cur">{{ category.name }}</li>
+      </ol>
     </div>
-</section>
+  </div>
 
-<!-- Category Content -->
-<section class="category-content py-5">
-    <div class="container">
-        <div class="row">
-            <!-- Posts Column -->
-            <div class="col-lg-8">
-                <nav aria-label="breadcrumb" class="mb-4">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                        <li class="breadcrumb-item"><a href="{% url 'blog:index' %}">Blog</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
-                    </ol>
-                </nav>
-
-                {% if posts %}
-                <div class="posts-list">
-                    {% for post in posts %}
-                    <article class="post-item mb-5 pb-4 border-bottom">
-                        <div class="row">
-                            {% if post.featured_image %}
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <a href="{{ post.get_absolute_url }}">
-                                    <img src="{{ post.featured_image.url }}" 
-                                         alt="{{ post.image_alt|default:post.title }}"
-                                         class="img-fluid rounded-3"
-                                         style="height: 150px; width: 100%; object-fit: cover;">
-                                </a>
-                            </div>
-                            <div class="col-md-8">
-                            {% else %}
-                            <div class="col-12">
-                            {% endif %}
-                                <div class="post-meta small text-muted mb-2">
-                                    <span><i class="far fa-calendar-alt me-1"></i> {{ post.published_date|date:"F j, Y" }}</span>
-                                    <span class="ms-3"><i class="far fa-user me-1"></i> {{ post.author.get_full_name|default:post.author.username }}</span>
-                                    <span class="ms-3"><i class="far fa-clock me-1"></i> {{ post.reading_time }} min read</span>
-                                </div>
-                                <h3 class="h5">
-                                    <a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">
-                                        {{ post.title }}
-                                    </a>
-                                </h3>
-                                <p class="text-muted small">{{ post.excerpt|truncatewords:25 }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
-                                        Read More <i class="fas fa-arrow-right ms-2"></i>
-                                    </a>
-                                    <div class="post-stats small text-muted">
-                                        <span><i class="far fa-eye me-1"></i> {{ post.views_count }}</span>
-                                        <span class="ms-3"><i class="far fa-comment me-1"></i> {{ post.comments.count }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                    {% endfor %}
-                </div>
-
-                <!-- Pagination -->
-                {% if is_paginated %}
-                <nav aria-label="Page navigation" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        {% endif %}
-
-                        {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                {% endif %}
-
-                {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
-                    <h3>No posts yet</h3>
-                    <p class="text-muted">Check back soon for new posts in this category.</p>
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Sidebar -->
-            <div class="col-lg-4">
-                <div class="sidebar">
-                    <!-- Category Info -->
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">About this Category</h5>
-                            <p class="card-text text-muted">{{ category.description|default:"No description available." }}</p>
-                            <div class="d-flex justify-content-between">
-                                <span>Total Posts:</span>
-                                <span class="fw-bold">{{ posts.paginator.count|default:category.get_post_count }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Other Categories -->
-                    {% get_categories as categories %}
-                    {% if categories %}
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">Other Categories</h5>
-                            <ul class="list-unstyled">
-                                {% for cat in categories %}
-                                {% if cat.id != category.id %}
-                                <li class="mb-2">
-                                    <a href="{{ cat.get_absolute_url }}" class="text-decoration-none d-flex justify-content-between">
-                                        <span>{{ cat.name }}</span>
-                                        <span class="badge bg-light text-dark">{{ cat.get_post_count }}</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Popular Tags -->
-                    {% get_popular_tags as tags %}
-                    {% if tags %}
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Popular Tags</h5>
-                            <div class="d-flex flex-wrap gap-2">
-                                {% for tag in tags %}
-                                <a href="{% url 'blog:tag' tag.slug %}" class="badge bg-light text-dark text-decoration-none p-2">
-                                    {{ tag.name }}
-                                </a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+  <!-- ── HERO ── -->
+  <section class="cat-hero">
+    <div class="cat-hero-grid"></div>
+    <div class="cat-hero-inner">
+      <div class="cat-hero-img-wrap">
+        {% if category.image %}
+        <img src="{{ category.image.url }}" alt="{{ category.name }}" class="cat-hero-img">
+        {% else %}
+        <i class="fas fa-folder-open cat-hero-icon"></i>
+        {% endif %}
+      </div>
+      <div class="cat-badge"><i class="fas fa-tag"></i> Category</div>
+      <h1>{{ category.name }}</h1>
+      {% if category.description %}
+      <p>{{ category.description }}</p>
+      {% endif %}
+      <div class="cat-post-count">
+        <i class="fas fa-newspaper"></i>
+        {{ posts.paginator.count|default:category.get_post_count }} articles in this category
+      </div>
     </div>
-</section>
+  </section>
+
+  <!-- ── BODY ── -->
+  <div class="cat-body">
+    <div class="cat-wrapper">
+      <div class="cat-layout">
+
+        <!-- Posts Column -->
+        <main>
+
+          <!-- Sort Bar -->
+          <div class="cat-sort-bar">
+            <span class="cat-sort-label">
+              Showing <strong>{{ posts.paginator.count|default:category.get_post_count }}</strong> articles
+            </span>
+            <select class="cat-sort-select" onchange="window.location='?sort='+this.value">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="popular">Most Popular</option>
+            </select>
+          </div>
+
+          <!-- Post Items -->
+          {% if posts %}
+          <div class="cat-post-list">
+            {% for post in posts %}
+            <article class="cat-post-item">
+              <a href="{{ post.get_absolute_url }}" class="cat-post-img-link">
+                <div class="cat-post-img-wrap">
+                  {% if post.featured_image %}
+                  <img src="{{ post.featured_image.url }}" alt="{{ post.image_alt|default:post.title }}" class="cat-post-img">
+                  {% else %}
+                  <div class="cat-post-img-placeholder"><i class="fas fa-feather-alt"></i></div>
+                  {% endif %}
+                </div>
+              </a>
+
+              <div class="cat-post-body">
+                <div class="cat-post-meta">
+                  <span><i class="far fa-calendar-alt"></i> {{ post.published_date|date:"F j, Y" }}</span>
+                  <span><i class="far fa-clock"></i> {{ post.reading_time }} min read</span>
+                </div>
+                <h3 class="cat-post-title">
+                  <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                </h3>
+                <p class="cat-post-excerpt">{{ post.excerpt|truncatewords:28 }}</p>
+                <div class="cat-post-footer">
+                  <div class="cat-post-author">
+                    <i class="fas fa-user-circle cat-post-author-icon"></i>
+                    {{ post.author.get_full_name|default:post.author.username }}
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="cat-post-stats">
+                      <span><i class="far fa-eye"></i> {{ post.views_count }}</span>
+                      <span><i class="far fa-comment"></i> {{ post.comments.count }}</span>
+                    </div>
+                    <a href="{{ post.get_absolute_url }}" class="btn-read-more">
+                      Read <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+
+          <!-- Pagination -->
+          {% if is_paginated %}
+          <nav class="cat-pagination" aria-label="Page navigation">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pag-btn">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+            {% else %}
+            <span class="pag-btn disabled"><i class="fas fa-chevron-left"></i></span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+              <span class="pag-btn active">{{ num }}</span>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <a href="?page={{ num }}" class="pag-btn">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pag-btn">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+            {% else %}
+            <span class="pag-btn disabled"><i class="fas fa-chevron-right"></i></span>
+            {% endif %}
+          </nav>
+          {% endif %}
+
+          {% else %}
+          <div class="cat-empty">
+            <i class="fas fa-folder-open"></i>
+            <h3>No Articles Yet</h3>
+            <p>There are no published articles in this category yet. Check back soon!</p>
+          </div>
+          {% endif %}
+
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="cat-sidebar">
+
+          <!-- About this category -->
+          <div class="cat-scard cat-scard-dark">
+            <div class="cat-scard-title">About this Category</div>
+            {% if category.description %}
+            <p style="font-size:0.83rem;color:rgba(255,255,255,0.5);line-height:1.65;margin-bottom:1rem;">{{ category.description }}</p>
+            {% endif %}
+            <div>
+              <div class="cat-about-stat">
+                <span class="cat-about-stat-key">Total Articles</span>
+                <span class="cat-about-stat-val">{{ posts.paginator.count|default:category.get_post_count }}</span>
+              </div>
+              <div class="cat-about-stat">
+                <span class="cat-about-stat-key">Category</span>
+                <span class="cat-about-stat-val">{{ category.name }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other Categories -->
+          {% get_categories as categories %}
+          {% if categories %}
+          <div class="cat-scard">
+            <div class="cat-scard-title">All Categories</div>
+            <ul class="cat-list">
+              {% for cat in categories %}
+              <li class="cat-list-item {% if cat.id == category.id %}active-cat{% endif %}">
+                <a href="{{ cat.get_absolute_url }}">
+                  <span>{{ cat.name }}</span>
+                  <span class="cat-count-badge">{{ cat.get_post_count }}</span>
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+          <!-- Popular Tags -->
+          {% get_popular_tags as tags %}
+          {% if tags %}
+          <div class="cat-scard">
+            <div class="cat-scard-title">Popular Tags</div>
+            <div class="cat-tags-cloud">
+              {% for tag in tags %}
+              <a href="{% url 'blog:tag' tag.slug %}" class="cat-tag">{{ tag.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Back to Blog -->
+          <a href="{% url 'blog:index' %}" style="display:flex;align-items:center;gap:8px;padding:0.85rem 1rem;background:var(--sand);border:1.5px solid var(--sand-dark);border-radius:14px;color:#4A3D30;font-weight:600;font-size:0.85rem;text-decoration:none;transition:all 0.2s;">
+            <i class="fas fa-arrow-left" style="color:var(--gold);"></i> All Blog Posts
+          </a>
+
+        </aside>
+
+      </div>
+    </div>
+  </div>
+
+</div>
 {% endblock %}

@@ -108,7 +108,7 @@ class ArchiveEntryAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Statistics', {
-            'fields': ('views_count', 'download_count', 'published_date', 'updated_date', 'created_at'),
+            'fields': ('views_count', 'download_count', 'published_date', 'created_at'),  # REMOVED 'updated_date'
             'classes': ('collapse',)
         }),
         ('URL', {

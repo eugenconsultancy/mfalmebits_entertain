@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from taggit.managers import TaggableManager
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from utils.seo import SEOMetaGenerator
 from utils.slug_utils import generate_seo_slug
 from utils.image_optimizer import optimize_uploaded_image
@@ -51,8 +51,7 @@ class ArchiveEntry(models.Model):
     slug = models.SlugField(unique=True, max_length=250)
     theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
     
-    # Content
-    content = RichTextField()
+    content = CKEditor5Field('Content', config_name='extends')
     excerpt = models.TextField(max_length=300, help_text="Short summary for listings")
     
     # Media

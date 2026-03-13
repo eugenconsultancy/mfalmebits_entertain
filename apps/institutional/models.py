@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from utils.seo import SEOMetaGenerator
 from utils.slug_utils import generate_seo_slug
 import uuid
@@ -20,7 +20,7 @@ class LicensingPlan(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     plan_type = models.CharField(max_length=20, choices=PLAN_TYPES)
-    description = RichTextField()
+    description = CKEditor5Field('Description', config_name='extends')
     short_description = models.CharField(max_length=200)
     
     # Pricing
@@ -267,7 +267,7 @@ class ResourceAccess(models.Model):
 class InstitutionalBrochure(models.Model):
     """Downloadable brochures"""
     title = models.CharField(max_length=200)
-    description = RichTextField()
+    description = CKEditor5Field('Description', config_name='extends')
     file = models.FileField(upload_to='institutional/brochures/')
     cover_image = models.ImageField(upload_to='institutional/brochures/covers/')
     language = models.CharField(max_length=50, default='English')
