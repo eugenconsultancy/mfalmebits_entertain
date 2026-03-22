@@ -12,18 +12,12 @@ DEBUG = False
 
 # Security
 SECRET_KEY = config('DJANGO_SECRET_KEY')
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '.onrender.com',  # Allow all Render subdomains
-    'mfalmebits-entertain.onrender.com',
-]
+
+# Read ALLOWED_HOSTS from environment variable or use defaults
+ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='localhost,127.0.0.1,.onrender.com').split(',')
 
 # CSRF Trusted Origins
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.onrender.com',
-    'https://mfalmebits-entertain.onrender.com',
-]
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.onrender.com').split(',')
 
 # Database - PostgreSQL on Render
 DATABASES = {
