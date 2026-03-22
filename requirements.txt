@@ -53,11 +53,11 @@ django-cacheops==7.0.2
 django-jazzmin==2.6.0
 django-admin-tools==0.9.0
 django-robots==1.0.0
-django-import-export==4.3.0  # ADDED - Required for import_export app
+django-import-export==4.3.0
 
-# Admin Filters & Range Filter
-django-admin-listfilter-dropdown==1.0.3  # ADDED - For django_admin_listfilter_dropdown
-django-rangefilter==1.1.1  # ADDED - For rangefilter
+# Admin Filters (CORRECTED PACKAGE NAMES)
+django-admin-list-filters==1.1.0  # CORRECTED - replaces django-admin-listfilter-dropdown
+django-admin-rangefilter==0.10.0  # CORRECTED - replaces django-rangefilter
 
 # Development Tools
 django-debug-toolbar==4.2

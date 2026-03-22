@@ -55,9 +55,10 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'corsheaders',
     'storages',
-    'import_export',  # REQUIRES django-import-export in requirements
-    'django_admin_listfilter_dropdown',  # REQUIRES django-admin-listfilter-dropdown
-    'rangefilter',  # REQUIRES django-rangefilter
+    'import_export',
+    # CORRECTED APP NAMES - these match the packages above
+    'admin_list_filters',        # For django-admin-list-filters
+    'rangefilter',               # For django-admin-rangefilter
 ]
 
 LOCAL_APPS = [
@@ -98,7 +99,6 @@ ROOT_URLCONF = 'core.urls'
 
 # ─────────────────────────────────────────────────────────────────────
 # TEMPLATES
-# Clean configuration with standard Django loaders
 # ─────────────────────────────────────────────────────────────────────
 TEMPLATES = [
     {
@@ -106,7 +106,7 @@ TEMPLATES = [
         'DIRS': [
             BASE_DIR / 'templates',
         ],
-        'APP_DIRS': True,  # Standard template loading
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -123,7 +123,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # ─────────────────────────────────────────────────────────────────────
-# DATABASE  (overridden per environment in development.py / production.py)
+# DATABASE
 # ─────────────────────────────────────────────────────────────────────
 DATABASES = {
     'default': {
@@ -168,7 +168,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = False   # Set True in production after collectstatic
+COMPRESS_OFFLINE = False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -241,9 +241,8 @@ LOGGING = {
 }
 
 # ─────────────────────────────────────────────────────────────────────
-# CKEDITOR 5 (MODERN CONFIGURATION)
+# CKEDITOR 5
 # ─────────────────────────────────────────────────────────────────────
-# Path for uploaded files (Relative to MEDIA_ROOT)
 CKEDITOR_5_UPLOAD_FILE_VIEW_NAME = "ckeditor_5_upload_file"
 CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
