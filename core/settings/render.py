@@ -13,14 +13,16 @@ DEBUG = False
 # Security
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 ALLOWED_HOSTS = [
-    '*.onrender.com',
     'localhost',
     '127.0.0.1',
+    '.onrender.com',  # Allow all Render subdomains
+    'mfalmebits-entertain.onrender.com',
 ]
 
 # CSRF Trusted Origins
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
+    'https://mfalmebits-entertain.onrender.com',
 ]
 
 # Database - PostgreSQL on Render
@@ -32,17 +34,11 @@ DATABASES = {
     )
 }
 
-# Static files - Use simpler storage (no manifest validation)
+# Static files - Simple storage
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [BASE_DIR / 'static']
-
-# FIX: Use simple storage instead of manifest storage to avoid source map errors
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# Alternative: If you want to keep manifest storage, uncomment and add this:
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# WHITENOISE_MANIFEST_STRICT = False  # This would ignore missing files
 
 # Media files
 MEDIA_URL = '/media/'
