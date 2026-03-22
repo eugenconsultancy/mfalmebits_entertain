@@ -1,7 +1,7 @@
 /**
  * MfalmeBits - Enhanced Main JavaScript
  * High-performance core with advanced appearance functionalities
- * Version 2.0 - Optimized & Feature-Rich
+ * Version 2.1 - Fixed scrollY undefined error
  */
 
 (function() {
@@ -65,30 +65,35 @@
     };
 
     // ==========================================================================
-    // Enhanced Navbar with Smooth Scroll Effect
+    // Enhanced Navbar with Smooth Scroll Effect (FIXED)
     // ==========================================================================
 
-    const handleNavbarScroll = throttle(smoothAnimation(() => {
-        const scrollY = window.scrollY || window.pageYOffset;
+    // Create a closure to maintain scroll position state
+    const createNavbarScrollHandler = () => {
+        let lastScrollY = 0;
         
-        if (scrollY > 50) {
-            DOM.navbar?.classList.add('navbar-scrolled');
-            DOM.navbar?.style.setProperty('--scroll-opacity', Math.min(scrollY / 300, 1));
-        } else {
-            DOM.navbar?.classList.remove('navbar-scrolled');
-            DOM.navbar?.style.setProperty('--scroll-opacity', 0);
-        }
+        return throttle(smoothAnimation(() => {
+            const scrollY = window.scrollY || window.pageYOffset;
+            
+            if (scrollY > 50) {
+                DOM.navbar?.classList.add('navbar-scrolled');
+                DOM.navbar?.style.setProperty('--scroll-opacity', Math.min(scrollY / 300, 1));
+            } else {
+                DOM.navbar?.classList.remove('navbar-scrolled');
+                DOM.navbar?.style.setProperty('--scroll-opacity', 0);
+            }
 
-        // Hide navbar on scroll down, show on scroll up
-        if (scrollY > this.lastScrollY && scrollY > 100) {
-            DOM.navbar?.classList.add('navbar-hidden');
-        } else {
-            DOM.navbar?.classList.remove('navbar-hidden');
-        }
-        this.lastScrollY = scrollY;
-    }), 50);
+            // Hide navbar on scroll down, show on scroll up
+            if (scrollY > lastScrollY && scrollY > 100) {
+                DOM.navbar?.classList.add('navbar-hidden');
+            } else {
+                DOM.navbar?.classList.remove('navbar-hidden');
+            }
+            lastScrollY = scrollY;
+        }), 50);
+    };
 
-    handleNavbarScroll.lastScrollY = 0;
+    const handleNavbarScroll = createNavbarScrollHandler();
     window.addEventListener('scroll', handleNavbarScroll, { passive: true });
 
     // ==========================================================================
@@ -105,8 +110,12 @@
         const updateProgress = throttle(() => {
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight - windowHeight;
-            const scrolled = (window.scrollY / documentHeight) * 100;
-            DOM.progressBar.style.width = `${Math.min(scrolled, 100)}%`;
+            if (documentHeight > 0) {
+                const scrolled = (window.scrollY / documentHeight) * 100;
+                if (DOM.progressBar) {
+                    DOM.progressBar.style.width = `${Math.min(scrolled, 100)}%`;
+                }
+            }
         }, 50);
 
         window.addEventListener('scroll', updateProgress, { passive: true });
@@ -121,60 +130,68 @@
         const scrollY = window.scrollY || window.pageYOffset;
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight - windowHeight;
-        const progress = (scrollY / documentHeight) * 100;
-
-        if (scrollY > 300) {
-            DOM.backToTopBtn?.classList.add('show');
-            DOM.backToTopBtn?.style.setProperty('--progress', progress);
-        } else {
-            DOM.backToTopBtn?.classList.remove('show');
+        
+        if (DOM.backToTopBtn) {
+            if (scrollY > 300) {
+                DOM.backToTopBtn.classList.add('show');
+                if (documentHeight > 0) {
+                    const progress = (scrollY / documentHeight) * 100;
+                    DOM.backToTopBtn.style.setProperty('--progress', progress);
+                }
+            } else {
+                DOM.backToTopBtn.classList.remove('show');
+            }
         }
     }, 50);
 
     window.addEventListener('scroll', handleBackToTop, { passive: true });
 
-    DOM.backToTopBtn?.addEventListener('click', (e) => {
-        e.preventDefault();
-        const duration = 800;
-        const start = window.scrollY;
-        const startTime = performance.now();
+    if (DOM.backToTopBtn) {
+        DOM.backToTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const duration = 800;
+            const start = window.scrollY;
+            const startTime = performance.now();
 
-        function animation(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Easing function for smooth animation
-            const easeInOutCubic = progress < 0.5 
-                ? 4 * progress * progress * progress 
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-            
-            window.scrollTo(0, start * (1 - easeInOutCubic));
-            
-            if (progress < 1) {
-                requestAnimationFrame(animation);
+            function animation(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function for smooth animation
+                const easeInOutCubic = progress < 0.5 
+                    ? 4 * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                window.scrollTo(0, start * (1 - easeInOutCubic));
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animation);
+                }
             }
-        }
-        
-        requestAnimationFrame(animation);
-    });
+            
+            requestAnimationFrame(animation);
+        });
+    }
 
     // ==========================================================================
     // Enhanced Mobile Menu with Animations
     // ==========================================================================
 
-    DOM.mobileMenuBtn?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = DOM.mobileMenu?.classList.toggle('show');
-        DOM.mobileMenuBtn.classList.toggle('active');
-        
-        // Prevent body scroll when menu is open
-        if (isOpen) {
-            DOM.body.style.overflow = 'hidden';
-            animateMenuItems();
-        } else {
-            DOM.body.style.overflow = '';
-        }
-    });
+    if (DOM.mobileMenuBtn) {
+        DOM.mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = DOM.mobileMenu?.classList.toggle('show');
+            DOM.mobileMenuBtn.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            if (isOpen) {
+                DOM.body.style.overflow = 'hidden';
+                animateMenuItems();
+            } else {
+                DOM.body.style.overflow = '';
+            }
+        });
+    }
 
     function animateMenuItems() {
         const items = DOM.mobileMenu?.querySelectorAll('.nav-link');
@@ -208,6 +225,8 @@
     document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
+            if (!href || href === '#') return;
+            
             const target = document.querySelector(href);
             
             if (target) {
@@ -441,14 +460,19 @@
                 });
 
                 if (response.ok) {
-                    new Toast('Form submitted successfully!', 'success');
+                    if (typeof Toast !== 'undefined') {
+                        new Toast('Form submitted successfully!', 'success');
+                    }
                     this.form.reset();
                     this.inputs.forEach(input => input.classList.remove('success'));
                 } else {
                     throw new Error('Submission failed');
                 }
             } catch (error) {
-                new Toast('Failed to submit form. Please try again.', 'error');
+                if (typeof Toast !== 'undefined') {
+                    new Toast('Failed to submit form. Please try again.', 'error');
+                }
+                console.error('Form submission error:', error);
             } finally {
                 this.setLoadingState(false);
             }
@@ -503,7 +527,7 @@
             }
         });
     }, {
-        rootMargin: '50px', // Start loading before element enters viewport
+        rootMargin: '50px',
         threshold: 0.01
     });
 
@@ -544,10 +568,14 @@
                     this.classList.remove('success');
                 }, 2000);
                 
-                new Toast('Copied to clipboard!', 'success', 1500);
+                if (typeof Toast !== 'undefined') {
+                    new Toast('Copied to clipboard!', 'success', 1500);
+                }
             } catch (err) {
                 console.error('Failed to copy:', err);
-                new Toast('Failed to copy to clipboard', 'error');
+                if (typeof Toast !== 'undefined') {
+                    new Toast('Failed to copy to clipboard', 'error');
+                }
             }
         });
     });
@@ -681,7 +709,7 @@
     window.Toast = Toast;
 
     // ==========================================================================
-    // Dark Mode Toggle
+    // Dark Mode Toggle (with error handling)
     // ==========================================================================
 
     class DarkModeManager {
@@ -715,16 +743,23 @@
             this.applyTheme();
             localStorage.setItem('theme', this.theme);
             
-            new Toast(`${this.theme === 'dark' ? 'Dark' : 'Light'} mode activated`, 'info', 1500);
+            if (typeof Toast !== 'undefined') {
+                new Toast(`${this.theme === 'dark' ? 'Dark' : 'Light'} mode activated`, 'info', 1500);
+            }
         }
 
         applyTheme() {
             document.documentElement.setAttribute('data-theme', this.theme);
-            DOM.themeToggle?.classList.toggle('dark', this.theme === 'dark');
+            if (DOM.themeToggle) {
+                DOM.themeToggle.classList.toggle('dark', this.theme === 'dark');
+            }
         }
     }
 
-    new DarkModeManager();
+    // Initialize dark mode (only if not already present)
+    if (!document.querySelector('.theme-toggle')) {
+        new DarkModeManager();
+    }
 
     // ==========================================================================
     // Scroll Animations (Fade In on Scroll)
@@ -754,7 +789,7 @@
         constructor(options = {}) {
             this.title = options.title || '';
             this.content = options.content || '';
-            this.size = options.size || 'medium'; // small, medium, large, fullscreen
+            this.size = options.size || 'medium';
             this.closeOnBackdrop = options.closeOnBackdrop !== false;
             this.showCloseBtn = options.showCloseBtn !== false;
             this.onClose = options.onClose || null;
@@ -896,7 +931,7 @@
                 contents.forEach(c => c.classList.remove('active'));
                 
                 tab.classList.add('active');
-                contents[index]?.classList.add('active');
+                if (contents[index]) contents[index].classList.add('active');
             });
         });
     });
@@ -1008,26 +1043,28 @@
             searchInput?.focus();
         },
         'ctrl+/': () => {
-            new Modal({
-                title: 'Keyboard Shortcuts',
-                content: `
-                    <div class="shortcuts-list">
-                        <div class="shortcut-item">
-                            <kbd>Ctrl</kbd> + <kbd>K</kbd>
-                            <span>Focus Search</span>
+            if (typeof Modal !== 'undefined') {
+                new Modal({
+                    title: 'Keyboard Shortcuts',
+                    content: `
+                        <div class="shortcuts-list">
+                            <div class="shortcut-item">
+                                <kbd>Ctrl</kbd> + <kbd>K</kbd>
+                                <span>Focus Search</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Ctrl</kbd> + <kbd>/</kbd>
+                                <span>Show Shortcuts</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <kbd>Esc</kbd>
+                                <span>Close Modal</span>
+                            </div>
                         </div>
-                        <div class="shortcut-item">
-                            <kbd>Ctrl</kbd> + <kbd>/</kbd>
-                            <span>Show Shortcuts</span>
-                        </div>
-                        <div class="shortcut-item">
-                            <kbd>Esc</kbd>
-                            <span>Close Modal</span>
-                        </div>
-                    </div>
-                `,
-                size: 'small'
-            });
+                    `,
+                    size: 'small'
+                });
+            }
         }
     };
 
@@ -1044,15 +1081,18 @@
     // ==========================================================================
 
     if ('PerformanceObserver' in window) {
-        const perfObserver = new PerformanceObserver((list) => {
-            list.getEntries().forEach((entry) => {
-                if (entry.entryType === 'largest-contentful-paint') {
-                    console.log('LCP:', entry.renderTime || entry.loadTime);
-                }
+        try {
+            const perfObserver = new PerformanceObserver((list) => {
+                list.getEntries().forEach((entry) => {
+                    if (entry.entryType === 'largest-contentful-paint') {
+                        console.log('LCP:', entry.renderTime || entry.loadTime);
+                    }
+                });
             });
-        });
-        
-        perfObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+            perfObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+        } catch (e) {
+            console.debug('PerformanceObserver not supported');
+        }
     }
 
     // ==========================================================================
@@ -1067,7 +1107,7 @@
 
     window.addEventListener('load', () => {
         document.body.classList.add('loaded');
-        console.log('MfalmeBits Enhanced v2.0 - Ready! 🚀');
+        console.log('MfalmeBits Enhanced v2.1 - Ready! 🚀');
     });
 
     // ==========================================================================
@@ -1075,7 +1115,6 @@
     // ==========================================================================
 
     if (document.querySelector('.dashboard-content')) {
-        // Add dashboard-specific enhancements
         console.log('Dashboard mode activated');
     }
 
