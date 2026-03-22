@@ -32,16 +32,23 @@ DATABASES = {
     )
 }
 
-# Static files - WhiteNoise
+# Static files - Use simpler storage (no manifest validation)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# FIX: Use simple storage instead of manifest storage to avoid source map errors
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+# Alternative: If you want to keep manifest storage, uncomment and add this:
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WHITENOISE_MANIFEST_STRICT = False  # This would ignore missing files
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Cache (memory cache for free tier)
+# Cache
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
