@@ -1,45 +1,309 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %}Login - MfalmeBits{% endblock %}
+
 {% block content %}
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
-  .login-wrap{font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#07080d;position:relative;overflow:hidden;}
-  .login-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(255,160,50,.07) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 30%,rgba(255,100,80,.06) 0%,transparent 55%);pointer-events:none;}
-  .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black,transparent);pointer-events:none;}
-  .card{position:relative;width:100%;max-width:420px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:48px 40px;backdrop-filter:blur(24px);box-shadow:0 32px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.07);animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-  .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,160,50,.1);border:1px solid rgba(255,160,50,.2);border-radius:99px;padding:4px 14px;font-size:12px;color:#ffa032;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-bottom:20px;}
-  .badge span{width:6px;height:6px;background:#ffa032;border-radius:50%;animation:pulse 2s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-  h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1;margin:0 0 6px;}
-  .sub{font-size:.9rem;color:rgba(255,255,255,.38);margin-bottom:32px;}
-  .field{position:relative;margin-bottom:18px;}
-  .field label{display:block;font-size:.75rem;font-weight:500;color:rgba(255,255,255,.45);letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;transition:color .2s;}
-  .field:focus-within label{color:#ffa032;}
-  .field input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:13px 44px 13px 16px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;transition:border-color .2s,background .2s,box-shadow .2s;box-sizing:border-box;}
-  .field input:focus{border-color:rgba(255,160,50,.5);background:rgba(255,160,50,.04);box-shadow:0 0 0 3px rgba(255,160,50,.08);}
-  .field .icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.25);cursor:pointer;transition:color .2s;display:flex;align-items:center;margin-top:10px;}
-  .field .icon:hover{color:#ffa032;}
-  .err{color:#ff6b6b;font-size:.78rem;margin-top:6px;}
-  .err-box{background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.2);border-radius:10px;padding:12px 16px;color:#ff8080;font-size:.85rem;margin-bottom:16px;}
-  .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
-  .remember{display:flex;align-items:center;gap:8px;cursor:pointer;}
-  .remember input{accent-color:#ffa032;width:15px;height:15px;cursor:pointer;}
-  .remember span{font-size:.83rem;color:rgba(255,255,255,.45);}
-  .forgot{font-size:.83rem;color:#ffa032;text-decoration:none;opacity:.8;transition:opacity .2s;}
-  .forgot:hover{opacity:1;}
-  .btn{width:100%;padding:14px;background:linear-gradient(135deg,#ffa032,#ff6b32);border:none;border-radius:12px;color:#fff;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.3px;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 24px rgba(255,160,50,.25);}
-  .btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);opacity:0;transition:opacity .2s;}
-  .btn:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(255,160,50,.35);}
-  .btn:hover::before{opacity:1;}
-  .btn:active{transform:translateY(0);}
-  .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:rgba(255,255,255,.15);font-size:.75rem;}
-  .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07);}
-  .footer-txt{text-align:center;font-size:.85rem;color:rgba(255,255,255,.35);}
-  .footer-txt a{color:#ffa032;text-decoration:none;font-weight:500;opacity:.9;transition:opacity .2s;}
-  .footer-txt a:hover{opacity:1;}
-  .corner{position:absolute;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(255,160,50,.15),transparent);top:-20px;right:-20px;pointer-events:none;}
+  
+  .login-wrap {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #07080d;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .login-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(255,160,50,.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 30%, rgba(255,100,80,.06) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+    pointer-events: none;
+  }
+  
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 48px 40px;
+    backdrop-filter: blur(24px);
+    box-shadow: 0 32px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07);
+    animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both;
+  }
+  
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,160,50,.1);
+    border: 1px solid rgba(255,160,50,.2);
+    border-radius: 99px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: #ffa032;
+    font-weight: 500;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  
+  .badge span {
+    width: 6px;
+    height: 6px;
+    background: #ffa032;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(.8); }
+  }
+  
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin: 0 0 6px;
+  }
+  
+  .sub {
+    font-size: .9rem;
+    color: rgba(255,255,255,.38);
+    margin-bottom: 32px;
+  }
+  
+  .field {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .field label {
+    display: block;
+    font-size: .75rem;
+    font-weight: 500;
+    color: rgba(255,255,255,.45);
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    transition: color .2s;
+  }
+  
+  .field:focus-within label {
+    color: #ffa032;
+  }
+  
+  .field input {
+    width: 100%;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    padding: 13px 44px 13px 16px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+    box-sizing: border-box;
+  }
+  
+  .field input:focus {
+    border-color: rgba(255,160,50,.5);
+    background: rgba(255,160,50,.04);
+    box-shadow: 0 0 0 3px rgba(255,160,50,.08);
+  }
+  
+  .field .icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,.25);
+    cursor: pointer;
+    transition: color .2s;
+    display: flex;
+    align-items: center;
+    margin-top: 0;
+  }
+  
+  .field .icon:hover {
+    color: #ffa032;
+  }
+  
+  .err {
+    color: #ff6b6b;
+    font-size: .78rem;
+    margin-top: 6px;
+  }
+  
+  .err-box {
+    background: rgba(255,80,80,.08);
+    border: 1px solid rgba(255,80,80,.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #ff8080;
+    font-size: .85rem;
+    margin-bottom: 16px;
+  }
+  
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  
+  .remember input {
+    accent-color: #ffa032;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+  .remember span {
+    font-size: .83rem;
+    color: rgba(255,255,255,.45);
+  }
+  
+  .forgot {
+    font-size: .83rem;
+    color: #ffa032;
+    text-decoration: none;
+    opacity: .8;
+    transition: opacity .2s;
+  }
+  
+  .forgot:hover {
+    opacity: 1;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #ffa032, #ff6b32);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 24px rgba(255,160,50,.25);
+  }
+  
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(255,160,50,.35);
+  }
+  
+  .btn:hover::before {
+    opacity: 1;
+  }
+  
+  .btn:active {
+    transform: translateY(0);
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    color: rgba(255,255,255,.15);
+    font-size: .75rem;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,.07);
+  }
+  
+  .footer-txt {
+    text-align: center;
+    font-size: .85rem;
+    color: rgba(255,255,255,.35);
+  }
+  
+  .footer-txt a {
+    color: #ffa032;
+    text-decoration: none;
+    font-weight: 500;
+    opacity: .9;
+    transition: opacity .2s;
+  }
+  
+  .footer-txt a:hover {
+    opacity: 1;
+  }
+  
+  .corner {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,160,50,.15), transparent);
+    top: -20px;
+    right: -20px;
+    pointer-events: none;
+  }
+  
+  @media (max-width: 480px) {
+    .card {
+      padding: 32px 24px;
+      margin: 16px;
+    }
+  }
 </style>
 
 <div class="login-wrap">
@@ -51,33 +315,73 @@
       <h1>Welcome<br>Back.</h1>
       <p class="sub">Access your MfalmeBits account</p>
     </div>
+    
     <form method="post">
       {% csrf_token %}
-      {% if form.non_field_errors %}<div class="err-box">{{ form.non_field_errors }}</div>{% endif %}
+      
+      {% if form.non_field_errors %}
+        <div class="err-box">{{ form.non_field_errors }}</div>
+      {% endif %}
+      
       <div class="field">
-        <label>Username or Email</label>
+        <label for="{{ form.username.id_for_label }}">Username or Email</label>
         {{ form.username }}
-        <span class="icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-        {% if form.username.errors %}<p class="err">{{ form.username.errors.0 }}</p>{% endif %}
+        <span class="icon" aria-hidden="true">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+        </span>
+        {% if form.username.errors %}
+          <p class="err">{{ form.username.errors.0 }}</p>
+        {% endif %}
       </div>
+      
       <div class="field" id="pw-field">
-        <label>Password</label>
+        <label for="{{ form.password.id_for_label }}">Password</label>
         {{ form.password }}
-        <span class="icon" onclick="togglePw()" title="Show/hide password"><svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
-        {% if form.password.errors %}<p class="err">{{ form.password.errors.0 }}</p>{% endif %}
+        <span class="icon" onclick="togglePassword()" role="button" aria-label="Toggle password visibility" style="cursor: pointer;">
+          <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </span>
+        {% if form.password.errors %}
+          <p class="err">{{ form.password.errors.0 }}</p>
+        {% endif %}
       </div>
+      
       <div class="row">
-        <label class="remember">{{ form.remember_me }}<span>Remember me</span></label>
+        <label class="remember">
+          {{ form.remember_me }}
+          <span>Remember me</span>
+        </label>
         <a href="{% url 'accounts:password_reset_request' %}" class="forgot">Forgot password?</a>
       </div>
+      
       <button type="submit" class="btn">Log In →</button>
     </form>
+    
     <div class="divider">or</div>
-    <p class="footer-txt">No account? <a href="{% url 'accounts:register' %}">Create one free</a></p>
+    <p class="footer-txt">
+      No account? 
+      <a href="{% url 'accounts:register' %}">Create one free</a>
+    </p>
   </div>
 </div>
 
 <script>
-  function togglePw(){const i=document.querySelector('#pw-field input');const ic=document.getElementById('eye-icon');if(i.type==='password'){i.type='text';ic.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';}else{i.type='password';ic.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';}}
+  function togglePassword() {
+    const passwordInput = document.querySelector('#pw-field input');
+    const eyeIcon = document.getElementById('eye-icon');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    }
+  }
 </script>
 {% endblock %}

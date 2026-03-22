@@ -4,118 +4,435 @@
 {% block title %}Register - MfalmeBits{% endblock %}
 
 {% block content %}
-<section class="min-h-screen flex items-center justify-center py-16">
-    <div class="container mx-auto px-4">
-        <div class="max-w-2xl mx-auto">
-            <div class="glass p-8">
-                <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold">Create an Account</h1>
-                    <p class="text-gray-600 dark:text-gray-300 mt-2">Join MfalmeBits to access exclusive content and features</p>
-                </div>
-                
-                <form method="post" class="space-y-6">
-                    {% csrf_token %}
-                    
-                    {% if form.non_field_errors %}
-                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
-                        {{ form.non_field_errors }}
-                    </div>
-                    {% endif %}
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-2">First Name</label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                        
-                        <div>
-                            <label class="block mb-2">Last Name</label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block mb-2">Username</label>
-                        {{ form.username }}
-                        {% if form.username.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.username.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div>
-                        <label class="block mb-2">Email</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-2">Password</label>
-                            {{ form.password1 }}
-                            {% if form.password1.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.password1.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                        
-                        <div>
-                            <label class="block mb-2">Confirm Password</label>
-                            {{ form.password2 }}
-                            {% if form.password2.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.password2.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg text-sm">
-                        <p class="font-semibold mb-2">Password requirements:</p>
-                        <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                            <li>At least 8 characters long</li>
-                            <li>Must contain at least one uppercase letter</li>
-                            <li>Must contain at least one number</li>
-                            <li>Must contain at least one special character</li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <label class="flex items-center">
-                            {{ form.agree_terms }}
-                            <span class="ml-2 text-sm">
-                                I agree to the 
-                                <a href="#" class="text-primary hover:underline">Terms of Service</a> 
-                                and 
-                                <a href="#" class="text-primary hover:underline">Privacy Policy</a>
-                            </span>
-                        </label>
-                        {% if form.agree_terms.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.agree_terms.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <button type="submit" 
-                            class="w-full bg-primary text-white px-6 py-3 rounded-lg text-lg font-semibold 
-                                   hover:bg-opacity-90 transition-colors magnetic">
-                        Create Account
-                    </button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600 dark:text-gray-300">
-                        Already have an account? 
-                        <a href="{% url 'accounts:login' %}" class="text-primary hover:underline">
-                            Log in
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+  
+  .register-wrap {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #07080d;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+  }
+  
+  .register-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(255,160,50,.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 30%, rgba(255,100,80,.06) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+    pointer-events: none;
+  }
+  
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 48px 40px;
+    backdrop-filter: blur(24px);
+    box-shadow: 0 32px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07);
+    animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both;
+  }
+  
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,160,50,.1);
+    border: 1px solid rgba(255,160,50,.2);
+    border-radius: 99px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: #ffa032;
+    font-weight: 500;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  
+  .badge span {
+    width: 6px;
+    height: 6px;
+    background: #ffa032;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(.8); }
+  }
+  
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin: 0 0 6px;
+  }
+  
+  .sub {
+    font-size: .9rem;
+    color: rgba(255,255,255,.38);
+    margin-bottom: 32px;
+  }
+  
+  .field {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .field label {
+    display: block;
+    font-size: .75rem;
+    font-weight: 500;
+    color: rgba(255,255,255,.45);
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    transition: color .2s;
+  }
+  
+  .field:focus-within label {
+    color: #ffa032;
+  }
+  
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+    box-sizing: border-box;
+  }
+  
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: rgba(255,160,50,.5);
+    background: rgba(255,160,50,.04);
+    box-shadow: 0 0 0 3px rgba(255,160,50,.08);
+  }
+  
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .err {
+    color: #ff6b6b;
+    font-size: .78rem;
+    margin-top: 6px;
+  }
+  
+  .err-box {
+    background: rgba(255,80,80,.08);
+    border: 1px solid rgba(255,80,80,.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #ff8080;
+    font-size: .85rem;
+    margin-bottom: 16px;
+  }
+  
+  .requirements {
+    background: rgba(255,255,255,.02);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: .75rem;
+    color: rgba(255,255,255,.45);
+    margin-bottom: 20px;
+  }
+  
+  .requirements p {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,.6);
+  }
+  
+  .requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .requirements li {
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 4px;
+    font-size: .72rem;
+  }
+  
+  .requirements li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #ffa032;
+    font-size: 11px;
+  }
+  
+  .checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  
+  .checkbox-field input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: #ffa032;
+    cursor: pointer;
+  }
+  
+  .checkbox-field label {
+    font-size: .85rem;
+    color: rgba(255,255,255,.6);
+    cursor: pointer;
+    line-height: 1.4;
+  }
+  
+  .checkbox-field a {
+    color: #ffa032;
+    text-decoration: none;
+  }
+  
+  .checkbox-field a:hover {
+    text-decoration: underline;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #ffa032, #ff6b32);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 24px rgba(255,160,50,.25);
+  }
+  
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(255,160,50,.35);
+  }
+  
+  .btn:hover::before {
+    opacity: 1;
+  }
+  
+  .btn:active {
+    transform: translateY(0);
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    color: rgba(255,255,255,.15);
+    font-size: .75rem;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,.07);
+  }
+  
+  .footer-txt {
+    text-align: center;
+    font-size: .85rem;
+    color: rgba(255,255,255,.35);
+  }
+  
+  .footer-txt a {
+    color: #ffa032;
+    text-decoration: none;
+    font-weight: 500;
+    opacity: .9;
+    transition: opacity .2s;
+  }
+  
+  .footer-txt a:hover {
+    opacity: 1;
+  }
+  
+  .corner {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,160,50,.15), transparent);
+    top: -20px;
+    right: -20px;
+    pointer-events: none;
+  }
+  
+  @media (max-width: 640px) {
+    .card {
+      padding: 32px 24px;
+    }
+    .field-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+</style>
+
+<div class="register-wrap">
+  <div class="grid-bg"></div>
+  <div class="card">
+    <div class="corner"></div>
+    <div class="text-center" style="margin-bottom: 4px;">
+      <div class="badge"><span></span>Join The Movement</div>
+      <h1>Create<br>Account.</h1>
+      <p class="sub">Start your journey with MfalmeBits</p>
     </div>
-</section>
+    
+    <form method="post" novalidate>
+      {% csrf_token %}
+      
+      {% if form.non_field_errors %}
+        <div class="err-box">{{ form.non_field_errors }}</div>
+      {% endif %}
+      
+      <div class="field-row">
+        <div class="field">
+          <label for="{{ form.first_name.id_for_label }}">First Name</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}
+            <p class="err">{{ form.first_name.errors.0 }}</p>
+          {% endif %}
+        </div>
+        
+        <div class="field">
+          <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}
+            <p class="err">{{ form.last_name.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <p class="err">{{ form.username.errors.0 }}</p>
+        {% endif %}
+      </div>
+      
+      <div class="field">
+        <label for="{{ form.email.id_for_label }}">Email Address</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <p class="err">{{ form.email.errors.0 }}</p>
+        {% endif %}
+      </div>
+      
+      <div class="field-row">
+        <div class="field">
+          <label for="{{ form.password1.id_for_label }}">Password</label>
+          {{ form.password1 }}
+          {% if form.password1.errors %}
+            <p class="err">{{ form.password1.errors.0 }}</p>
+          {% endif %}
+        </div>
+        
+        <div class="field">
+          <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+          {{ form.password2 }}
+          {% if form.password2.errors %}
+            <p class="err">{{ form.password2.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="requirements">
+        <p>Password requirements:</p>
+        <ul>
+          <li>At least 8 characters long</li>
+          <li>Contains uppercase and lowercase letters</li>
+          <li>Contains at least one number</li>
+          <li>Contains at least one special character</li>
+        </ul>
+      </div>
+      
+      <div class="checkbox-field">
+        {{ form.agree_terms }}
+        <label for="{{ form.agree_terms.id_for_label }}">
+          I agree to the 
+          <a href="{% url 'home:terms_of_service' %}" target="_blank">Terms of Service</a> 
+          and 
+          <a href="{% url 'home:privacy_policy' %}" target="_blank">Privacy Policy</a>
+        </label>
+      </div>
+      {% if form.agree_terms.errors %}
+        <p class="err">{{ form.agree_terms.errors.0 }}</p>
+      {% endif %}
+      
+      <button type="submit" class="btn">Create Account →</button>
+    </form>
+    
+    <div class="divider">or</div>
+    <p class="footer-txt">
+      Already have an account? 
+      <a href="{% url 'accounts:login' %}">Log in</a>
+    </p>
+  </div>
+</div>
 {% endblock %}
