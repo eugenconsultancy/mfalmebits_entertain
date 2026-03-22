@@ -55,9 +55,8 @@ django-admin-tools==0.9.0
 django-robots==1.0.0
 django-import-export==4.3.0
 
-# Admin Filters (CORRECTED PACKAGE NAMES)
-django-admin-list-filters==1.1.0  # CORRECTED - replaces django-admin-listfilter-dropdown
-django-admin-rangefilter==0.10.0  # CORRECTED - replaces django-rangefilter
+# REMOVED: django-admin-list-filters (causing import error)
+# REMOVED: django-admin-rangefilter (causing import error)
 
 # Development Tools
 django-debug-toolbar==4.2

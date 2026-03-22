@@ -56,9 +56,8 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'storages',
     'import_export',
-    # CORRECTED APP NAMES - these match the packages above
-    'admin_list_filters',        # For django-admin-list-filters
-    'rangefilter',               # For django-admin-rangefilter
+    # REMOVED: admin_list_filters - causing import error
+    # REMOVED: rangefilter - causing import error
 ]
 
 LOCAL_APPS = [
