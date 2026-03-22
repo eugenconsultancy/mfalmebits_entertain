@@ -55,9 +55,9 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'corsheaders',
     'storages',
-    'import_export',
-    'django_admin_listfilter_dropdown',
-    'rangefilter',
+    'import_export',  # REQUIRES django-import-export in requirements
+    'django_admin_listfilter_dropdown',  # REQUIRES django-admin-listfilter-dropdown
+    'rangefilter',  # REQUIRES django-rangefilter
 ]
 
 LOCAL_APPS = [
@@ -245,7 +245,7 @@ LOGGING = {
 # ─────────────────────────────────────────────────────────────────────
 # Path for uploaded files (Relative to MEDIA_ROOT)
 CKEDITOR_5_UPLOAD_FILE_VIEW_NAME = "ckeditor_5_upload_file"
-CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage" # Or S3Boto3Storage for production
+CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 CKEDITOR_5_CONFIGS = {
     'default': {
@@ -288,15 +288,12 @@ CKEDITOR_5_CONFIGS = {
     },
 }
 
-# Optional: Add custom CSS to match your MfalmeBits frontend
 CKEDITOR_5_CUSTOM_CSS = 'admin/css/mfalmebits_admin.css'
 
 # ═════════════════════════════════════════════════════════════════════
-# JAZZMIN — Premium Django Admin UI (Exclusive Dashboard Provider)
-# Docs: https://django-jazzmin.readthedocs.io/
+# JAZZMIN — Premium Django Admin UI
 # ═════════════════════════════════════════════════════════════════════
 JAZZMIN_SETTINGS = {
-    # ── Branding ─────────────────────────────────────────────────────
     "site_title": "MfalmeBits Admin",
     "site_header": "MfalmeBits",
     "site_brand": "MfalmeBits",
@@ -305,118 +302,91 @@ JAZZMIN_SETTINGS = {
     "site_icon": "images/favicon.ico",
     "welcome_sign": "Welcome to MfalmeBits Dashboard",
     "copyright": "MfalmeBits © 2025",
-
-    # ── Search ───────────────────────────────────────────────────────
     "search_model": ["auth.user", "blog.Post", "archive.Entry"],
-
     "user_avatar": None,
-
-    # ── Top-bar links ─────────────────────────────────────────────────
     "topmenu_links": [
-        {"name": "Home",      "url": "admin:index",  "permissions": ["auth.view_user"]},
-        {"name": "View Site", "url": "/",            "new_window": True},
-        {"name": "Archive",   "url": "/archive/",    "new_window": True},
-        {"name": "Library",   "url": "/library/",    "new_window": True},
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "View Site", "url": "/", "new_window": True},
+        {"name": "Archive", "url": "/archive/", "new_window": True},
+        {"name": "Library", "url": "/library/", "new_window": True},
         {"model": "auth.User"},
     ],
-
-    # ── User-menu links ───────────────────────────────────────────────
     "usermenu_links": [
         {"name": "View Site", "url": "/", "new_window": True},
         {"model": "auth.user"},
     ],
-
-    # ── Sidebar ───────────────────────────────────────────────────────
-    "show_sidebar":        True,
+    "show_sidebar": True,
     "navigation_expanded": True,
-    "hide_apps":           [],
-    "hide_models":         [],
-
+    "hide_apps": [],
+    "hide_models": [],
     "order_with_respect_to": [
         "auth", "accounts", "home", "archive", "library",
         "blog", "newsletter", "institutional", "collaboration",
         "contact", "about",
     ],
-
-    # ── Icons (Font Awesome 5 free) ───────────────────────────────────
     "icons": {
-        "auth":                               "fas fa-users-cog",
-        "auth.user":                          "fas fa-user",
-        "auth.Group":                         "fas fa-users",
-        "archive.Entry":                      "fas fa-archive",
-        "archive.Theme":                      "fas fa-tags",
-        "archive.Collection":                  "fas fa-layer-group",
-        "library.Product":                     "fas fa-book",
-        "library.Category":                    "fas fa-th-large",
-        "blog.Post":                           "fas fa-newspaper",
-        "blog.Category":                       "fas fa-folder",
-        "blog.Tag":                            "fas fa-tag",
-        "newsletter.Subscriber":               "fas fa-envelope",
-        "newsletter.Campaign":                 "fas fa-paper-plane",
-        "home.HeroSlide":                      "fas fa-images",
-        "home.FeaturedEssay":                  "fas fa-star",
-        "institutional.Partner":               "fas fa-handshake",
-        "collaboration.Project":               "fas fa-project-diagram",
-        "contact.Message":                     "fas fa-comments",
-        "accounts.Profile":                    "fas fa-id-card",
-        "sites.Site":                          "fas fa-globe-africa",
-        "django_celery_beat.CrontabSchedule":  "fas fa-clock",
-        "django_celery_beat.PeriodicTask":     "fas fa-tasks",
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "archive.Entry": "fas fa-archive",
+        "archive.Theme": "fas fa-tags",
+        "library.Product": "fas fa-book",
+        "library.Category": "fas fa-th-large",
+        "blog.Post": "fas fa-newspaper",
+        "blog.Category": "fas fa-folder",
+        "blog.Tag": "fas fa-tag",
+        "newsletter.Subscriber": "fas fa-envelope",
+        "newsletter.Campaign": "fas fa-paper-plane",
+        "home.HeroSlide": "fas fa-images",
+        "institutional.Partner": "fas fa-handshake",
+        "collaboration.Project": "fas fa-project-diagram",
+        "contact.Message": "fas fa-comments",
+        "accounts.Profile": "fas fa-id-card",
+        "sites.Site": "fas fa-globe-africa",
+        "django_celery_beat.CrontabSchedule": "fas fa-clock",
+        "django_celery_beat.PeriodicTask": "fas fa-tasks",
     },
-
-    "default_icon_parents":  "fas fa-chevron-circle-right",
+    "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
-
     "related_modal_active": True,
-
-    # ── Custom assets (place files in static/admin/) ──────────────────
     "custom_css": "admin/css/mfalmebits_admin.css",
-    "custom_js":  "admin/js/mfalmebits_admin.js",
-
-    # ── Misc ──────────────────────────────────────────────────────────
-    "use_google_fonts_cdn":    True,
-    "show_ui_builder":         False,
-    "changeform_format":       "horizontal_tabs",
+    "custom_js": "admin/js/mfalmebits_admin.js",
+    "use_google_fonts_cdn": True,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
     "changeform_format_overrides": {
-        "auth.user":  "collapsible",
+        "auth.user": "collapsible",
         "auth.group": "vertical_tabs",
     },
     "language_chooser": False,
 }
 
 JAZZMIN_UI_TWEAKS = {
-    "theme":           "darkly",
+    "theme": "darkly",
     "dark_mode_theme": "darkly",
-
-    # Navbar
     "navbar_small_text": False,
     "footer_small_text": False,
-    "body_small_text":   False,
-    "brand_small_text":  False,
-    "brand_colour":      "navbar-danger",
-    "accent":            "accent-danger",
-    "navbar":            "navbar-dark",
-    "no_navbar_border":  True,
-    "navbar_fixed":      True,
-
-    # Sidebar
-    "sidebar":                    "sidebar-dark-danger",
-    "sidebar_nav_small_text":     False,
-    "sidebar_disable_expand":     False,
-    "sidebar_nav_child_indent":   True,
-    "sidebar_nav_compact_style":  False,
-    "sidebar_nav_legacy_style":   False,
-    "sidebar_nav_flat_style":     True,
-
-    # Buttons
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-danger",
+    "accent": "accent-danger",
+    "navbar": "navbar-dark",
+    "no_navbar_border": True,
+    "navbar_fixed": True,
+    "sidebar": "sidebar-dark-danger",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": True,
     "button_classes": {
-        "primary":   "btn-primary",
+        "primary": "btn-primary",
         "secondary": "btn-outline-secondary",
-        "info":      "btn-outline-info",
-        "warning":   "btn-warning",
-        "danger":    "btn-danger",
-        "success":   "btn-success",
+        "info": "btn-outline-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
     },
-
     "actions_sticky_top": True,
 }
