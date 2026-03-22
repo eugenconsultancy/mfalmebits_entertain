@@ -52,8 +52,9 @@ django-cacheops==7.0.2
 # Admin & Dashboard
 django-jazzmin==2.6.0
 django-admin-tools==0.9.0
-django-robots==1.1.0  # FIXED: Updated to version compatible with Django 4.2
 django-import-export==4.3.0
+
+# REMOVED: django-robots==1.1.0 - causes Python 2 compatibility issues
 
 # Development Tools
 django-debug-toolbar==4.2

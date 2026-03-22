@@ -41,7 +41,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'taggit',
-    'robots',
+    # 'robots',  # REMOVED - causes Python 2 compatibility issues
     'django_ckeditor_5',
     'crispy_forms',
     'crispy_bootstrap5',
@@ -56,8 +56,6 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'storages',
     'import_export',
-    # REMOVED: admin_list_filters - causing import error
-    # REMOVED: rangefilter - causing import error
 ]
 
 LOCAL_APPS = [

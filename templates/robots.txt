@@ -1,10 +1,8 @@
 User-agent: *
-Allow: /
 Disallow: /admin/
 Disallow: /accounts/
-Disallow: /api/
 Disallow: /private/
-Disallow: /media/
+Allow: /
 
 # Sitemap
-Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
+Sitemap: {{ request.build_absolute_uri }}/sitemap.xml
