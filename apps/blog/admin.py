@@ -71,8 +71,8 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ['name', 'email', 'post', 'created_at', 'is_approved', 'is_spam']
     list_filter = ['is_approved', 'is_spam', 'created_at']
     search_fields = ['name', 'email', 'content']
-    # FIX APPLIED HERE: Added updated_at to readonly_fields
-    readonly_fields = ['ip_address', 'user_agent', 'created_at', 'updated_at']
+    # FIX: Removed 'updated_at' - this field does not exist in Comment model
+    readonly_fields = ['ip_address', 'user_agent', 'created_at']
     list_editable = ['is_approved', 'is_spam']
     
     fieldsets = (
@@ -83,7 +83,7 @@ class CommentAdmin(admin.ModelAdmin):
             'fields': ('is_approved', 'is_spam')
         }),
         ('Metadata', {
-            'fields': ('ip_address', 'user_agent', 'created_at', 'updated_at')
+            'fields': ('ip_address', 'user_agent', 'created_at')
         }),
     )
     

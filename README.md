@@ -301,3 +301,48 @@ CELERY_RESULT_BACKEND=redis://localhost:6379/0
 Since you are based in **Nairobi (Africa/Nairobi)**, ensure your server time matches. You already have `TIME_ZONE = 'Africa/Nairobi'` in your `base.py`, which is perfect. This ensures that when a researcher uploads an entry to the archive, the "Date Added" is accurate to Kenyan time.
 
 **Which of these would you like to tackle first? I can provide the specific code snippets for your `production.py` to make the AWS or Stripe integration live.**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Internal Database URL; postgresql://mfalme_bits_db_user:GY10riZX8oBihwZ1nqwTOKgxz50knUyT@dpg-d7005q24d50c73911djg-a/mfalme_bits_db
+External Database URL: postgresql://mfalme_bits_db_user:GY10riZX8oBihwZ1nqwTOKgxz50knUyT@dpg-d7005q24d50c73911djg-a.singapore-postgres.render.com/mfalme_bits_db
+
+Database;
+mfalme_bits_db
+
+Username;
+mfalme_bits_db_user
+
+Password; GY10riZX8oBihwZ1nqwTOKgxz50knUyT

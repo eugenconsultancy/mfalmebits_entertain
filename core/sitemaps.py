@@ -10,11 +10,18 @@ class StaticViewSitemap(Sitemap):
     changefreq = 'weekly'
     
     def items(self):
-        return ['home:index', 'about:index', 'contact:index', 
-                'archive:index', 'library:index', 'blog:index']
+        return [
+            'home:home',
+            'about:index', 
+            'contact:index',
+            'archive:index',
+            'library:index',
+            'blog:index'
+        ]
     
     def location(self, item):
         return reverse(item)
+
 
 class ArchiveSitemap(Sitemap):
     """Sitemap for archive entries"""
@@ -25,10 +32,11 @@ class ArchiveSitemap(Sitemap):
         return ArchiveEntry.objects.filter(is_active=True)
     
     def lastmod(self, obj):
-        return obj.updated_at
+        return obj.updated_at if hasattr(obj, 'updated_at') else obj.created_at
     
     def location(self, obj):
         return obj.get_absolute_url()
+
 
 class BlogSitemap(Sitemap):
     """Sitemap for blog posts"""
@@ -36,13 +44,14 @@ class BlogSitemap(Sitemap):
     priority = 0.6
     
     def items(self):
-        return Post.objects.filter(is_active=True)
+        return Post.objects.filter(status='published', is_active=True)
     
     def lastmod(self, obj):
-        return obj.updated_at
+        return obj.updated_date if hasattr(obj, 'updated_date') else obj.created_at
     
     def location(self, obj):
         return obj.get_absolute_url()
+
 
 class LibrarySitemap(Sitemap):
     """Sitemap for digital products"""

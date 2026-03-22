@@ -1,3 +1,4 @@
+# ====== FILE: ./apps/home/admin.py =====
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
@@ -62,7 +63,7 @@ class HomeSectionAdmin(admin.ModelAdmin):
 from django.contrib import admin
 from django.utils.html import format_html
 
-# @admin.register(HeroSlide)
+@admin.register(HeroSlide)
 class HeroSlideAdmin(admin.ModelAdmin):
     """Admin configuration for HeroSlide model"""
     list_display = ['title', 'order', 'is_active', 'button_text', 'image_preview']
@@ -70,13 +71,13 @@ class HeroSlideAdmin(admin.ModelAdmin):
     search_fields = ['title', 'subtitle', 'description']
     list_editable = ['order', 'is_active']
     
-    # 1. Added 'created_at' here so Django knows it's display-only
-    readonly_fields = ['image_preview', 'created_at']
+    # 1. REMOVED 'created_at' from readonly_fields
+    readonly_fields = ['image_preview']
     
     fieldsets = (
         ('Content', {
             'fields': ('title', 'subtitle', 'description'),
-            'classes': ('collapse',), # Optional: makes it toggleable in Jazzmin
+            'classes': ('collapse',),
         }),
         ('Media', {
             'fields': ('image', 'image_preview', 'image_alt')
@@ -123,8 +124,8 @@ class FeaturedItemAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description']
     list_editable = ['order', 'is_active']
     
-    # FIX: Added 'created_at' here to stop the FieldError
-    readonly_fields = ['image_preview', 'linked_content', 'created_at']
+    # FIX: Removed 'created_at' from readonly_fields
+    readonly_fields = ['image_preview', 'linked_content']
     
     fieldsets = (
         ('Basic Information', {
@@ -213,8 +214,8 @@ class TestimonialAdmin(admin.ModelAdmin):
     search_fields = ['name', 'company', 'content']
     list_editable = ['order', 'is_active']
     
-    # FIX: Added 'created_at' to readonly_fields
-    readonly_fields = ['avatar_preview', 'created_at']
+    # FIX: Removed 'created_at' from readonly_fields
+    readonly_fields = ['avatar_preview']
     
     fieldsets = (
         ('Author Information', {
@@ -269,7 +270,7 @@ class TestimonialAdmin(admin.ModelAdmin):
 from django.contrib import admin
 from django.utils.html import format_html
 
-# @admin.register(Partner)
+@admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
     """Admin configuration for Partner model"""
     list_display = ['name', 'order', 'is_active', 'logo_preview', 'website_link']
@@ -278,7 +279,7 @@ class PartnerAdmin(admin.ModelAdmin):
     list_editable = ['order', 'is_active']
     
     # ADDED 'created_at' here to resolve the FieldError
-    readonly_fields = ['logo_preview', 'website_link', 'created_at']
+    readonly_fields = ['logo_preview', 'website_link']
     
     fieldsets = (
         ('Basic Information', {
@@ -295,7 +296,7 @@ class PartnerAdmin(admin.ModelAdmin):
         }),
         ('Metadata', {
             'fields': ('created_at',),
-            'classes': ('collapse',), # Cleanly hides metadata in Jazzmin unless needed
+            'classes': ('collapse',),
         }),
     )
     
@@ -377,10 +378,10 @@ class CTASectionAdmin(admin.ModelAdmin):
     duplicate_cta.short_description = "Duplicate selected CTAs"
 
 
-# Register all models with their respective admin classes
-admin.site.register(HomeSection, HomeSectionAdmin)
-admin.site.register(HeroSlide, HeroSlideAdmin)
-admin.site.register(FeaturedItem, FeaturedItemAdmin)
-admin.site.register(Testimonial, TestimonialAdmin)
-admin.site.register(Partner, PartnerAdmin)
-admin.site.register(CTASection, CTASectionAdmin)
+# # Register all models with their respective admin classes
+# admin.site.register(HomeSection, HomeSectionAdmin)
+# admin.site.register(HeroSlide, HeroSlideAdmin)
+# admin.site.register(FeaturedItem, FeaturedItemAdmin)
+# admin.site.register(Testimonial, TestimonialAdmin)
+# admin.site.register(Partner, PartnerAdmin)
+# admin.site.register(CTASection, CTASectionAdmin)

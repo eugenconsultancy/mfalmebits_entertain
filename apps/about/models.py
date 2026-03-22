@@ -61,7 +61,7 @@ class TeamMember(models.Model):
     bio = CKEditor5Field('Bio', config_name='extends')
     
     # Image
-    photo = models.ImageField(upload_to='about/team/')
+    photo = models.ImageField(upload_to='about/team/', blank=True, null=True)
     photo_alt = models.CharField(max_length=100, blank=True)
     
     # Social Media

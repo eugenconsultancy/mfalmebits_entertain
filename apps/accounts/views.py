@@ -218,7 +218,8 @@ class VerifyEmailView(TemplateView):
                 
         except Profile.DoesNotExist:
             messages.error(request, "Invalid verification link.")
-            return redirect('home:index')
+            # FIXED: Changed from 'home:index' to 'home:home'
+            return redirect('home:home')
         
         return super().get(request, *args, **kwargs)
 

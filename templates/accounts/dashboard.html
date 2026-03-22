@@ -2,157 +2,651 @@
 {% load static %}
 {% load accounts_tags %}
 
-{% block title %}Dashboard - {{ user.username }} | MfalmeBits{% endblock %}
+{% block seo_title %}Dashboard — {{ user.username }} | MfalmeBits{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ════════════════════════════════════════════════════════════
+   DASHBOARD — MfalmeBits  ·  Dark Glassmorphism
+════════════════════════════════════════════════════════════ */
+
+/* ── Dashboard page background ──────────────────────────── */
+.dash-page {
+    background:
+        radial-gradient(ellipse 70% 50% at 10% 0%,   rgba(193,58,16,.12) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 60% at 90% 100%,  rgba(212,146,42,.07) 0%, transparent 50%),
+        radial-gradient(ellipse 80% 80% at 50% 50%,   rgba(13,13,18,1) 0%, rgba(6,6,10,1) 100%);
+    min-height: 100vh;
+}
+
+/* ── Hero header ─────────────────────────────────────────── */
+.dash-hero {
+    position: relative;
+    padding: 3.5rem 0 2.8rem;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+/* Animated aurora background */
+.dash-hero::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 0;
+    background:
+        radial-gradient(ellipse 90% 80% at 15% 50%, rgba(193,58,16,.16) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 70% at 85% 20%, rgba(212,146,42,.10) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 60% at 50% 100%, rgba(26,92,58,.07) 0%, transparent 45%);
+    animation: auroraShift 18s ease-in-out infinite alternate;
+}
+@keyframes auroraShift {
+    0%   { transform: scale(1) rotate(0deg); opacity: .7; }
+    50%  { transform: scale(1.06) rotate(1deg); opacity: 1; }
+    100% { transform: scale(1) rotate(-1deg); opacity: .8; }
+}
+
+.dash-hero::after {
+    content: '';
+    position: absolute; inset: 0; z-index: 0;
+    background: rgba(6,6,10,.42);
+    backdrop-filter: blur(0px);
+}
+
+.dash-hero .container { position: relative; z-index: 2; }
+
+/* Particle canvas */
+#dashParticles {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+}
+
+/* ── Welcome card ────────────────────────────────────────── */
+.welcome-glass {
+    background: rgba(255,255,255,.038);
+    backdrop-filter: blur(28px) saturate(1.5);
+    -webkit-backdrop-filter: blur(28px) saturate(1.5);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 2.6rem 2.8rem;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+.welcome-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+    margin-bottom: .7rem;
+}
+
+.user-name-highlight {
+    background: linear-gradient(120deg, var(--terra-light, #e0541e), var(--ochre, #d4922a));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.welcome-subtitle {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,.60);
+    margin-bottom: 2rem;
+    max-width: 540px;
+    line-height: 1.7;
+}
+
+/* ── Quick stats row ─────────────────────────────────────── */
+.quick-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+
+.stat-item {
+    display: flex; flex-direction: column;
+    gap: 3px;
+}
+
+.stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -.04em;
+    color: #ffffff;
+    line-height: 1;
+    background: linear-gradient(130deg, #fff 30%, rgba(255,255,255,.70) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.stat-lbl {
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.38);
+}
+
+.stat-divider {
+    width: 1px;
+    background: rgba(255,255,255,.10);
+    align-self: stretch;
+}
+
+/* ── Profile card ────────────────────────────────────────── */
+.profile-glass {
+    background: rgba(255,255,255,.045);
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 2.4rem 2rem;
+    text-align: center;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+.profile-avatar-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.2rem;
+}
+
+.profile-avatar-wrap img,
+.profile-avatar-initials {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,.10);
+    box-shadow: 0 8px 28px rgba(0,0,0,.45), 0 0 0 4px rgba(193,58,16,.20);
+    display: block;
+    object-fit: cover;
+}
+
+.profile-avatar-initials {
+    background: linear-gradient(135deg, var(--terra-light, #e0541e), var(--terra-dark, #9a2e0b));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 800;
+    color: #fff;
+}
+
+.online-dot {
+    position: absolute; bottom: 4px; right: 4px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #10b981;
+    border: 2px solid rgba(6,6,10,.9);
+    box-shadow: 0 0 8px rgba(16,185,129,.5);
+}
+
+.profile-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 800;
+    color: #ffffff; letter-spacing: -.02em;
+    margin-bottom: .25rem;
+}
+
+.profile-email {
+    font-size: .82rem;
+    color: rgba(255,255,255,.42);
+    margin-bottom: 1.4rem;
+}
+
+.profile-edit-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: rgba(193,58,16,.15);
+    border: 1px solid rgba(193,58,16,.30);
+    color: #e0541e; border-radius: 12px;
+    padding: .7rem 1.4rem;
+    font-size: .88rem; font-weight: 700;
+    text-decoration: none; width: 100%;
+    transition: background .2s, border-color .2s, transform .2s;
+}
+.profile-edit-btn:hover {
+    background: rgba(193,58,16,.28);
+    border-color: rgba(193,58,16,.55);
+    color: #e0541e;
+    transform: translateY(-2px);
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION: Main dashboard area
+════════════════════════════════════════════════════════════ */
+.dash-main { padding: 3.5rem 0 5rem; }
+
+/* ── KPI Quick-action cards ──────────────────────────────── */
+.kpi-card {
+    background: rgba(255,255,255,.04);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 20px;
+    padding: 1.8rem 1.6rem;
+    text-align: center;
+    transition: transform .26s cubic-bezier(.22,1,.36,1),
+                box-shadow .26s cubic-bezier(.22,1,.36,1),
+                border-color .2s;
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.28);
+    cursor: pointer;
+}
+
+.kpi-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 80% at 50% -20%, var(--kpi-glow, rgba(193,58,16,.08)) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.kpi-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0,0,0,.45), 0 0 0 1px var(--kpi-border, rgba(193,58,16,.25));
+    border-color: var(--kpi-border, rgba(193,58,16,.25));
+}
+
+/* Colour variants */
+.kpi-terra  { --kpi-glow: rgba(193,58,16,.12); --kpi-border: rgba(193,58,16,.30); }
+.kpi-green  { --kpi-glow: rgba(16,185,129,.10); --kpi-border: rgba(16,185,129,.28); }
+.kpi-amber  { --kpi-glow: rgba(245,158,11,.10); --kpi-border: rgba(245,158,11,.28); }
+.kpi-blue   { --kpi-glow: rgba(59,130,246,.10); --kpi-border: rgba(59,130,246,.28); }
+
+.kpi-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.4rem;
+    position: relative; z-index: 1;
+}
+.kpi-icon-terra  { background: rgba(193,58,16,.18);  color: #e0541e; }
+.kpi-icon-green  { background: rgba(16,185,129,.16);  color: #10b981; }
+.kpi-icon-amber  { background: rgba(245,158,11,.16);  color: #f59e0b; }
+.kpi-icon-blue   { background: rgba(59,130,246,.16);  color: #3b82f6; }
+
+.kpi-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem; font-weight: 800;
+    letter-spacing: -.04em; color: #ffffff;
+    line-height: 1; margin-bottom: .35rem;
+    position: relative; z-index: 1;
+}
+
+.kpi-label {
+    font-size: .8rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(255,255,255,.42);
+    margin-bottom: .8rem;
+    position: relative; z-index: 1;
+}
+
+.kpi-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .82rem; font-weight: 700;
+    color: rgba(255,255,255,.50);
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 8px; padding: .38rem .9rem;
+    transition: color .18s, border-color .18s, background .18s;
+    position: relative; z-index: 1;
+}
+.kpi-link:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,.22);
+    background: rgba(255,255,255,.06);
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION CARDS (saved / downloads / purchases / activity)
+════════════════════════════════════════════════════════════ */
+.section-glass {
+    background: rgba(255,255,255,.038);
+    backdrop-filter: blur(22px) saturate(1.3);
+    -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 22px;
+    padding: 2rem 2rem;
+    box-shadow: 0 8px 36px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.section-glass-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem; font-weight: 800;
+    color: #ffffff; letter-spacing: -.02em;
+    display: flex; align-items: center; gap: .6rem;
+}
+
+.section-glass-title i { font-size: 1rem; }
+
+.sec-title-icon-terra  { color: #e0541e; }
+.sec-title-icon-green  { color: #10b981; }
+.sec-title-icon-amber  { color: #f59e0b; }
+.sec-title-icon-blue   { color: #3b82f6; }
+
+/* ── Activity item rows ──────────────────────────────────── */
+.activity-row {
+    display: flex; align-items: center; gap: 1rem;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 14px; padding: .9rem 1rem;
+    margin-bottom: .7rem;
+    transition: background .2s, border-color .2s, transform .2s;
+    cursor: pointer;
+}
+.activity-row:last-child { margin-bottom: 0; }
+.activity-row:hover {
+    background: rgba(255,255,255,.055);
+    border-color: rgba(193,58,16,.20);
+    transform: translateX(4px);
+}
+
+.activity-thumb {
+    width: 46px; height: 46px; border-radius: 12px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+}
+.thumb-terra  { background: rgba(193,58,16,.18);  color: #e0541e; }
+.thumb-green  { background: rgba(16,185,129,.16);  color: #10b981; }
+.thumb-amber  { background: rgba(245,158,11,.16);  color: #f59e0b; }
+.thumb-blue   { background: rgba(59,130,246,.16);  color: #3b82f6; }
+
+.activity-info { flex: 1; min-width: 0; }
+
+.activity-title {
+    font-family: 'Syne', sans-serif;
+    font-size: .92rem; font-weight: 700;
+    color: #ffffff; letter-spacing: -.01em;
+    margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.activity-meta {
+    font-size: .76rem;
+    color: rgba(255,255,255,.38);
+    display: flex; align-items: center; gap: .5rem;
+}
+
+.activity-action {
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 10px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+    color: rgba(255,255,255,.50);
+    text-decoration: none; font-size: .85rem;
+    flex-shrink: 0;
+    transition: background .18s, color .18s;
+}
+.activity-action:hover { background: rgba(193,58,16,.20); color: #e0541e; }
+
+/* ── Badge chips ─────────────────────────────────────────── */
+.chip {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 6px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .3px;
+}
+.chip-green  { background: rgba(16,185,129,.16); color: #10b981; }
+.chip-amber  { background: rgba(245,158,11,.16); color: #f59e0b; }
+.chip-terra  { background: rgba(193,58,16,.18); color: #e0541e; }
+.chip-blue   { background: rgba(59,130,246,.16); color: #7eb8ff; }
+.chip-red    { background: rgba(239,68,68,.14); color: #f87171; }
+
+/* ── Empty states ────────────────────────────────────────── */
+.empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    padding: 3rem 1.5rem;
+    background: rgba(255,255,255,.02);
+    border: 1px dashed rgba(255,255,255,.08);
+    border-radius: 16px;
+    gap: .8rem;
+}
+.empty-state-icon {
+    width: 64px; height: 64px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.05); font-size: 1.8rem;
+    color: rgba(255,255,255,.20);
+}
+.empty-state-text {
+    font-size: .9rem; color: rgba(255,255,255,.38); margin: 0;
+    font-weight: 500;
+}
+.empty-state-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(193,58,16,.16);
+    border: 1px solid rgba(193,58,16,.28);
+    color: #e0541e; border-radius: 10px;
+    padding: .55rem 1.2rem;
+    font-size: .84rem; font-weight: 700;
+    text-decoration: none;
+    transition: background .2s, border-color .2s;
+}
+.empty-state-btn:hover { background: rgba(193,58,16,.28); color: #e0541e; }
+
+/* ── View all link ───────────────────────────────────────── */
+.view-all-link {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .8rem; font-weight: 700;
+    color: rgba(255,255,255,.38);
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px; padding: .34rem .85rem;
+    transition: color .18s, border-color .18s, background .18s;
+}
+.view-all-link:hover { color: #e0541e; border-color: rgba(193,58,16,.28); background: rgba(193,58,16,.08); }
+
+/* ── Section header ──────────────────────────────────────── */
+.section-glass-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+/* ── Purchase row additions ──────────────────────────────── */
+.purchase-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: .94rem; font-weight: 800;
+    color: #f59e0b; letter-spacing: -.01em;
+}
+
+/* ── Timeline login ──────────────────────────────────────── */
+.login-browser {
+    font-size: .92rem; font-weight: 700; color: #fff;
+    letter-spacing: -.01em;
+}
+.login-time { font-size: .74rem; color: rgba(255,255,255,.35); }
+.login-ip   { font-size: .74rem; color: rgba(255,255,255,.28); }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 991px) {
+    .welcome-glass { margin-bottom: 1.5rem; }
+    .quick-stats   { gap: 1.5rem; }
+}
+@media (max-width: 575px) {
+    .welcome-title { font-size: 1.7rem; }
+    .kpi-number    { font-size: 1.9rem; }
+    .stat-val      { font-size: 1.7rem; }
+    .welcome-glass { padding: 1.6rem 1.4rem; }
+    .profile-glass { padding: 1.6rem 1.4rem; }
+    .section-glass { padding: 1.5rem 1.2rem; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<!-- Dashboard Header with Glassmorphism -->
-<section class="dashboard-header py-5 position-relative overflow-hidden">
-    <div class="animated-gradient"></div>
-    <div class="particles" id="particles"></div>
-    <div class="container position-relative z-index-2">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <div class="welcome-card glass-card-1 p-4 stagger-children">
-                    <h1 class="display-5 fw-bold text-white animate-slide-in-left">
-                        Welcome back, <span class="text-gradient-highlight">{{ user.first_name|default:user.username }}</span>
+<div class="dash-page">
+
+<!-- ════════════════════════════════════════════════════════
+     HERO HEADER
+════════════════════════════════════════════════════════ -->
+<section class="dash-hero">
+    <div id="dashParticles"></div>
+
+    <div class="container">
+        <div class="row g-4 align-items-center">
+
+            <!-- Welcome card -->
+            <div class="col-lg-8 fade-in">
+                <div class="welcome-glass">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="sec-badge">
+                            <span class="pulse-dot"></span>
+                            Live Dashboard
+                        </span>
+                    </div>
+
+                    <h1 class="welcome-title">
+                        Welcome back,&nbsp;
+                        <span class="user-name-highlight">{{ user.first_name|default:user.username }}</span>
                     </h1>
-                    <p class="lead text-white-50 animate-slide-in-right">
-                        Your creative hub for managing content, tracking performance, and exploring new opportunities.
+
+                    <p class="welcome-subtitle">
+                        Your creative hub for managing content, tracking performance and exploring African knowledge archives.
                     </p>
-                    <div class="quick-stats d-flex gap-4 mt-4">
-                        <div class="stat-item animate-fade-in-up" style="animation-delay: 0.2s;">
-                            <span class="stat-value h3 text-white">{{ stats.saved_items }}</span>
-                            <span class="stat-label text-light-emphasis">Saved Items</span>
+
+                    <div class="quick-stats">
+                        <div class="stat-item">
+                            <span class="stat-val counter" data-target="{{ stats.saved_items }}">0</span>
+                            <span class="stat-lbl">Saved Items</span>
                         </div>
-                        <div class="stat-item animate-fade-in-up" style="animation-delay: 0.3s;">
-                            <span class="stat-value h3 text-white">{{ stats.downloads }}</span>
-                            <span class="stat-label text-light-emphasis">Downloads</span>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-val counter" data-target="{{ stats.downloads }}">0</span>
+                            <span class="stat-lbl">Downloads</span>
                         </div>
-                        <div class="stat-item animate-fade-in-up" style="animation-delay: 0.4s;">
-                            <span class="stat-value h3 text-white">{{ stats.logins }}</span>
-                            <span class="stat-label text-light-emphasis">Logins</span>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-val counter" data-target="{{ stats.logins }}">0</span>
+                            <span class="stat-lbl">Total Logins</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-val counter" data-target="{{ recent_purchases|length }}">0</span>
+                            <span class="stat-lbl">Purchases</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="profile-quick-card glass-card-2 p-4 text-center animate-float">
-                    {% if user.profile.avatar %}
-                        <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="profile-avatar rounded-circle mb-3" width="100" height="100">
-                    {% else %}
-                        <div class="profile-avatar-placeholder rounded-circle bg-primary-gradient text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
-                            <span class="display-5">{{ user.username|first|upper }}</span>
-                        </div>
-                    {% endif %}
-                    <h5 class="text-white mb-1">{{ user.get_full_name|default:user.username }}</h5>
-                    <p class="text-white-50 small mb-3">{{ user.email }}</p>
-                    <a href="{% url 'accounts:profile_edit' %}" class="glass-btn-1 w-100">
-                        <i class="fas fa-user-edit me-2"></i>Edit Profile
+
+            <!-- Profile card -->
+            <div class="col-lg-4 fade-in" style="transition-delay:.12s">
+                <div class="profile-glass">
+                    <div class="profile-avatar-wrap">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="profile-avatar-initials">
+                        {% else %}
+                            <div class="profile-avatar-initials">{{ user.username|first|upper }}</div>
+                        {% endif %}
+                        <span class="online-dot"></span>
+                    </div>
+
+                    <div class="profile-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="profile-email">{{ user.email }}</div>
+
+                    <a href="{% url 'accounts:profile_edit' %}" class="profile-edit-btn">
+                        <i class="fas fa-pen-to-square"></i> Edit Profile
                     </a>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
 
-<!-- Main Dashboard Content -->
-<section class="dashboard-content py-5">
+<!-- ════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════ -->
+<section class="dash-main">
     <div class="container">
-        <!-- Quick Actions Grid -->
+
+        <!-- ── KPI Row ───────────────────────────────────────── -->
         <div class="row g-4 mb-5">
-            <div class="col-md-3">
-                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
-                    <div class="icon-wrapper bg-primary-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                        <i class="fas fa-bookmark fa-2x"></i>
+
+            <div class="col-xl-3 col-sm-6 reveal">
+                <div class="kpi-card kpi-terra">
+                    <div class="kpi-icon kpi-icon-terra">
+                        <i class="fas fa-bookmark"></i>
                     </div>
-                    <h6 class="text-white mb-2">Saved Items</h6>
-                    <p class="text-white-50 small mb-3">{{ stats.saved_items }} items</p>
-                    <a href="{% url 'accounts:saved_items' %}" class="glass-btn-2 w-100">
-                        View All <i class="fas fa-arrow-right ms-2"></i>
+                    <div class="kpi-number counter" data-target="{{ stats.saved_items }}">0</div>
+                    <div class="kpi-label">Saved Items</div>
+                    <a href="{% url 'accounts:saved_items' %}" class="kpi-link">
+                        View All <i class="fas fa-arrow-right fa-xs"></i>
                     </a>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
-                    <div class="icon-wrapper bg-success-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                        <i class="fas fa-download fa-2x"></i>
+
+            <div class="col-xl-3 col-sm-6 reveal" style="transition-delay:.07s">
+                <div class="kpi-card kpi-green">
+                    <div class="kpi-icon kpi-icon-green">
+                        <i class="fas fa-download"></i>
                     </div>
-                    <h6 class="text-white mb-2">Total Downloads</h6>
-                    <p class="text-white-50 small mb-3">{{ stats.downloads }} downloads</p>
-                    <a href="{% url 'accounts:downloads' %}" class="glass-btn-2 w-100">
-                        View History <i class="fas fa-arrow-right ms-2"></i>
+                    <div class="kpi-number counter" data-target="{{ stats.downloads }}">0</div>
+                    <div class="kpi-label">Total Downloads</div>
+                    <a href="{% url 'accounts:downloads' %}" class="kpi-link">
+                        View History <i class="fas fa-arrow-right fa-xs"></i>
                     </a>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
-                    <div class="icon-wrapper bg-warning-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                        <i class="fas fa-history fa-2x"></i>
+
+            <div class="col-xl-3 col-sm-6 reveal" style="transition-delay:.14s">
+                <div class="kpi-card kpi-amber">
+                    <div class="kpi-icon kpi-icon-amber">
+                        <i class="fas fa-clock-rotate-left"></i>
                     </div>
-                    <h6 class="text-white mb-2">Total Logins</h6>
-                    <p class="text-white-50 small mb-3">{{ stats.logins }} logins</p>
-                    <a href="{% url 'accounts:login_history' %}" class="glass-btn-2 w-100">
-                        View History <i class="fas fa-arrow-right ms-2"></i>
+                    <div class="kpi-number counter" data-target="{{ stats.logins }}">0</div>
+                    <div class="kpi-label">Total Logins</div>
+                    <a href="{% url 'accounts:login_history' %}" class="kpi-link">
+                        View History <i class="fas fa-arrow-right fa-xs"></i>
                     </a>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="glass-card-1 p-4 text-center hover-lift" data-tilt>
-                    <div class="icon-wrapper bg-info-gradient text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                        <i class="fas fa-shopping-cart fa-2x"></i>
+
+            <div class="col-xl-3 col-sm-6 reveal" style="transition-delay:.21s">
+                <div class="kpi-card kpi-blue">
+                    <div class="kpi-icon kpi-icon-blue">
+                        <i class="fas fa-bag-shopping"></i>
                     </div>
-                    <h6 class="text-white mb-2">Recent Purchases</h6>
-                    <p class="text-white-50 small mb-3">{{ recent_purchases|length }} purchases</p>
-                    <a href="#" class="glass-btn-2 w-100">
-                        View All <i class="fas fa-arrow-right ms-2"></i>
+                    <div class="kpi-number counter" data-target="{{ recent_purchases|length }}">0</div>
+                    <div class="kpi-label">Purchases</div>
+                    <a href="#purchases" class="kpi-link">
+                        View All <i class="fas fa-arrow-right fa-xs"></i>
                     </a>
                 </div>
             </div>
+
         </div>
 
-        <!-- Activity Grid -->
+        <!-- ── Activity Grid (2×2) ───────────────────────────── -->
         <div class="row g-4">
+
             <!-- Recently Saved -->
-            <div class="col-lg-6">
-                <div class="glass-card-2 p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="text-white mb-0">
-                            <i class="fas fa-bookmark me-2 text-primary"></i>Recently Saved
-                        </h5>
-                        <a href="{% url 'accounts:saved_items' %}" class="glass-btn-2">
-                            View All <i class="fas fa-arrow-right ms-2"></i>
+            <div class="col-lg-6 reveal">
+                <div class="section-glass h-100">
+                    <div class="section-glass-head">
+                        <span class="section-glass-title">
+                            <i class="fas fa-bookmark sec-title-icon-terra"></i>
+                            Recently Saved
+                        </span>
+                        <a href="{% url 'accounts:saved_items' %}" class="view-all-link">
+                            All <i class="fas fa-arrow-right fa-xs"></i>
                         </a>
                     </div>
-                    
+
                     {% if recent_saved %}
-                        <div class="saved-items-list">
-                            {% for item in recent_saved %}
-                            <div class="saved-item glass-card-1 mb-3 p-3 d-flex justify-content-between align-items-center reveal-scale">
-                                <div class="d-flex align-items-center">
-                                    <div class="placeholder-icon bg-primary-gradient text-white rounded me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                        <i class="fas fa-{% if item.item_type == 'archive' %}archive{% elif item.item_type == 'product' %}book{% else %}newspaper{% endif %}"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="text-white fw-bold mb-1">{{ item.get_item.title|default:'Item'|truncatechars:30 }}</h6>
-                                        <p class="text-light-emphasis small mb-0">
-                                            <i class="fas fa-clock me-1"></i>Saved {{ item.created_at|timesince }} ago
-                                        </p>
-                                    </div>
+                        {% for item in recent_saved %}
+                        <div class="activity-row">
+                            <div class="activity-thumb thumb-terra">
+                                <i class="fas fa-{% if item.item_type == 'archive' %}box-archive{% elif item.item_type == 'product' %}book{% else %}newspaper{% endif %}"></i>
+                            </div>
+                            <div class="activity-info">
+                                <div class="activity-title">{{ item.get_item.title|default:'Item'|truncatechars:32 }}</div>
+                                <div class="activity-meta">
+                                    <i class="fas fa-clock fa-xs"></i>
+                                    {{ item.created_at|timesince }} ago
                                 </div>
-                                <a href="{{ item.get_item.get_absolute_url }}" class="btn-icon text-primary" title="View Item">
-                                    <i class="fas fa-external-link-alt fa-lg"></i>
-                                </a>
                             </div>
-                            {% endfor %}
+                            <a href="{{ item.get_item.get_absolute_url }}" class="activity-action" title="View">
+                                <i class="fas fa-arrow-up-right-from-square fa-xs"></i>
+                            </a>
                         </div>
+                        {% endfor %}
                     {% else %}
-                        <div class="empty-state text-center py-5">
-                            <div class="empty-icon mb-3">
-                                <i class="fas fa-bookmark fa-4x text-light-emphasis"></i>
-                            </div>
-                            <p class="text-light-emphasis mb-3">No saved items yet</p>
-                            <a href="{% url 'blog:index' %}" class="glass-btn-1">
-                                <i class="fas fa-search me-2"></i>Browse Content
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-bookmark"></i></div>
+                            <p class="empty-state-text">No saved items yet</p>
+                            <a href="{% url 'blog:index' %}" class="empty-state-btn">
+                                <i class="fas fa-magnifying-glass fa-xs"></i> Browse Content
                             </a>
                         </div>
                     {% endif %}
@@ -160,44 +654,40 @@
             </div>
 
             <!-- Recent Downloads -->
-            <div class="col-lg-6">
-                <div class="glass-card-2 p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="text-white mb-0">
-                            <i class="fas fa-download me-2 text-success"></i>Recent Downloads
-                        </h5>
-                        <a href="{% url 'accounts:downloads' %}" class="glass-btn-2">
-                            View All <i class="fas fa-arrow-right ms-2"></i>
+            <div class="col-lg-6 reveal" style="transition-delay:.08s">
+                <div class="section-glass h-100">
+                    <div class="section-glass-head">
+                        <span class="section-glass-title">
+                            <i class="fas fa-download sec-title-icon-green"></i>
+                            Recent Downloads
+                        </span>
+                        <a href="{% url 'accounts:downloads' %}" class="view-all-link">
+                            All <i class="fas fa-arrow-right fa-xs"></i>
                         </a>
                     </div>
-                    
+
                     {% if recent_downloads %}
-                        <div class="downloads-list">
-                            {% for download in recent_downloads %}
-                            <div class="download-item glass-card-1 mb-3 p-3 d-flex justify-content-between align-items-center reveal-scale">
-                                <div class="d-flex align-items-center">
-                                    <div class="download-icon bg-success-gradient text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                        <i class="fas fa-file-{% if download.item_type == 'archive' %}archive{% else %}pdf{% endif %}"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="text-white fw-bold mb-1">{{ download.item_title|truncatechars:30 }}</h6>
-                                        <p class="text-light-emphasis small mb-0">
-                                            <i class="fas fa-clock me-1"></i>Downloaded {{ download.last_downloaded|timesince }} ago
-                                        </p>
-                                    </div>
+                        {% for download in recent_downloads %}
+                        <div class="activity-row">
+                            <div class="activity-thumb thumb-green">
+                                <i class="fas fa-file-{% if download.item_type == 'archive' %}zipper{% else %}pdf{% endif %}"></i>
+                            </div>
+                            <div class="activity-info">
+                                <div class="activity-title">{{ download.item_title|truncatechars:32 }}</div>
+                                <div class="activity-meta">
+                                    <i class="fas fa-clock fa-xs"></i>
+                                    {{ download.last_downloaded|timesince }} ago
                                 </div>
-                                <span class="badge bg-success">{{ download.download_count }}x</span>
                             </div>
-                            {% endfor %}
+                            <span class="chip chip-green">{{ download.download_count }}×</span>
                         </div>
+                        {% endfor %}
                     {% else %}
-                        <div class="empty-state text-center py-5">
-                            <div class="empty-icon mb-3">
-                                <i class="fas fa-download fa-4x text-light-emphasis"></i>
-                            </div>
-                            <p class="text-light-emphasis mb-3">No downloads yet</p>
-                            <a href="{% url 'library:index' %}" class="glass-btn-1">
-                                <i class="fas fa-shopping-cart me-2"></i>Explore Library
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-download"></i></div>
+                            <p class="empty-state-text">No downloads yet</p>
+                            <a href="{% url 'library:index' %}" class="empty-state-btn">
+                                <i class="fas fa-store fa-xs"></i> Explore Library
                             </a>
                         </div>
                     {% endif %}
@@ -205,52 +695,47 @@
             </div>
 
             <!-- Recent Purchases -->
-            <div class="col-lg-6">
-                <div class="glass-card-2 p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="text-white mb-0">
-                            <i class="fas fa-shopping-cart me-2 text-warning"></i>Recent Purchases
-                        </h5>
-                        <a href="#" class="glass-btn-2">
-                            View All <i class="fas fa-arrow-right ms-2"></i>
+            <div class="col-lg-6 reveal" id="purchases">
+                <div class="section-glass h-100">
+                    <div class="section-glass-head">
+                        <span class="section-glass-title">
+                            <i class="fas fa-bag-shopping sec-title-icon-amber"></i>
+                            Recent Purchases
+                        </span>
+                        <a href="#" class="view-all-link">
+                            All <i class="fas fa-arrow-right fa-xs"></i>
                         </a>
                     </div>
-                    
+
                     {% if recent_purchases %}
-                        <div class="purchases-list">
-                            {% for purchase in recent_purchases %}
-                            <div class="purchase-item glass-card-1 mb-3 p-3 reveal-scale">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="placeholder-icon bg-warning-gradient text-white rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                            <i class="fas fa-book"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="text-white fw-bold mb-1">{{ purchase.product.title|truncatechars:30 }}</h6>
-                                            <p class="text-light-emphasis small mb-1">
-                                                <i class="fas fa-clock me-1"></i>{{ purchase.purchase_date|timesince }} ago
-                                            </p>
-                                            <span class="badge bg-warning text-dark fw-bold">${{ purchase.amount }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-success mb-2">{{ purchase.status|title }}</span>
-                                        <a href="#" class="btn btn-sm glass-btn-2 d-block">
-                                            <i class="fas fa-download me-1"></i>Download
-                                        </a>
-                                    </div>
+                        {% for purchase in recent_purchases %}
+                        <div class="activity-row">
+                            <div class="activity-thumb thumb-amber">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="activity-info">
+                                <div class="activity-title">{{ purchase.product.title|truncatechars:28 }}</div>
+                                <div class="activity-meta">
+                                    <i class="fas fa-clock fa-xs"></i>
+                                    {{ purchase.purchase_date|timesince }} ago
+                                    &nbsp;·&nbsp;
+                                    <span class="chip chip-green">{{ purchase.status|title }}</span>
                                 </div>
                             </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="empty-state text-center py-5">
-                            <div class="empty-icon mb-3">
-                                <i class="fas fa-shopping-cart fa-4x text-light-emphasis"></i>
+                            <div class="d-flex flex-column align-items-end gap-1">
+                                <span class="purchase-amount">${{ purchase.amount }}</span>
+                                <a href="#" class="activity-action" title="Download">
+                                    <i class="fas fa-download fa-xs"></i>
+                                </a>
                             </div>
-                            <p class="text-light-emphasis mb-3">No purchases yet</p>
-                            <a href="{% url 'library:index' %}" class="glass-btn-1">
-                                <i class="fas fa-store me-2"></i>Visit Store
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-bag-shopping"></i></div>
+                            <p class="empty-state-text">No purchases yet</p>
+                            <a href="{% url 'library:index' %}" class="empty-state-btn">
+                                <i class="fas fa-store fa-xs"></i> Visit Store
                             </a>
                         </div>
                     {% endif %}
@@ -258,369 +743,93 @@
             </div>
 
             <!-- Recent Login Activity -->
-            <div class="col-lg-6">
-                <div class="glass-card-2 p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="text-white mb-0">
-                            <i class="fas fa-history me-2 text-info"></i>Recent Login Activity
-                        </h5>
-                        <a href="{% url 'accounts:login_history' %}" class="glass-btn-2">
-                            View Full History <i class="fas fa-arrow-right ms-2"></i>
+            <div class="col-lg-6 reveal" style="transition-delay:.08s">
+                <div class="section-glass h-100">
+                    <div class="section-glass-head">
+                        <span class="section-glass-title">
+                            <i class="fas fa-shield-halved sec-title-icon-blue"></i>
+                            Login Activity
+                        </span>
+                        <a href="{% url 'accounts:login_history' %}" class="view-all-link">
+                            Full History <i class="fas fa-arrow-right fa-xs"></i>
                         </a>
                     </div>
-                    
+
                     {% if recent_logins %}
-                        <div class="activity-timeline">
-                            {% for login in recent_logins %}
-                            <div class="timeline-item glass-card-1 mb-3 p-3 position-relative reveal-left">
-                                <div class="d-flex">
-                                    <div class="timeline-icon bg-info-gradient text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                        <i class="fas fa-{% if login.device_type == 'mobile' %}mobile-alt{% else %}desktop{% endif %}"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h6 class="text-white fw-bold mb-1">{{ login.browser|default:'Browser' }} on {{ login.os|default:'OS' }}</h6>
-                                                <p class="text-light-emphasis small mb-1">
-                                                    <i class="fas fa-clock me-1"></i>{{ login.login_time|timesince }} ago
-                                                </p>
-                                                <p class="text-light-emphasis small mb-0">
-                                                    <i class="fas fa-map-marker-alt me-1"></i>{{ login.ip_address }}
-                                                </p>
-                                            </div>
-                                            <span class="badge bg-{% if login.login_successful %}success{% else %}danger{% endif %}">
-                                                {% if login.login_successful %}Success{% else %}Failed{% endif %}
-                                            </span>
-                                        </div>
-                                    </div>
+                        {% for login in recent_logins %}
+                        <div class="activity-row">
+                            <div class="activity-thumb thumb-blue">
+                                <i class="fas fa-{% if login.device_type == 'mobile' %}mobile-screen{% else %}desktop{% endif %}"></i>
+                            </div>
+                            <div class="activity-info">
+                                <div class="login-browser">{{ login.browser|default:'Browser' }} · {{ login.os|default:'OS' }}</div>
+                                <div class="login-time">
+                                    <i class="fas fa-clock fa-xs"></i>
+                                    {{ login.login_time|timesince }} ago
+                                    &nbsp;·&nbsp;
+                                    <span class="login-ip">{{ login.ip_address }}</span>
                                 </div>
                             </div>
-                            {% endfor %}
+                            <span class="chip {% if login.login_successful %}chip-green{% else %}chip-red{% endif %}">
+                                {% if login.login_successful %}OK{% else %}Fail{% endif %}
+                            </span>
                         </div>
+                        {% endfor %}
                     {% else %}
-                        <div class="text-center py-4">
-                            <p class="text-light-emphasis mb-0">No login activity recorded</p>
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-shield-halved"></i></div>
+                            <p class="empty-state-text">No login activity recorded</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
+
+        </div><!-- /row -->
+    </div><!-- /container -->
 </section>
 
-<style>
-    :root {
-        --primary-accent: #ff6b4a;
-        --secondary-accent: #ff8a6f;
-        --success-accent: #10b981;
-        --warning-accent: #f59e0b;
-        --info-accent: #3b82f6;
-        --deep-charcoal: #0a0c0f;
-        --medium-charcoal: #1a1e24;
-        --light-charcoal: #2a2f36;
-        --text-primary: #ffffff;
-        --text-secondary: #e0e0e0;
-        --text-emphasis: #b0b0b0;
-    }
+</div><!-- /dash-page -->
+{% endblock %}
 
-    /* Dashboard Header */
-    .dashboard-header {
-        background: linear-gradient(135deg, var(--deep-charcoal) 0%, var(--medium-charcoal) 100%);
-        min-height: 300px;
-        position: relative;
-    }
-    
-    .animated-gradient {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(-45deg, var(--primary-accent), var(--secondary-accent), #8B4513, #c97c5d);
-        background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
-        opacity: 0.1;
-    }
-    
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    
-    .text-gradient-highlight {
-        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-    
-    .text-light-emphasis {
-        color: var(--text-secondary) !important;
-    }
-    
-    /* Welcome Card */
-    .welcome-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 107, 74, 0.2);
-        border-radius: 20px;
-    }
-    
-    .stat-label {
-        color: var(--text-secondary) !important;
-        font-size: 0.9rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    /* Quick Action Cards */
-    .glass-card-1 {
-        background: var(--medium-charcoal);
-        border: 1px solid rgba(255, 107, 74, 0.2);
-        border-radius: 20px;
-        transition: all 0.3s ease;
-    }
-    
-    .glass-card-1:hover {
-        border-color: var(--primary-accent);
-        box-shadow: 0 10px 30px rgba(255, 107, 74, 0.2);
-    }
-    
-    .icon-wrapper {
-        transition: all 0.3s ease;
-    }
-    
-    .glass-card-1:hover .icon-wrapper {
-        transform: scale(1.1);
-    }
-    
-    .bg-primary-gradient {
-        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
-    }
-    
-    .bg-success-gradient {
-        background: linear-gradient(135deg, var(--success-accent), #059669);
-    }
-    
-    .bg-warning-gradient {
-        background: linear-gradient(135deg, var(--warning-accent), #d97706);
-    }
-    
-    .bg-info-gradient {
-        background: linear-gradient(135deg, var(--info-accent), #2563eb);
-    }
-    
-    /* Glass Buttons */
-    .glass-btn-1 {
-        background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
-        border: none;
-        color: white;
-        padding: 0.75rem;
-        border-radius: 10px;
-        text-decoration: none;
-        display: inline-block;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .glass-btn-1:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(255, 107, 74, 0.3);
-        color: white;
-    }
-    
-    .glass-btn-2 {
-        background: transparent;
-        border: 2px solid var(--primary-accent);
-        color: var(--primary-accent);
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .glass-btn-2:hover {
-        background: var(--primary-accent);
-        color: white;
-    }
-    
-    /* Activity Cards */
-    .glass-card-2 {
-        background: var(--medium-charcoal);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
-    }
-    
-    .saved-item, .download-item, .purchase-item, .timeline-item {
-        background: var(--light-charcoal);
-        border: 1px solid rgba(255, 107, 74, 0.1);
-        border-radius: 15px;
-        transition: all 0.3s ease;
-    }
-    
-    .saved-item:hover, .download-item:hover, .purchase-item:hover, .timeline-item:hover {
-        border-color: var(--primary-accent);
-        background: rgba(255, 107, 74, 0.05);
-        transform: translateX(5px);
-    }
-    
-    .btn-icon {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        background: rgba(255, 107, 74, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-accent);
-        transition: all 0.3s ease;
-    }
-    
-    .btn-icon:hover {
-        background: var(--primary-accent);
-        color: white;
-        transform: scale(1.1);
-    }
-    
-    /* Badges */
-    .badge.bg-success {
-        background: var(--success-accent) !important;
-        color: white;
-        font-weight: 500;
-        padding: 0.35rem 0.65rem;
-    }
-    
-    .badge.bg-warning {
-        background: var(--warning-accent) !important;
-        color: var(--deep-charcoal) !important;
-        font-weight: 600;
-    }
-    
-    /* Empty State */
-    .empty-state {
-        background: var(--light-charcoal);
-        border-radius: 15px;
-        padding: 2rem;
-    }
-    
-    .empty-icon i {
-        color: var(--primary-accent);
-        opacity: 0.5;
-    }
-    
-    /* Timeline */
-    .timeline-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-    
-    /* Particles */
-    .particles {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow: hidden;
-    }
-    
-    .particle {
-        position: absolute;
-        background: rgba(255, 107, 74, 0.1);
-        border-radius: 50%;
-        pointer-events: none;
-        animation: floatParticle linear infinite;
-    }
-    
-    @keyframes floatParticle {
-        from { transform: translateY(100vh) rotate(0deg); }
-        to { transform: translateY(-100vh) rotate(360deg); }
-    }
-    
-    .z-index-2 {
-        z-index: 2;
-        position: relative;
-    }
-    
-    .profile-avatar-placeholder {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-    
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .animate-fade-in-up {
-        animation: fadeInUp 0.5s ease forwards;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .quick-stats {
-            flex-direction: column;
-            gap: 1rem !important;
-        }
-        
-        .welcome-card {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .glass-btn-2 {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.8rem;
-        }
-    }
-</style>
-
+{% block extra_js %}
 <script>
-    // Particle background
-    function createParticles() {
-        const particles = document.getElementById('particles');
-        if (!particles) return;
-        
-        for (let i = 0; i < 30; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            
-            const size = Math.random() * 5 + 2;
-            const posX = Math.random() * 100;
-            const delay = Math.random() * 5;
-            const duration = Math.random() * 10 + 10;
-            
-            particle.style.cssText = `
-                width: ${size}px;
-                height: ${size}px;
-                left: ${posX}%;
-                bottom: -20px;
-                animation-delay: ${delay}s;
-                animation-duration: ${duration}s;
-                opacity: ${Math.random() * 0.2 + 0.1};
-                background: rgba(255, 107, 74, ${Math.random() * 0.3});
-                box-shadow: 0 0 ${size * 2}px rgba(255, 107, 74, 0.3);
-            `;
-            
-            particles.appendChild(particle);
+document.addEventListener('DOMContentLoaded', function () {
+    /* ── Floating particles ────────────────────────────────── */
+    const pc = document.getElementById('dashParticles');
+    if (pc) {
+        for (let i = 0; i < 35; i++) {
+            const p = document.createElement('div');
+            const s = Math.random() * 4 + 1.5;
+            const colors = [
+                'rgba(193,58,16,', 'rgba(212,146,42,', 'rgba(16,185,129,',
+                'rgba(59,130,246,', 'rgba(255,255,255,'
+            ];
+            const c = colors[Math.floor(Math.random() * colors.length)];
+            Object.assign(p.style, {
+                position: 'absolute',
+                borderRadius: '50%',
+                pointerEvents: 'none',
+                width:  s + 'px',
+                height: s + 'px',
+                left:   Math.random() * 100 + '%',
+                bottom: '-20px',
+                background: c + (Math.random() * .18 + .04) + ')',
+                boxShadow: `0 0 ${s*2}px ${c}.25)`,
+                animation: `floatUp ${Math.random()*18+10}s linear infinite`,
+                animationDelay: `-${Math.random()*12}s`,
+                willChange: 'transform',
+            });
+            pc.appendChild(p);
         }
     }
-    
-    createParticles();
+});
 </script>
+<style>
+@keyframes floatUp {
+    from { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: .6; }
+    to   { transform: translateY(-100vh) rotate(540deg) scale(.5); opacity: 0; }
+}
+</style>
 {% endblock %}
