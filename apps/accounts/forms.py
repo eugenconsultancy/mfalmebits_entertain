@@ -6,25 +6,31 @@ from .models import Profile, UserPreference, SavedItem
 import re
 
 class UserRegistrationForm(forms.ModelForm):
-    """User registration form"""
+    """User registration form with accessibility improvements"""
     password1 = forms.CharField(
         label='Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'Enter password'
+            'placeholder': 'Enter password',
+            'autocomplete': 'new-password',
+            'aria-label': 'Enter your password'
         })
     )
     password2 = forms.CharField(
         label='Confirm Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'Confirm password'
+            'placeholder': 'Confirm password',
+            'autocomplete': 'new-password',
+            'aria-label': 'Confirm your password'
         })
     )
     agree_terms = forms.BooleanField(
         required=True,
+        label='I agree to the Terms of Service and Privacy Policy',
         widget=forms.CheckboxInput(attrs={
-            'class': 'rounded'
+            'class': 'rounded',
+            'aria-label': 'Agree to terms and conditions'
         })
     )
     
@@ -34,19 +40,27 @@ class UserRegistrationForm(forms.ModelForm):
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'Choose a username'
+                'placeholder': 'Choose a username',
+                'autocomplete': 'username',
+                'aria-label': 'Username'
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'your.email@example.com'
+                'placeholder': 'your.email@example.com',
+                'autocomplete': 'email',
+                'aria-label': 'Email address'
             }),
             'first_name': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'First name'
+                'placeholder': 'First name',
+                'autocomplete': 'given-name',
+                'aria-label': 'First name'
             }),
             'last_name': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'Last name'
+                'placeholder': 'Last name',
+                'autocomplete': 'family-name',
+                'aria-label': 'Last name'
             }),
         }
     
@@ -89,24 +103,32 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    """User login form"""
+    """User login form with accessibility improvements"""
     username = forms.CharField(
+        label='Username or Email',
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'Username or Email'
+            'placeholder': 'Username or Email',
+            'autocomplete': 'username',
+            'aria-label': 'Username or email address'
         })
     )
     password = forms.CharField(
+        label='Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'Password'
+            'placeholder': 'Password',
+            'autocomplete': 'current-password',
+            'aria-label': 'Password'
         })
     )
     remember_me = forms.BooleanField(
         required=False,
+        label='Remember me',
         initial=False,
         widget=forms.CheckboxInput(attrs={
-            'class': 'rounded'
+            'class': 'rounded',
+            'aria-label': 'Remember my login on this device'
         })
     )
 
@@ -126,59 +148,84 @@ class UserProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
                 'rows': 4,
-                'placeholder': 'Tell us about yourself...'
+                'placeholder': 'Tell us about yourself...',
+                'aria-label': 'Biography'
             }),
             'avatar': forms.FileInput(attrs={
-                'class': 'w-full px-4 py-2 border rounded-lg'
+                'class': 'w-full px-4 py-2 border rounded-lg',
+                'aria-label': 'Profile picture'
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': '+1 234 567 8900'
+                'placeholder': '+1 234 567 8900',
+                'autocomplete': 'tel',
+                'aria-label': 'Phone number'
             }),
             'birth_date': forms.DateInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'type': 'date'
+                'type': 'date',
+                'aria-label': 'Birth date'
             }),
             'country': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'Country'
+                'placeholder': 'Country',
+                'autocomplete': 'country',
+                'aria-label': 'Country'
             }),
             'city': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'City'
+                'placeholder': 'City',
+                'autocomplete': 'address-level2',
+                'aria-label': 'City'
             }),
             'address': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
                 'rows': 2,
-                'placeholder': 'Address'
+                'placeholder': 'Address',
+                'autocomplete': 'street-address',
+                'aria-label': 'Address'
             }),
             'occupation': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'Occupation'
+                'placeholder': 'Occupation',
+                'autocomplete': 'organization-title',
+                'aria-label': 'Occupation'
             }),
             'organization': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'Organization/Institution'
+                'placeholder': 'Organization/Institution',
+                'autocomplete': 'organization',
+                'aria-label': 'Organization'
             }),
             'website': forms.URLInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'https://'
+                'placeholder': 'https://',
+                'autocomplete': 'url',
+                'aria-label': 'Website'
             }),
             'twitter': forms.URLInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'https://twitter.com/'
+                'placeholder': 'https://twitter.com/',
+                'autocomplete': 'url',
+                'aria-label': 'Twitter profile'
             }),
             'linkedin': forms.URLInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'https://linkedin.com/in/'
+                'placeholder': 'https://linkedin.com/in/',
+                'autocomplete': 'url',
+                'aria-label': 'LinkedIn profile'
             }),
             'facebook': forms.URLInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'https://facebook.com/'
+                'placeholder': 'https://facebook.com/',
+                'autocomplete': 'url',
+                'aria-label': 'Facebook profile'
             }),
             'instagram': forms.URLInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'https://instagram.com/'
+                'placeholder': 'https://instagram.com/',
+                'autocomplete': 'url',
+                'aria-label': 'Instagram profile'
             }),
         }
 
@@ -186,21 +233,30 @@ class UserProfileForm(forms.ModelForm):
 class UserChangePasswordForm(forms.Form):
     """Change password form"""
     current_password = forms.CharField(
+        label='Current Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'Current password'
+            'placeholder': 'Current password',
+            'autocomplete': 'current-password',
+            'aria-label': 'Current password'
         })
     )
     new_password = forms.CharField(
+        label='New Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'New password'
+            'placeholder': 'New password',
+            'autocomplete': 'new-password',
+            'aria-label': 'New password'
         })
     )
     confirm_password = forms.CharField(
+        label='Confirm New Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'Confirm new password'
+            'placeholder': 'Confirm new password',
+            'autocomplete': 'new-password',
+            'aria-label': 'Confirm new password'
         })
     )
     
@@ -236,9 +292,12 @@ class UserChangePasswordForm(forms.Form):
 class PasswordResetRequestForm(forms.Form):
     """Password reset request form"""
     email = forms.EmailField(
+        label='Email Address',
         widget=forms.EmailInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'your.email@example.com'
+            'placeholder': 'your.email@example.com',
+            'autocomplete': 'email',
+            'aria-label': 'Email address'
         })
     )
 
@@ -246,15 +305,21 @@ class PasswordResetRequestForm(forms.Form):
 class PasswordResetConfirmForm(forms.Form):
     """Password reset confirmation form"""
     new_password = forms.CharField(
+        label='New Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'New password'
+            'placeholder': 'New password',
+            'autocomplete': 'new-password',
+            'aria-label': 'New password'
         })
     )
     confirm_password = forms.CharField(
+        label='Confirm New Password',
         widget=forms.PasswordInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
-            'placeholder': 'Confirm new password'
+            'placeholder': 'Confirm new password',
+            'autocomplete': 'new-password',
+            'aria-label': 'Confirm new password'
         })
     )
     
@@ -285,33 +350,42 @@ class UserPreferencesForm(forms.ModelForm):
         exclude = ['user']
         widgets = {
             'theme': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border rounded-lg'
+                'class': 'w-full px-4 py-2 border rounded-lg',
+                'aria-label': 'Theme preference'
             }),
             'items_per_page': forms.NumberInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
                 'min': 10,
-                'max': 100
+                'max': 100,
+                'aria-label': 'Items per page'
             }),
             'profile_visibility': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border rounded-lg'
+                'class': 'w-full px-4 py-2 border rounded-lg',
+                'aria-label': 'Profile visibility'
             }),
             'show_email': forms.CheckboxInput(attrs={
-                'class': 'rounded'
+                'class': 'rounded',
+                'aria-label': 'Show email on profile'
             }),
             'show_saved_items': forms.CheckboxInput(attrs={
-                'class': 'rounded'
+                'class': 'rounded',
+                'aria-label': 'Show saved items on profile'
             }),
             'email_on_comment': forms.CheckboxInput(attrs={
-                'class': 'rounded'
+                'class': 'rounded',
+                'aria-label': 'Receive email on comment'
             }),
             'email_on_reply': forms.CheckboxInput(attrs={
-                'class': 'rounded'
+                'class': 'rounded',
+                'aria-label': 'Receive email on reply'
             }),
             'email_on_purchase': forms.CheckboxInput(attrs={
-                'class': 'rounded'
+                'class': 'rounded',
+                'aria-label': 'Receive email on purchase'
             }),
             'email_on_newsletter': forms.CheckboxInput(attrs={
-                'class': 'rounded'
+                'class': 'rounded',
+                'aria-label': 'Receive newsletter'
             }),
         }
 
@@ -326,10 +400,12 @@ class SavedItemForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
                 'rows': 3,
-                'placeholder': 'Add notes...'
+                'placeholder': 'Add notes...',
+                'aria-label': 'Notes'
             }),
             'tags': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border rounded-lg',
-                'placeholder': 'Comma-separated tags'
+                'placeholder': 'Comma-separated tags',
+                'aria-label': 'Tags'
             }),
         }

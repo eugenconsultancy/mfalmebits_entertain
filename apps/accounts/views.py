@@ -64,7 +64,7 @@ class LoginView(FormView):
                 
                 messages.success(self.request, f"Welcome back, {user.get_full_name() or user.username}!")
                 
-                # Redirect to next page if specified
+                # FIX: Redirect to next page if specified, otherwise to success_url
                 next_url = self.request.GET.get('next')
                 if next_url:
                     return redirect(next_url)
@@ -130,7 +130,7 @@ class LogoutView(TemplateView):
     def get(self, request, *args, **kwargs):
         logout(request)
         messages.success(request, "You have been logged out successfully.")
-        return redirect('home:home')  # Changed from 'home:index' to 'home:home'
+        return redirect('home:home')
 
 
 class RegisterView(CreateView):
@@ -148,8 +148,8 @@ class RegisterView(CreateView):
         response = super().form_valid(form)
         
         # Send verification email if required
-        settings = AccountSettings.objects.first()
-        if settings and settings.require_email_verification:
+        settings_obj = AccountSettings.objects.first()
+        if settings_obj and settings_obj.require_email_verification:
             self.send_verification_email(self.object)
             messages.success(self.request, "Registration successful! Please check your email to verify your account.")
         else:
@@ -218,7 +218,6 @@ class VerifyEmailView(TemplateView):
                 
         except Profile.DoesNotExist:
             messages.error(request, "Invalid verification link.")
-            # FIXED: Changed from 'home:index' to 'home:home'
             return redirect('home:home')
         
         return super().get(request, *args, **kwargs)
@@ -576,4 +575,4 @@ class DeleteAccountView(TemplateView):
         user.save()
         
         messages.success(request, "Your account has been deactivated.")
-        return redirect('home:index')
+        return redirect('home:home')
