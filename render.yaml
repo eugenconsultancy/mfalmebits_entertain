@@ -1,16 +1,15 @@
-# render.yaml - Render Infrastructure as Code
+# render.yaml - Render Infrastructure as Code for MfalmeBits
 services:
   # Web Service (Django Application)
   - type: web
     name: mfalme-bits
     runtime: python
-    repo: https://github.com/YOUR_USERNAME/mfalme_entertain.git
+    repo: https://github.com/eugenconsultancy/mfalmebits_entertain.git
     plan: free
-    region: oregon  # Choose: oregon, frankfurt, singapore, ohio
+    region: oregon
     buildCommand: |
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
-      python manage.py compress --force || true
     startCommand: |
       python manage.py migrate --noinput
       gunicorn core.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 120
@@ -18,11 +17,6 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: mfalme-bits-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: mfalme-bits-redis
           property: connectionString
       - key: DJANGO_SECRET_KEY
         generateValue: true
@@ -32,36 +26,17 @@ services:
         value: 3.11.9
       - key: WEB_CONCURRENCY
         value: 2
+      - key: RENDER
+        value: true
 
   # PostgreSQL Database
-  - type: postgresql
+  - type: pgsql
     name: mfalme-bits-db
     plan: free
     ipAllowList: []  # Allow all connections (restricted internally)
-    
-  # Redis Cache (Optional but recommended)
-  - type: redis
-    name: mfalme-bits-redis
-    plan: free
-    ipAllowList: []
 
-  # Background Worker (for Celery tasks - optional)
-  - type: worker
-    name: mfalme-bits-worker
-    runtime: python
-    repo: https://github.com/YOUR_USERNAME/mfalme_entertain.git
-    plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: celery -A core worker --loglevel=info
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: mfalme-bits-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: mfalme-bits-redis
-          property: connectionString
-      - key: DJANGO_SETTINGS_MODULE
-        value: core.settings.render
+  # Redis Cache (Optional - uncomment if you need caching)
+  # - type: redis
+  #   name: mfalme-bits-redis
+  #   plan: free
+  #   ipAllowList: []
