@@ -54,7 +54,8 @@ django-jazzmin==2.6.0
 django-admin-tools==0.9.0
 django-import-export==4.3.0
 
-# REMOVED: django-robots==1.1.0 - causes Python 2 compatibility issues
+# Required by django-import-export for Excel file support
+openpyxl==3.1.5  # ADDED - Required for import_export
 
 # Development Tools
 django-debug-toolbar==4.2
