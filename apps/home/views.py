@@ -8,6 +8,11 @@ from apps.archive.models import ArchiveEntry, Theme
 from apps.library.models import DigitalProduct, ProductCategory
 from apps.blog.models import Post
 from utils.seo import SEOMetaGenerator
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.db import connections
+from django.db.utils import OperationalError
+import json
 from utils.schema import get_organization_schema, get_website_schema
 
 class HomeView(TemplateView):
@@ -238,3 +243,38 @@ class TermsOfServiceView(TemplateView):
         context['seo_keywords'] = "MfalmeBits terms of service, terms and conditions, user agreement"
         
         return context
+    
+
+@csrf_exempt
+def health_check(request):
+    """Health check endpoint for Railway"""
+    health_status = {
+        'status': 'healthy',
+        'timestamp': __import__('django.utils.timezone').now().isoformat(),
+        'checks': {}
+    }
+    
+    # Check database
+    try:
+        connections['default'].ensure_connection()
+        health_status['checks']['database'] = 'connected'
+    except OperationalError:
+        health_status['checks']['database'] = 'disconnected'
+        health_status['status'] = 'unhealthy'
+    
+    # Check cache (if Redis is configured)
+    try:
+        from django.core.cache import cache
+        cache.set('health_check', 'ok', 1)
+        if cache.get('health_check') == 'ok':
+            health_status['checks']['cache'] = 'operational'
+        else:
+            health_status['checks']['cache'] = 'error'
+    except Exception:
+        health_status['checks']['cache'] = 'not_configured'
+    
+    # Return appropriate HTTP status
+    if health_status['status'] == 'healthy':
+        return JsonResponse(health_status, status=200)
+    else:
+        return JsonResponse(health_status, status=500)
