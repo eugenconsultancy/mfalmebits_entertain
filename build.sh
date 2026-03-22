@@ -20,17 +20,13 @@ export DJANGO_SETTINGS_MODULE=core.settings.render
 echo "📦 Collecting static files..."
 python manage.py collectstatic --noinput --verbosity 0
 
-# Compress static files (if using django-compressor)
-echo "🎨 Compressing static assets..."
-python manage.py compress --force --verbosity 0 || echo "⚠️  Compression skipped"
-
-# Run migrations (only if needed)
+# Run migrations
 echo "🔄 Running database migrations..."
 python manage.py migrate --noinput
 
-# Create cache tables
-echo "💾 Creating cache tables..."
-python manage.py createcachetable || echo "⚠️  Cache table creation skipped"
+# Create superuser (using the script)
+echo "👤 Creating superuser..."
+python scripts/create_superuser.py
 
 echo "========================================="
 echo "✅ Build completed successfully!"
