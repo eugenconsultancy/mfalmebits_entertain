@@ -6,8 +6,12 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    # Use development settings by default
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
+    # Check for RAILWAY_ENVIRONMENT variable
+    if os.environ.get('RAILWAY_ENVIRONMENT') == 'production':
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.railway')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
+    
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

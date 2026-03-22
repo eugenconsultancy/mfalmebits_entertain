@@ -58,33 +58,17 @@ media/images/
 media/ebooks/
 media/curriculum/
 
-# Media files
-/media/
-/staticfiles/
-
-# Database
-*.sqlite3
-*.db
-
 # Environment
 .env
 .env.local
 .env.production
 
+# Railway
+.railway/
+
 # Logs
 *.log
 logs/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
 
 # Python
 __pycache__/
