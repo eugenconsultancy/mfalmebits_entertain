@@ -6,9 +6,9 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    # Check for RAILWAY_ENVIRONMENT variable
-    if os.environ.get('RAILWAY_ENVIRONMENT') == 'production':
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.railway')
+    # Check for Render environment
+    if os.environ.get('RENDER') == 'true' or 'RENDER' in os.environ:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.render')
     else:
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
     

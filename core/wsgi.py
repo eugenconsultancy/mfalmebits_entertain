@@ -6,9 +6,9 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-# Use railway settings if on Railway
-if os.environ.get('RAILWAY_ENVIRONMENT') == 'production':
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.railway')
+# Use render settings if on Render
+if os.environ.get('RENDER') == 'true' or 'RENDER' in os.environ:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.render')
 else:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
 
