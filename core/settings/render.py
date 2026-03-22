@@ -13,7 +13,7 @@ DEBUG = False
 # Security
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
-# Read ALLOWED_HOSTS from environment variable or use defaults
+# Read ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='localhost,127.0.0.1,.onrender.com').split(',')
 
 # CSRF Trusted Origins
@@ -28,7 +28,7 @@ DATABASES = {
     )
 }
 
-# Static files - Simple storage
+# Static files - Use WhiteNoise without compression
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [BASE_DIR / 'static']
@@ -44,6 +44,10 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
+# DISABLE django-compressor (causing MIME type issues)
+COMPRESS_ENABLED = False
+COMPRESS_OFFLINE = False
 
 # Email configuration
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
