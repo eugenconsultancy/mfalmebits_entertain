@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-{% load account %}
 
 {% block title %}Login - MfalmeBits{% endblock %}
 
@@ -253,12 +252,6 @@
     transform: translateY(0);
   }
   
-  .btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-  
   .divider {
     display: flex;
     align-items: center;
@@ -305,22 +298,6 @@
     pointer-events: none;
   }
   
-  /* Loading spinner */
-  .loading-spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 0.6s linear infinite;
-    margin-right: 8px;
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
   @media (max-width: 480px) {
     .card {
       padding: 32px 24px;
@@ -339,41 +316,30 @@
       <p class="sub">Access your MfalmeBits account</p>
     </div>
     
-    <!-- FIXED: Form with correct action and fields -->
-    <form method="post" action="{% url 'accounts:login' %}" id="login-form">
+    <form method="post">
       {% csrf_token %}
       
       {% if form.non_field_errors %}
-        <div class="err-box">
-          {% for error in form.non_field_errors %}
-            {{ error }}
-          {% endfor %}
-        </div>
+        <div class="err-box">{{ form.non_field_errors }}</div>
       {% endif %}
       
-      <!-- FIXED: Using 'login' field for AllAuth compatibility -->
       <div class="field">
-        <label for="id_login">Username or Email</label>
-        <input type="text" name="login" id="id_login" 
-               value="{{ form.login.value|default:'' }}"
-               placeholder="Enter your username or email"
-               autocomplete="username" required>
+        <label for="{{ form.username.id_for_label }}">Username or Email</label>
+        {{ form.username }}
         <span class="icon" aria-hidden="true">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <circle cx="12" cy="8" r="4"/>
             <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
           </svg>
         </span>
-        {% if form.login.errors %}
-          <p class="err">{{ form.login.errors.0 }}</p>
+        {% if form.username.errors %}
+          <p class="err">{{ form.username.errors.0 }}</p>
         {% endif %}
       </div>
       
       <div class="field" id="pw-field">
-        <label for="id_password">Password</label>
-        <input type="password" name="password" id="id_password" 
-               placeholder="Enter your password"
-               autocomplete="current-password" required>
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
         <span class="icon" onclick="togglePassword()" role="button" aria-label="Toggle password visibility" style="cursor: pointer;">
           <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -387,18 +353,13 @@
       
       <div class="row">
         <label class="remember">
-          <input type="checkbox" name="remember" id="id_remember" {% if form.remember.value %}checked{% endif %}>
+          {{ form.remember_me }}
           <span>Remember me</span>
         </label>
         <a href="{% url 'accounts:password_reset_request' %}" class="forgot">Forgot password?</a>
       </div>
       
-      <button type="submit" class="btn" id="login-btn">Log In →</button>
-      
-      <!-- Hidden redirect field for next parameter -->
-      {% if redirect_field_value %}
-        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-      {% endif %}
+      <button type="submit" class="btn">Log In →</button>
     </form>
     
     <div class="divider">or</div>
@@ -410,9 +371,8 @@
 </div>
 
 <script>
-  // Password visibility toggle
   function togglePassword() {
-    const passwordInput = document.getElementById('id_password');
+    const passwordInput = document.querySelector('#pw-field input');
     const eyeIcon = document.getElementById('eye-icon');
     
     if (passwordInput.type === 'password') {
@@ -423,39 +383,5 @@
       eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
     }
   }
-  
-  // Form submission handler to prevent double submission
-  document.getElementById('login-form').addEventListener('submit', function(e) {
-    const btn = document.getElementById('login-btn');
-    
-    // Disable button to prevent double submission
-    if (btn.disabled) {
-      e.preventDefault();
-      return;
-    }
-    
-    // Show loading state
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
-    
-    // Re-enable after 5 seconds if something goes wrong
-    setTimeout(function() {
-      if (btn.disabled) {
-        btn.disabled = false;
-        btn.innerHTML = 'Log In →';
-      }
-    }, 5000);
-  });
-  
-  // Clear loading state on page navigation
-  window.addEventListener('pageshow', function() {
-    const btn = document.getElementById('login-btn');
-    if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = 'Log In →';
-    }
-  });
-  
-  console.log('Login form loaded. Using username/email authentication.');
 </script>
 {% endblock %}
