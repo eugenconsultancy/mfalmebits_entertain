@@ -122,6 +122,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # ─────────────────────────────────────────────────────────────────────
 # DATABASE
 # ─────────────────────────────────────────────────────────────────────
+# Note: This is overridden in render.py for production
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -183,6 +184,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# Note: These are overridden in render.py for production
+# Keeping base.py values for development only
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
