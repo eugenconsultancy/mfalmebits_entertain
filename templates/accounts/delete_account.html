@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Delete Account - MfalmeBits{% endblock %}
+
+{% block content %}
+<style>
+  .delete-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #37063b 0%, #1a021c 100%);
+    padding: 2rem;
+  }
+  
+  .delete-card {
+    max-width: 500px;
+    width: 100%;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 48px 40px;
+    backdrop-filter: blur(24px);
+    text-align: center;
+  }
+  
+  .delete-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,80,80,.1);
+    border: 2px solid rgba(255,80,80,.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+  
+  .delete-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: #ff5050;
+  }
+  
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  
+  .warning {
+    color: #ff6b6b;
+    background: rgba(255,107,107,.1);
+    border: 1px solid rgba(255,107,107,.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 24px 0;
+    text-align: left;
+  }
+  
+  .warning p {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .warning ul {
+    margin: 8px 0 0 20px;
+    color: rgba(255,255,255,.7);
+    font-size: 0.85rem;
+  }
+  
+  .warning li {
+    margin: 4px 0;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 32px;
+  }
+  
+  .btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn-danger {
+    background: linear-gradient(135deg, #ff5050, #cc0000);
+    color: #fff;
+    border: none;
+  }
+  
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255,80,80,.3);
+  }
+  
+  .btn-secondary {
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.2);
+  }
+  
+  .btn-secondary:hover {
+    background: rgba(255,255,255,.15);
+    transform: translateY(-2px);
+  }
+  
+  .confirmation-input {
+    margin: 20px 0;
+    text-align: left;
+  }
+  
+  .confirmation-input label {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,.6);
+    margin-bottom: 8px;
+  }
+  
+  .confirmation-input input {
+    width: 100%;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    padding: 10px 16px;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+  }
+  
+  .confirmation-input input:focus {
+    border-color: rgba(255,80,80,.5);
+  }
+</style>
+
+<div class="delete-wrap">
+  <div class="delete-card">
+    <div class="delete-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        <line x1="10" y1="11" x2="10" y2="17"/>
+        <line x1="14" y1="11" x2="14" y2="17"/>
+      </svg>
+    </div>
+    
+    <h1>Delete Account</h1>
+    <p style="color: rgba(255,255,255,.6);">This action cannot be undone</p>
+    
+    <div class="warning">
+      <p><strong>⚠️ Warning:</strong> Deleting your account will permanently remove:</p>
+      <ul>
+        <li>Your profile and all personal information</li>
+        <li>All saved items and collections</li>
+        <li>Your download history</li>
+        <li>Any content you've created</li>
+        <li>Your purchase history (anonymized for legal purposes)</li>
+      </ul>
+    </div>
+    
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="confirmation-input">
+        <label>Type <strong style="color: #ff5050;">DELETE</strong> to confirm</label>
+        <input type="text" name="confirm_delete" id="confirm_delete" 
+               placeholder="DELETE" required>
+      </div>
+      
+      <div class="buttons">
+        <a href="{% url 'accounts:settings' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger" id="delete-btn" disabled>Permanently Delete Account</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Enable delete button only when user types DELETE
+  const confirmInput = document.getElementById('confirm_delete');
+  const deleteBtn = document.getElementById('delete-btn');
+  
+  confirmInput.addEventListener('input', function() {
+    if (this.value === 'DELETE') {
+      deleteBtn.disabled = false;
+      deleteBtn.style.opacity = '1';
+      deleteBtn.style.cursor = 'pointer';
+    } else {
+      deleteBtn.disabled = true;
+      deleteBtn.style.opacity = '0.5';
+      deleteBtn.style.cursor = 'not-allowed';
+    }
+  });
+</script>
+{% endblock %}
