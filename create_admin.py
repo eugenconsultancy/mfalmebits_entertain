@@ -1,27 +1,30 @@
 """
-Create admin superuser script - SAFE version that never overwrites passwords
+Create admin superuser script - Fixed for Render deployment
+Place this file in your project root directory
 """
 import os
 import sys
 import django
 
-# Ensure Django is initialized with production settings
+# Set Django settings module to render settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.render')
 
-# Add project root to Python path for imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the current directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Initialize Django
 django.setup()
 
-def create_culture_admin():
+def create_superuser():
     """
-    Create or update the culture superuser WITHOUT overwriting existing passwords.
-    This is critical for Render free tier where the script runs on every deploy.
+    Create or update superuser without causing login loops
     """
     from django.contrib.auth import get_user_model
+    from django.contrib.auth.models import User as AuthUser
+    
     User = get_user_model()
     
-    # Get credentials from environment variables (set in Render dashboard)
+    # Get credentials from environment variables
     username = os.getenv('DJANGO_SUPERUSER_USERNAME', 'culture')
     email = os.getenv('DJANGO_SUPERUSER_EMAIL', 'culture@gmail.com')
     password = os.getenv('DJANGO_SUPERUSER_PASSWORD', '64006400')
@@ -32,53 +35,68 @@ def create_culture_admin():
         # Try to get existing user
         user = User.objects.get(username=username)
         
-        # User exists - check if password is usable
-        if user.has_usable_password():
-            print(f"✅ Superuser '{username}' already exists with valid password.")
-            print(f"   Password NOT changed to preserve existing credentials.")
-            print(f"   Use: {username} or {email} with your current password.")
-        else:
-            # Password is unusable (e.g., old hashing algorithm)
-            user.set_password(password)
-            user.is_staff = True
+        # Check if user has proper superuser flags
+        needs_update = False
+        
+        if not user.is_superuser:
             user.is_superuser = True
+            needs_update = True
+            print(f"   Upgrading user to superuser")
+            
+        if not user.is_staff:
+            user.is_staff = True
+            needs_update = True
+            print(f"   Upgrading user to staff")
+        
+        # Only set password if it's not usable or explicitly needed
+        if not user.has_usable_password():
+            user.set_password(password)
+            needs_update = True
+            print(f"   Setting password (was unusable)")
+        
+        if needs_update:
             user.save()
-            print(f"🔑 Reset password for existing user '{username}' (password was unusable).")
+            print(f"✅ Updated existing user '{username}'")
+        else:
+            print(f"✅ Superuser '{username}' already exists with valid credentials")
+        
+        print(f"   Login URL: https://mfalmebits-entertain.onrender.com/admin/")
+        print(f"   Username: {username}")
+        print(f"   Email: {email}")
         
     except User.DoesNotExist:
         # Create new superuser
         print(f"📝 Creating new superuser: {username}")
-        user = User.objects.create_superuser(
+        User.objects.create_superuser(
             username=username,
             email=email,
             password=password
         )
-        print(f"✅ Superuser '{username}' created successfully.")
-        print(f"   Login with username: {username} OR email: {email}")
+        print(f"✅ Superuser '{username}' created successfully")
     
-    # Verify the user is properly configured
-    user.refresh_from_db()
+    # Verify the user
+    user = User.objects.get(username=username)
     if user.is_superuser and user.is_staff and user.has_usable_password():
         print(f"🎉 Superuser verification PASSED")
         return True
     else:
-        print(f"⚠️  Superuser verification FAILED - check user flags")
+        print(f"⚠️ Superuser verification FAILED")
         return False
 
 if __name__ == "__main__":
-    print("=" * 50)
-    print("MfalmeBits Superuser Setup")
-    print("=" * 50)
+    print("=" * 60)
+    print("MfalmeBits Entertainment - Superuser Setup")
+    print("=" * 60)
     
-    success = create_culture_admin()
+    success = create_superuser()
     
     if success:
-        print("=" * 50)
-        print("✅ Superuser setup complete")
-        print("=" * 50)
+        print("=" * 60)
+        print("✅ Superuser setup completed successfully")
+        print("=" * 60)
         sys.exit(0)
     else:
-        print("=" * 50)
-        print("❌ Superuser setup failed")
-        print("=" * 50)
+        print("=" * 60)
+        print("❌ Superuser setup failed - check logs above")
+        print("=" * 60)
         sys.exit(1)
