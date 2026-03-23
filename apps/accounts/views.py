@@ -13,7 +13,7 @@ from django.http import JsonResponse, Http404
 from django.db.models import Q, Count
 from django.core.mail import send_mail
 from django.conf import settings
-from allauth.account.views import LoginView as AllAuthLoginView
+from django.views.generic import FormView
 
 from .models import (
     Profile, LoginHistory, SavedItem, UserPreference, 
@@ -30,8 +30,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class LoginView(AllAuthLoginView):
-    """User login view with AllAuth integration - FIXED"""
+class LoginView(FormView):
+    """User login view - Simplified without AllAuth"""
     template_name = 'accounts/login.html'
     form_class = UserLoginForm
     success_url = reverse_lazy('accounts:dashboard')
@@ -41,13 +41,21 @@ class LoginView(AllAuthLoginView):
             return redirect('accounts:dashboard')
         return super().dispatch(request, *args, **kwargs)
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add register URL to context
+        context['register_url'] = reverse('accounts:register')
+        context['login_url'] = reverse('accounts:login')
+        context['redirect_field_name'] = 'next'
+        return context
+    
     def form_valid(self, form):
         # Get user from cleaned data
         user = form.cleaned_data.get('user')
         remember_me = form.cleaned_data.get('remember_me', False)
         
         if user:
-            # Use Django's login method
+            # Login the user
             login(self.request, user)
             
             # Set session expiry based on remember_me
@@ -129,7 +137,6 @@ class LoginView(AllAuthLoginView):
 
 class LogoutView(TemplateView):
     """User logout view"""
-    template_name = 'accounts/logout.html'
     
     def get(self, request, *args, **kwargs):
         logout(request)
