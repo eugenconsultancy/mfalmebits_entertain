@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load account %}
 
 {% block title %}Login - MfalmeBits{% endblock %}
 
@@ -252,6 +253,12 @@
     transform: translateY(0);
   }
   
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
   .divider {
     display: flex;
     align-items: center;
@@ -298,30 +305,20 @@
     pointer-events: none;
   }
   
-  /* Additional styles for validation */
-  .field input.error {
-    border-color: #ff6b6b;
-    background: rgba(255,107,107,.05);
+  /* Loading spinner */
+  .loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
   }
   
-  .field.success input {
-    border-color: #4caf50;
-  }
-  
-  .validation-message {
-    font-size: .75rem;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .validation-message.error {
-    color: #ff6b6b;
-  }
-  
-  .validation-message.success {
-    color: #4caf50;
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
   
   @media (max-width: 480px) {
@@ -342,43 +339,42 @@
       <p class="sub">Access your MfalmeBits account</p>
     </div>
     
-    <form method="post" id="loginForm" onsubmit="return validateForm()">
+    <!-- FIXED: Form with correct action and fields - NOW WITH BOTH FIELDS -->
+    <form method="post" action="{% url 'accounts:login' %}" id="login-form">
       {% csrf_token %}
       
       {% if form.non_field_errors %}
-        <div class="err-box">{{ form.non_field_errors }}</div>
+        <div class="err-box">
+          {% for error in form.non_field_errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
       {% endif %}
       
-      <!-- Username/Email Field -->
-      <div class="field" id="username-field">
-        <label for="id_username">Username or Email</label>
-        <input type="text" 
-               name="username" 
-               id="id_username" 
-               value="{{ form.username.value|default:'' }}"
+      <!-- USERNAME/EMAIL FIELD - FIXED: This was missing! -->
+      <div class="field">
+        <label for="id_login">Username or Email</label>
+        <input type="text" name="login" id="id_login" 
+               value="{{ form.login.value|default:'' }}"
                placeholder="Enter your username or email"
-               required
-               autofocus>
+               autocomplete="username" required>
         <span class="icon" aria-hidden="true">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <circle cx="12" cy="8" r="4"/>
             <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
           </svg>
         </span>
-        {% if form.username.errors %}
-          <p class="err">{{ form.username.errors.0 }}</p>
+        {% if form.login.errors %}
+          <p class="err">{{ form.login.errors.0 }}</p>
         {% endif %}
-        <div class="validation-message" id="username-validation"></div>
       </div>
       
-      <!-- Password Field -->
+      <!-- PASSWORD FIELD -->
       <div class="field" id="pw-field">
         <label for="id_password">Password</label>
-        <input type="password" 
-               name="password" 
-               id="id_password"
+        <input type="password" name="password" id="id_password" 
                placeholder="Enter your password"
-               required>
+               autocomplete="current-password" required>
         <span class="icon" onclick="togglePassword()" role="button" aria-label="Toggle password visibility" style="cursor: pointer;">
           <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -388,19 +384,22 @@
         {% if form.password.errors %}
           <p class="err">{{ form.password.errors.0 }}</p>
         {% endif %}
-        <div class="validation-message" id="password-validation"></div>
       </div>
       
-      <!-- Remember Me Checkbox -->
       <div class="row">
         <label class="remember">
-          <input type="checkbox" name="remember_me" id="id_remember_me" {% if form.remember_me.value %}checked{% endif %}>
+          <input type="checkbox" name="remember" id="id_remember" {% if form.remember.value %}checked{% endif %}>
           <span>Remember me</span>
         </label>
         <a href="{% url 'accounts:password_reset_request' %}" class="forgot">Forgot password?</a>
       </div>
       
       <button type="submit" class="btn" id="login-btn">Log In →</button>
+      
+      <!-- Hidden redirect field for next parameter -->
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
     </form>
     
     <div class="divider">or</div>
@@ -412,9 +411,9 @@
 </div>
 
 <script>
-  // Toggle password visibility
+  // Password visibility toggle
   function togglePassword() {
-    const passwordInput = document.querySelector('#id_password');
+    const passwordInput = document.getElementById('id_password');
     const eyeIcon = document.getElementById('eye-icon');
     
     if (passwordInput.type === 'password') {
@@ -426,137 +425,38 @@
     }
   }
   
-  // Validate username/email format
-  function validateUsername(username) {
-    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-    const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
+  // Form submission handler to prevent double submission
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    const btn = document.getElementById('login-btn');
     
-    if (!username.trim()) {
-      return { valid: false, message: 'Username or email is required' };
-    }
-    
-    if (emailRegex.test(username)) {
-      return { valid: true, message: 'Valid email format' };
-    }
-    
-    if (usernameRegex.test(username)) {
-      return { valid: true, message: 'Valid username format' };
-    }
-    
-    return { valid: false, message: 'Please enter a valid email or username (3-30 characters, letters, numbers, underscore)' };
-  }
-  
-  // Validate password
-  function validatePassword(password) {
-    if (!password) {
-      return { valid: false, message: 'Password is required' };
-    }
-    
-    if (password.length < 8) {
-      return { valid: false, message: 'Password must be at least 8 characters' };
-    }
-    
-    // Check for uppercase, lowercase, number, special character
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    
-    if (!hasUpperCase) {
-      return { valid: false, message: 'Password must contain at least one uppercase letter' };
-    }
-    if (!hasLowerCase) {
-      return { valid: false, message: 'Password must contain at least one lowercase letter' };
-    }
-    if (!hasNumber) {
-      return { valid: false, message: 'Password must contain at least one number' };
-    }
-    if (!hasSpecial) {
-      return { valid: false, message: 'Password must contain at least one special character (!@#$%^&*)' };
-    }
-    
-    return { valid: true, message: 'Valid password' };
-  }
-  
-  // Real-time validation for username field
-  const usernameInput = document.getElementById('id_username');
-  const usernameValidation = document.getElementById('username-validation');
-  const usernameField = document.getElementById('username-field');
-  
-  if (usernameInput) {
-    usernameInput.addEventListener('input', function() {
-      const result = validateUsername(this.value);
-      
-      if (result.valid) {
-        usernameField.classList.add('success');
-        usernameField.classList.remove('error');
-        usernameValidation.className = 'validation-message success';
-        usernameValidation.innerHTML = '✓ ' + result.message;
-      } else {
-        usernameField.classList.remove('success');
-        usernameField.classList.add('error');
-        usernameValidation.className = 'validation-message error';
-        usernameValidation.innerHTML = '⚠ ' + result.message;
-      }
-    });
-  }
-  
-  // Real-time validation for password field
-  const passwordInput = document.getElementById('id_password');
-  const passwordValidation = document.getElementById('password-validation');
-  const passwordField = document.getElementById('pw-field');
-  
-  if (passwordInput) {
-    passwordInput.addEventListener('input', function() {
-      const result = validatePassword(this.value);
-      
-      if (result.valid) {
-        passwordField.classList.add('success');
-        passwordField.classList.remove('error');
-        passwordValidation.className = 'validation-message success';
-        passwordValidation.innerHTML = '✓ ' + result.message;
-      } else {
-        passwordField.classList.remove('success');
-        passwordField.classList.add('error');
-        passwordValidation.className = 'validation-message error';
-        passwordValidation.innerHTML = '⚠ ' + result.message;
-      }
-    });
-  }
-  
-  // Form validation before submission
-  function validateForm() {
-    const username = usernameInput ? usernameInput.value : '';
-    const password = passwordInput ? passwordInput.value : '';
-    
-    const usernameResult = validateUsername(username);
-    const passwordResult = validatePassword(password);
-    
-    if (!usernameResult.valid) {
-      alert(usernameResult.message);
-      if (usernameInput) usernameInput.focus();
-      return false;
-    }
-    
-    if (!passwordResult.valid) {
-      alert(passwordResult.message);
-      if (passwordInput) passwordInput.focus();
-      return false;
+    // Disable button to prevent double submission
+    if (btn.disabled) {
+      e.preventDefault();
+      return;
     }
     
     // Show loading state
-    const loginBtn = document.getElementById('login-btn');
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = 'Logging in...';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
     
-    return true;
-  }
+    // Re-enable after 5 seconds if something goes wrong
+    setTimeout(function() {
+      if (btn.disabled) {
+        btn.disabled = false;
+        btn.innerHTML = 'Log In →';
+      }
+    }, 5000);
+  });
   
-  // Auto-focus on username field on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    if (usernameInput) {
-      usernameInput.focus();
+  // Clear loading state on page navigation
+  window.addEventListener('pageshow', function() {
+    const btn = document.getElementById('login-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = 'Log In →';
     }
   });
+  
+  console.log('Login form loaded with both username/email and password fields.');
 </script>
 {% endblock %}
