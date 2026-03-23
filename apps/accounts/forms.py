@@ -105,7 +105,7 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    """User login form - FIXED: Compatible with AllAuth using 'login' field"""
+    """User login form - FIXED: Accepts request parameter for AllAuth compatibility"""
     login = forms.CharField(
         label='Username or Email',
         widget=forms.TextInput(attrs={
@@ -133,6 +133,12 @@ class UserLoginForm(forms.Form):
             'aria-label': 'Remember my login on this device'
         })
     )
+    
+    # FIXED: Add __init__ method to accept request parameter
+    def __init__(self, *args, **kwargs):
+        # Pop request if it exists (AllAuth passes it)
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
     
     def clean(self):
         cleaned_data = super().clean()
