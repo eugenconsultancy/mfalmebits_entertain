@@ -1,6 +1,6 @@
 """
 render.py — Production settings for MfalmeBits Entertainment on Render
-Fixed to prevent login loops and authentication issues
+Fixed with proper AllAuth middleware configuration
 """
 import os
 import dj_database_url
@@ -64,6 +64,9 @@ SECURE_SSL_REDIRECT = False  # Render handles SSL
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 # ─────────────────────────────────────────────────────────────────────
 # SESSION & CSRF - CRITICAL FOR LOGIN
@@ -72,42 +75,14 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 86400
-SESSION_SAVE_EVERY_REQUEST = True  # Important for session persistence
+SESSION_SAVE_EVERY_REQUEST = True
 
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_USE_SESSIONS = False  # Don't store CSRF in session to avoid conflicts
 
 # ─────────────────────────────────────────────────────────────────────
-# AUTHENTICATION - PREVENT LOGIN LOOP
-# ─────────────────────────────────────────────────────────────────────
-# Simple login redirects - avoid complex chains
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-
-# Disable AllAuth for admin to prevent conflicts
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Default Django auth
-    # 'allauth.account.auth_backends.AuthenticationBackend',  # Comment out if causing issues
-]
-
-# If you need AllAuth, use these settings:
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_LOGOUT_REDIRECT_URL = '/'
-ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
-ACCOUNT_USERNAME_MIN_LENGTH = 3
-
-# ─────────────────────────────────────────────────────────────────────
-# MIDDLEWARE ORDER - Important for login
+# MIDDLEWARE - AllAuth middleware IS required
 # ─────────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -119,13 +94,45 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',  # Temporarily disable if causing loop
+    'allauth.account.middleware.AccountMiddleware',  # REQUIRED - must be present
 ]
 
 # ─────────────────────────────────────────────────────────────────────
-# EMAIL (optional)
+# AUTHENTICATION - Both backends required for AllAuth
 # ─────────────────────────────────────────────────────────────────────
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Use console for now
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Django admin auth
+    'allauth.account.auth_backends.AuthenticationBackend',  # AllAuth
+]
+
+# AllAuth Settings - Configured to work with both username and email
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Accept both
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Disable email verification for free tier
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_USERNAME_MIN_LENGTH = 3
+ACCOUNT_PRESERVE_USERNAME_CASING = False
+ACCOUNT_UNIQUE_EMAIL = True
+
+# Disable signup if you only want superuser access
+ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
+ACCOUNT_SIGNUP_ENABLED = False  # Set to True if you want public signup
+
+# ─────────────────────────────────────────────────────────────────────
+# EMAIL - Use console backend for now (no email sending issues)
+# ─────────────────────────────────────────────────────────────────────
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@mfalmebits.com')
 
 # ─────────────────────────────────────────────────────────────────────
 # CACHE
@@ -137,7 +144,7 @@ CACHES = {
 }
 
 # ─────────────────────────────────────────────────────────────────────
-# LOGGING - Helps debug login issues
+# LOGGING - Debug login issues
 # ─────────────────────────────────────────────────────────────────────
 LOGGING = {
     'version': 1,
@@ -170,6 +177,11 @@ LOGGING = {
             'propagate': True,
         },
         'django.request': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'allauth': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,

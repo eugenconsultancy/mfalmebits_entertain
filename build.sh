@@ -5,6 +5,7 @@ echo "========================================="
 echo "🚀 Building MfalmeBits Entertainment for Render"
 echo "========================================="
 
+# Exit on error
 set -e
 
 echo "🐍 Python version:"
@@ -24,7 +25,6 @@ echo "🔄 Running database migrations..."
 python manage.py migrate --noinput
 
 echo "👤 Setting up superuser..."
-# Run the create_admin.py script from project root
 python create_admin.py
 
 if [ $? -ne 0 ]; then

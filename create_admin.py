@@ -1,6 +1,5 @@
 """
 Create admin superuser script - Fixed for Render deployment
-Place this file in your project root directory
 """
 import os
 import sys
@@ -20,7 +19,6 @@ def create_superuser():
     Create or update superuser without causing login loops
     """
     from django.contrib.auth import get_user_model
-    from django.contrib.auth.models import User as AuthUser
     
     User = get_user_model()
     
@@ -41,18 +39,18 @@ def create_superuser():
         if not user.is_superuser:
             user.is_superuser = True
             needs_update = True
-            print(f"   Upgrading user to superuser")
+            print(f"   ✓ Upgrading user to superuser")
             
         if not user.is_staff:
             user.is_staff = True
             needs_update = True
-            print(f"   Upgrading user to staff")
+            print(f"   ✓ Upgrading user to staff")
         
-        # Only set password if it's not usable or explicitly needed
+        # Only set password if it's not usable
         if not user.has_usable_password():
             user.set_password(password)
             needs_update = True
-            print(f"   Setting password (was unusable)")
+            print(f"   ✓ Setting password (was unusable)")
         
         if needs_update:
             user.save()
@@ -60,27 +58,31 @@ def create_superuser():
         else:
             print(f"✅ Superuser '{username}' already exists with valid credentials")
         
-        print(f"   Login URL: https://mfalmebits-entertain.onrender.com/admin/")
+        print(f"\n📋 Login Information:")
+        print(f"   URL: https://mfalmebits-entertain.onrender.com/admin/")
         print(f"   Username: {username}")
         print(f"   Email: {email}")
+        print(f"   Password: {'*' * len(password)} (hidden)")
+        
+        return True
         
     except User.DoesNotExist:
         # Create new superuser
         print(f"📝 Creating new superuser: {username}")
-        User.objects.create_superuser(
-            username=username,
-            email=email,
-            password=password
-        )
-        print(f"✅ Superuser '{username}' created successfully")
+        try:
+            User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            print(f"✅ Superuser '{username}' created successfully")
+            return True
+        except Exception as e:
+            print(f"❌ Error creating superuser: {str(e)}")
+            return False
     
-    # Verify the user
-    user = User.objects.get(username=username)
-    if user.is_superuser and user.is_staff and user.has_usable_password():
-        print(f"🎉 Superuser verification PASSED")
-        return True
-    else:
-        print(f"⚠️ Superuser verification FAILED")
+    except Exception as e:
+        print(f"❌ Unexpected error: {str(e)}")
         return False
 
 if __name__ == "__main__":
@@ -91,12 +93,12 @@ if __name__ == "__main__":
     success = create_superuser()
     
     if success:
-        print("=" * 60)
+        print("\n" + "=" * 60)
         print("✅ Superuser setup completed successfully")
         print("=" * 60)
         sys.exit(0)
     else:
-        print("=" * 60)
+        print("\n" + "=" * 60)
         print("❌ Superuser setup failed - check logs above")
         print("=" * 60)
         sys.exit(1)
