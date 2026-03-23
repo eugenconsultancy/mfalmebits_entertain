@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 import uuid
 
+
 class Profile(models.Model):
     """Extended user profile"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -77,17 +78,13 @@ class Profile(models.Model):
         return token
 
 
+# FIXED: Only ONE signal for profile creation (no duplicate save signal)
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    """Create profile when user is created"""
+    """Create profile when user is created - ONLY on creation"""
     if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    """Save profile when user is saved"""
-    instance.profile.save()
+        Profile.objects.get_or_create(user=instance)
+        print(f"✅ Profile created for user: {instance.username}")
 
 
 class LoginHistory(models.Model):
@@ -193,11 +190,13 @@ class UserPreference(models.Model):
         return f"{self.user.username}'s Preferences"
 
 
+# FIXED: Only ONE signal for preferences creation (no duplicate)
 @receiver(post_save, sender=User)
 def create_user_preferences(sender, instance, created, **kwargs):
-    """Create preferences when user is created"""
+    """Create preferences when user is created - ONLY on creation"""
     if created:
-        UserPreference.objects.create(user=instance)
+        UserPreference.objects.get_or_create(user=instance)
+        print(f"✅ Preferences created for user: {instance.username}")
 
 
 class DownloadHistory(models.Model):

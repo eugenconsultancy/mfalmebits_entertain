@@ -1,11 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
 
 app_name = 'accounts'
 
 urlpatterns = [
-    # Authentication
+    # Authentication - Using AllAuth-compatible views
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('register/', views.RegisterView.as_view(), name='register'),
@@ -41,4 +41,9 @@ urlpatterns = [
     
     # Account Management
     path('delete/', views.DeleteAccountView.as_view(), name='delete_account'),
+]
+
+# Add AllAuth URLs for compatibility
+urlpatterns += [
+    path('allauth/', include('allauth.urls')),
 ]

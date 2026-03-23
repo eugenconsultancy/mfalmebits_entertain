@@ -1,9 +1,11 @@
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import Profile, UserPreference, SavedItem
 import re
+
 
 class UserRegistrationForm(forms.ModelForm):
     """User registration form with accessibility improvements"""
@@ -103,8 +105,8 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.Form):
-    """User login form with accessibility improvements"""
-    username = forms.CharField(
+    """User login form - FIXED: Compatible with AllAuth using 'login' field"""
+    login = forms.CharField(
         label='Username or Email',
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-2 border rounded-lg',
@@ -131,6 +133,34 @@ class UserLoginForm(forms.Form):
             'aria-label': 'Remember my login on this device'
         })
     )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        login_value = cleaned_data.get('login')
+        password = cleaned_data.get('password')
+        
+        if login_value and password:
+            user = None
+            
+            # Check if login is email or username
+            if '@' in login_value:
+                try:
+                    user_obj = User.objects.get(email=login_value.lower())
+                    user = authenticate(username=user_obj.username, password=password)
+                except User.DoesNotExist:
+                    pass
+            else:
+                user = authenticate(username=login_value, password=password)
+            
+            if not user:
+                raise ValidationError("Invalid username/email or password.")
+            
+            if not user.is_active:
+                raise ValidationError("This account is inactive.")
+            
+            cleaned_data['user'] = user
+        
+        return cleaned_data
 
 
 class UserProfileForm(forms.ModelForm):

@@ -13,6 +13,8 @@ from django.http import JsonResponse, Http404
 from django.db.models import Q, Count
 from django.core.mail import send_mail
 from django.conf import settings
+from allauth.account.views import LoginView as AllAuthLoginView
+
 from .models import (
     Profile, LoginHistory, SavedItem, UserPreference, 
     DownloadHistory, PaymentMethod, AccountSettings
@@ -28,8 +30,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class LoginView(FormView):
-    """User login view"""
+class LoginView(AllAuthLoginView):
+    """User login view with AllAuth integration - FIXED"""
     template_name = 'accounts/login.html'
     form_class = UserLoginForm
     success_url = reverse_lazy('accounts:dashboard')
@@ -40,42 +42,41 @@ class LoginView(FormView):
         return super().dispatch(request, *args, **kwargs)
     
     def form_valid(self, form):
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password')
+        # Get user from cleaned data
+        user = form.cleaned_data.get('user')
         remember_me = form.cleaned_data.get('remember_me', False)
         
-        user = authenticate(self.request, username=username, password=password)
-        
-        if user is not None:
-            if user.is_active:
-                login(self.request, user)
-                
-                # Set session expiry
-                if not remember_me:
-                    self.request.session.set_expiry(0)
-                
-                # Record login history
-                self.record_login_history(user)
-                
-                # Update profile
-                user.profile.login_count += 1
-                user.profile.last_active = timezone.now()
-                user.profile.save()
-                
-                messages.success(self.request, f"Welcome back, {user.get_full_name() or user.username}!")
-                
-                # FIX: Redirect to next page if specified, otherwise to success_url
-                next_url = self.request.GET.get('next')
-                if next_url:
-                    return redirect(next_url)
-                
-                return super().form_valid(form)
+        if user:
+            # Use Django's login method
+            login(self.request, user)
+            
+            # Set session expiry based on remember_me
+            if not remember_me:
+                self.request.session.set_expiry(0)
             else:
-                messages.error(self.request, "This account is inactive.")
+                # Set session to expire in 2 weeks if remember_me is checked
+                self.request.session.set_expiry(1209600)
+            
+            # Record login history
+            self.record_login_history(user)
+            
+            # Update profile statistics
+            profile = user.profile
+            profile.login_count += 1
+            profile.last_active = timezone.now()
+            profile.save()
+            
+            messages.success(self.request, f"Welcome back, {user.get_full_name() or user.username}!")
+            
+            # Handle next URL redirection
+            next_url = self.request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            
+            return super().form_valid(form)
         else:
             messages.error(self.request, "Invalid username or password.")
-        
-        return self.form_invalid(form)
+            return self.form_invalid(form)
     
     def record_login_history(self, user):
         """Record login attempt in history"""
@@ -83,7 +84,7 @@ class LoginView(FormView):
             ip = self.request.META.get('REMOTE_ADDR')
             user_agent = self.request.META.get('HTTP_USER_AGENT', '')
             
-            # Parse user agent for device info (simplified)
+            # Parse user agent for device info
             device_type = 'desktop'
             browser = 'Unknown'
             os = 'Unknown'
@@ -99,6 +100,8 @@ class LoginView(FormView):
                 browser = 'Firefox'
             elif 'Safari' in user_agent:
                 browser = 'Safari'
+            elif 'Edge' in user_agent:
+                browser = 'Edge'
             
             if 'Windows' in user_agent:
                 os = 'Windows'
@@ -108,7 +111,7 @@ class LoginView(FormView):
                 os = 'Linux'
             elif 'Android' in user_agent:
                 os = 'Android'
-            elif 'iOS' in user_agent:
+            elif 'iOS' in user_agent or 'iPhone' in user_agent or 'iPad' in user_agent:
                 os = 'iOS'
             
             LoginHistory.objects.create(
@@ -126,6 +129,7 @@ class LoginView(FormView):
 
 class LogoutView(TemplateView):
     """User logout view"""
+    template_name = 'accounts/logout.html'
     
     def get(self, request, *args, **kwargs):
         logout(request)
@@ -167,19 +171,19 @@ class RegisterView(CreateView):
             
             subject = 'Verify your email address - MfalmeBits'
             message = f"""
-            Hi {user.get_full_name() or user.username},
-            
-            Thank you for registering with MfalmeBits. Please verify your email address by clicking the link below:
-            
-            {verify_url}
-            
-            This link will expire in 24 hours.
-            
-            If you didn't register for an account, please ignore this email.
-            
-            Best regards,
-            The MfalmeBits Team
-            """
+Hi {user.get_full_name() or user.username},
+
+Thank you for registering with MfalmeBits. Please verify your email address by clicking the link below:
+
+{verify_url}
+
+This link will expire in 24 hours.
+
+If you didn't register for an account, please ignore this email.
+
+Best regards,
+The MfalmeBits Team
+"""
             
             send_mail(
                 subject,
@@ -361,12 +365,12 @@ class PasswordResetRequestView(FormView):
         try:
             user = User.objects.get(email=email)
             
-            # Generate reset token (in production, use a proper token system)
+            # Generate reset token
             import hashlib
             import time
             token = hashlib.sha256(f"{user.email}{time.time()}{user.password}".encode()).hexdigest()
             
-            # Store token in session (in production, use database)
+            # Store token in session
             self.request.session['reset_token'] = token
             self.request.session['reset_user_id'] = user.id
             
@@ -377,19 +381,19 @@ class PasswordResetRequestView(FormView):
             
             subject = 'Password Reset Request - MfalmeBits'
             message = f"""
-            Hi {user.get_full_name() or user.username},
-            
-            You requested to reset your password. Click the link below to set a new password:
-            
-            {reset_url}
-            
-            This link will expire in 1 hour.
-            
-            If you didn't request this, please ignore this email.
-            
-            Best regards,
-            The MfalmeBits Team
-            """
+Hi {user.get_full_name() or user.username},
+
+You requested to reset your password. Click the link below to set a new password:
+
+{reset_url}
+
+This link will expire in 1 hour.
+
+If you didn't request this, please ignore this email.
+
+Best regards,
+The MfalmeBits Team
+"""
             
             send_mail(
                 subject,
