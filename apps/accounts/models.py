@@ -78,13 +78,20 @@ class Profile(models.Model):
         return token
 
 
-# FIXED: Only ONE signal for profile creation (no duplicate save signal)
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    """Create profile when user is created - ONLY on creation"""
+def create_or_update_user_profile_and_preferences(sender, instance, created, **kwargs):
+    """
+    Create Profile and UserPreference when User is created.
+    ONLY called on creation to avoid duplicate signal issues.
+    """
     if created:
+        # Create profile
         Profile.objects.get_or_create(user=instance)
-        print(f"✅ Profile created for user: {instance.username}")
+        
+        # Create preferences
+        UserPreference.objects.get_or_create(user=instance)
+        
+        print(f"✅ Profile and Preferences created for user: {instance.username}")
 
 
 class LoginHistory(models.Model):
@@ -188,15 +195,6 @@ class UserPreference(models.Model):
     
     def __str__(self):
         return f"{self.user.username}'s Preferences"
-
-
-# FIXED: Only ONE signal for preferences creation (no duplicate)
-@receiver(post_save, sender=User)
-def create_user_preferences(sender, instance, created, **kwargs):
-    """Create preferences when user is created - ONLY on creation"""
-    if created:
-        UserPreference.objects.get_or_create(user=instance)
-        print(f"✅ Preferences created for user: {instance.username}")
 
 
 class DownloadHistory(models.Model):

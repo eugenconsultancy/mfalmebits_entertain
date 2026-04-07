@@ -21,6 +21,8 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+import hashlib
+import hmac
 
 logger = logging.getLogger(__name__)
 
@@ -69,8 +71,8 @@ class NewsletterSubscribeView(FormView):
             subscriber.save()
         
         # Send confirmation email if required
-        settings = NewsletterSettings.objects.first()
-        if settings and settings.require_confirmation and settings.double_opt_in:
+        settings_obj = NewsletterSettings.objects.first()
+        if settings_obj and settings_obj.require_confirmation and settings_obj.double_opt_in:
             self.send_confirmation_email(subscriber)
             messages.success(self.request, 'Please check your email to confirm your subscription.')
         else:
@@ -136,10 +138,10 @@ class NewsletterSubscribeView(FormView):
     def send_welcome_email(self, subscriber):
         """Send welcome email"""
         try:
-            settings = NewsletterSettings.objects.first()
-            if settings and settings.welcome_email_content:
-                subject = settings.welcome_email_subject
-                message = settings.welcome_email_content
+            settings_obj = NewsletterSettings.objects.first()
+            if settings_obj and settings_obj.welcome_email_content:
+                subject = settings_obj.welcome_email_subject
+                message = settings_obj.welcome_email_content
             else:
                 subject = 'Welcome to MfalmeBits Newsletter!'
                 message = f"""
@@ -168,55 +170,74 @@ class NewsletterSubscribeView(FormView):
 
 
 class NewsletterConfirmView(TemplateView):
-    """Confirm subscription"""
+    """Confirm subscription and handle missing tokens gracefully"""
     template_name = 'newsletter/confirm.html'
     
     def get(self, request, *args, **kwargs):
-        token = kwargs.get('token')
+        # 1. Try to get token from URL path, then fall back to GET parameters
+        token = kwargs.get('token') or request.GET.get('token')
+        
+        # Handle missing token (prevents the 404/crash)
+        if not token:
+            messages.error(request, 'No confirmation token provided. Please check your email link.')
+            return redirect('newsletter:subscribe')
         
         try:
+            # 2. Identify the subscriber using the token
             subscriber = Subscriber.objects.get(confirmation_token=token)
             
             if not subscriber.confirmed:
                 subscriber.confirmed = True
                 subscriber.confirmed_at = timezone.now()
-                subscriber.confirmation_token = ''
+                # Clear token after use? 
+                # NOTE: If you clear it here, the 'preferences' link below needs the NEW token 
+                # or you should keep the token if it's used as their permanent ID.
+                # subscriber.confirmation_token = '' 
                 subscriber.save()
                 
-                # Send welcome email
+                # 3. Trigger Welcome Email
                 self.send_welcome_email(subscriber)
                 
-                messages.success(request, 'Your subscription has been confirmed!')
+                messages.success(request, 'Your subscription has been confirmed! Karibu.')
             else:
-                messages.info(request, 'Your subscription was already confirmed.')
+                messages.info(request, 'This subscription has already been confirmed.')
                 
         except Subscriber.DoesNotExist:
-            messages.error(request, 'Invalid confirmation link.')
+            # 4. Handle invalid/expired tokens
+            messages.error(request, 'The confirmation link is invalid or has expired.')
             return redirect('newsletter:subscribe')
         
         return super().get(request, *args, **kwargs)
     
     def send_welcome_email(self, subscriber):
-        """Send welcome email"""
+        """Send welcome email using DB settings or fallback defaults"""
         try:
-            settings = NewsletterSettings.objects.first()
-            if settings and settings.welcome_email_content:
-                subject = settings.welcome_email_subject
-                message = settings.welcome_email_content
+            settings_obj = NewsletterSettings.objects.first()
+            
+            # Prepare dynamic preference link using the subscriber's token
+            # This prevents the "No Token" error on the preferences page
+            pref_url = self.request.build_absolute_uri(
+                reverse('newsletter:preferences_with_token', kwargs={'token': subscriber.confirmation_token})
+            )
+            
+            if settings_obj and settings_obj.welcome_email_content:
+                subject = settings_obj.welcome_email_subject
+                message = settings_obj.welcome_email_content.replace('{{ preferences_url }}', pref_url)
             else:
-                subject = 'Welcome to MfalmeBits Newsletter!'
+                subject = 'Welcome to MfalmeBits!'
+                full_name = subscriber.get_full_name() or "Subscriber"
                 message = f"""
-                Hi {subscriber.get_full_name()},
-                
-                Thank you for confirming your subscription to the MfalmeBits newsletter!
-                
-                You'll now receive updates on African knowledge, culture, and digital resources.
-                
-                You can manage your preferences at any time:
-                {self.request.build_absolute_uri('/newsletter/preferences/')}
-                
-                Best regards,
-                The MfalmeBits Team
+Hi {full_name},
+
+Thank you for confirming your subscription to MfalmeBits!
+
+You'll now receive curated updates on African History, Culture, and Innovation.
+
+Manage your interests and preferences here:
+{pref_url}
+
+Best regards,
+The MfalmeBits Team
                 """
             
             send_mail(
@@ -224,12 +245,12 @@ class NewsletterConfirmView(TemplateView):
                 message,
                 settings.DEFAULT_FROM_EMAIL,
                 [subscriber.email],
-                fail_silently=True,
+                fail_silently=False, 
             )
         except Exception as e:
-            logger.error(f"Failed to send welcome email: {e}")
+            logger.error(f"Critical: Failed to send welcome email to {subscriber.email}. Error: {e}")
 
-
+            
 class NewsletterUnsubscribeView(FormView):
     """Handle unsubscriptions"""
     template_name = 'newsletter/unsubscribe.html'
@@ -276,7 +297,7 @@ class NewsletterUnsubscribeView(FormView):
             # Record reason if provided
             if reason:
                 # You could create an UnsubscribeReason model here
-                pass
+                logger.info(f"Unsubscribe reason for {email}: {reason}")
             
             messages.success(self.request, 'You have been unsubscribed successfully.')
             
@@ -472,11 +493,29 @@ class NewsletterCategoryView(ListView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class NewsletterTrackView(TemplateView):
-    """Tracking endpoint for newsletter events"""
+    """
+    Tracking endpoint for newsletter events (SEPARATE FROM NORMAL VIEWS).
+    
+    IMPORTANT: This endpoint is CSRF-exempt because it's called from email clients
+    and pixel tracking requests, which cannot include CSRF tokens.
+    
+    Security Note: Verify tracking requests via token validation, not CSRF tokens.
+    """
     
     def post(self, request, *args, **kwargs):
+        """Handle tracking events via API"""
         try:
             data = json.loads(request.body)
+            
+            # Validate tracking request with timestamp and signature
+            # (Implement proper signature verification in production)
+            timestamp = data.get('timestamp')
+            signature = data.get('signature')
+            
+            # Verify signature
+            if not self._verify_signature(data, signature):
+                return JsonResponse({'success': False, 'error': 'Invalid signature'}, status=403)
+            
             event_type = data.get('event')
             issue_id = data.get('issue_id')
             subscriber_id = data.get('subscriber_id')
@@ -513,8 +552,26 @@ class NewsletterTrackView(TemplateView):
             
             return JsonResponse({'success': True})
             
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
         except Exception as e:
+            logger.error(f"Tracking error: {e}")
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    
+    def _verify_signature(self, data, signature):
+        """Verify request signature using HMAC"""
+        try:
+            # Use SECRET_KEY to verify signature (implement properly in production)
+            payload = json.dumps({k: v for k, v in data.items() if k != 'signature'}, sort_keys=True)
+            expected_signature = hmac.new(
+                settings.SECRET_KEY.encode(),
+                payload.encode(),
+                hashlib.sha256
+            ).hexdigest()
+            return hmac.compare_digest(expected_signature, signature or '')
+        except Exception as e:
+            logger.error(f"Signature verification failed: {e}")
+            return False
 
 
 class NewsletterContactView(FormView):
@@ -536,11 +593,14 @@ class NewsletterContactView(FormView):
         
         # Send email to newsletter team
         try:
+            settings_obj = NewsletterSettings.objects.first()
+            newsletter_email = settings_obj.sender_email if settings_obj else settings.DEFAULT_FROM_EMAIL
+            
             send_mail(
                 f"Newsletter Contact: {subject}",
                 f"From: {name} <{email}>\n\n{message}",
                 settings.DEFAULT_FROM_EMAIL,
-                [settings.NEWSLETTER_EMAIL or settings.DEFAULT_FROM_EMAIL],
+                [newsletter_email],
                 fail_silently=True,
             )
             messages.success(self.request, 'Your message has been sent. We\'ll respond shortly.')

@@ -1,204 +1,763 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block seo_title %}{{ seo_title|default:"About MfalmeBits" }}{% endblock %}
-{% block seo_description %}{{ seo_description|default:"Learn about MfalmeBits - African Knowledge, Identity, and Future Thinking" }}{% endblock %}
-{% block seo_keywords %}{{ seo_keywords|default:"about, African knowledge, cultural archive, digital library" }}{% endblock %}
+{% block seo_title %}{{ seo_title|default:"About MfalmeBits - African Knowledge Sanctuary" }}{% endblock %}
+{% block seo_description %}{{ seo_description|default:"Discover MfalmeBits - A digital sanctuary preserving African knowledge, culture, and heritage for future generations." }}{% endblock %}
+{% block seo_keywords %}{{ seo_keywords|default:"about, African knowledge, cultural archive, digital library, African heritage" }}{% endblock %}
 
 {% block extra_css %}
-<!-- Remove the main-enhanced.css reference - using existing CSS files -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:opsz,wght@14..32,100;14..32,200;14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+<style>
+    /* ========================================
+       PREMIUM WEB 3.0 DESIGN SYSTEM
+       Earth-Tone Palette with Modern Aesthetic
+    ======================================== */
+    
+    :root {
+        /* Earth Tone Colors */
+        --earth-brown: #8B4513;
+        --earth-terracotta: #C17A42;
+        --earth-sand: #D4B896;
+        --earth-cream: #FDF8F0;
+        --earth-clay: #A0522D;
+        --earth-umber: #6B3A2A;
+        
+        /* Vibrant Accents */
+        --blue-accent: #3B82F6;
+        --blue-glow: rgba(59, 130, 246, 0.4);
+        --gold-accent: #D4AF37;
+        
+        /* Typography */
+        --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+        --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        
+        /* Spacing */
+        --section-spacing: 120px;
+        --card-radius: 24px;
+        
+        /* Glassmorphism */
+        --glass-bg: rgba(253, 248, 240, 0.7);
+        --glass-border: 1px solid rgba(139, 69, 19, 0.1);
+        --glass-blur: blur(12px);
+    }
+    
+    /* Dark mode adjustments */
+    .dark {
+        --glass-bg: rgba(30, 20, 15, 0.7);
+        --glass-border: 1px solid rgba(255, 255, 255, 0.05);
+        --earth-cream: #1a1a1a;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        background: var(--earth-cream);
+        color: #2c1810;
+    }
+    
+    /* Typography Scale - Increased by 15% */
+    h1, .h1 {
+        font-family: var(--font-serif);
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+    }
+    
+    h2, .h2 {
+        font-family: var(--font-serif);
+        font-size: 3rem;
+        font-weight: 700;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+    }
+    
+    h3, .h3 {
+        font-family: var(--font-serif);
+        font-size: 2rem;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+    
+    h4, .h4 {
+        font-family: var(--font-serif);
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .lead {
+        font-size: 1.25rem;
+        line-height: 1.7;
+        font-weight: 400;
+    }
+    
+    body, p, .body-text {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+    
+    .small-text {
+        font-size: 0.875rem;
+        line-height: 1.6;
+    }
+    
+    /* Text Gradient */
+    .text-gradient {
+        background: linear-gradient(135deg, var(--earth-brown) 0%, var(--blue-accent) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    .text-gradient-gold {
+        background: linear-gradient(135deg, var(--gold-accent) 0%, var(--earth-terracotta) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    /* ========================================
+       HERO SECTION WITH PARALLAX
+    ======================================== */
+    
+    .hero-premium {
+        position: relative;
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, var(--earth-cream) 0%, #f5ede0 100%);
+        overflow: hidden;
+    }
+    
+    .dark .hero-premium {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a1f18 100%);
+    }
+    
+    /* African Pattern Texture */
+    .hero-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' opacity='0.03'%3E%3Cpath fill='%238B4513' d='M10,10 L20,5 L30,10 L25,20 L15,20 Z'/%3E%3Cpath fill='%238B4513' d='M50,50 L60,45 L70,50 L65,60 L55,60 Z'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 60px;
+        pointer-events: none;
+    }
+    
+    /* Floating Orbs - Web 3.0 Effect */
+    .floating-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.3;
+        animation: float 20s ease-in-out infinite;
+    }
+    
+    .orb-1 {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, var(--blue-accent), transparent);
+        top: -100px;
+        right: -100px;
+        animation-delay: 0s;
+    }
+    
+    .orb-2 {
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, var(--earth-terracotta), transparent);
+        bottom: 50px;
+        left: -50px;
+        animation-delay: 5s;
+    }
+    
+    .orb-3 {
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, var(--gold-accent), transparent);
+        top: 40%;
+        left: 20%;
+        animation-delay: 10s;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0) translateX(0); }
+        33% { transform: translateY(-30px) translateX(20px); }
+        66% { transform: translateY(20px) translateX(-15px); }
+    }
+    
+    /* Stats Container */
+    .stats-container {
+        display: flex;
+        gap: 48px;
+        margin-top: 48px;
+        flex-wrap: wrap;
+    }
+    
+    .stat-card-premium {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border: var(--glass-border);
+        border-radius: 20px;
+        padding: 24px 32px;
+        text-align: center;
+        min-width: 140px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card-premium:hover {
+        transform: translateY(-5px);
+        border-color: var(--blue-accent);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+    }
+    
+    .stat-number {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--earth-brown), var(--blue-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    /* ========================================
+       MODERN ARCHIVE BUTTON (GLASS + LIQUID)
+    ======================================== */
+    
+    .btn-archive-premium {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 32px;
+        background: rgba(59, 130, 246, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 60px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--blue-accent);
+        text-decoration: none;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+    
+    .btn-archive-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+        transition: left 0.5s ease;
+        z-index: -1;
+    }
+    
+    .btn-archive-premium::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        background: linear-gradient(135deg, var(--blue-accent), #2563eb);
+        transition: height 0.3s ease;
+        z-index: -2;
+        border-radius: 60px;
+    }
+    
+    .btn-archive-premium:hover {
+        color: white;
+        border-color: transparent;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-archive-premium:hover::after {
+        height: 100%;
+    }
+    
+    .btn-archive-premium:hover::before {
+        left: 100%;
+    }
+    
+    .btn-icon-sparkle {
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .btn-archive-premium:hover .btn-icon-sparkle {
+        transform: rotate(15deg) scale(1.1);
+    }
+    
+    .btn-counter {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 40px;
+        padding: 4px 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+    
+    /* ========================================
+       BENTO BOX CARDS
+    ======================================== */
+    
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        margin-top: 60px;
+    }
+    
+    .bento-card {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border: var(--glass-border);
+        border-radius: var(--card-radius);
+        padding: 40px;
+        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .bento-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--earth-brown), var(--blue-accent), var(--gold-accent));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+    
+    .bento-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .bento-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    .card-icon-premium {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(59, 130, 246, 0.1));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+    
+    .card-icon-premium i {
+        font-size: 32px;
+        background: linear-gradient(135deg, var(--earth-brown), var(--blue-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    /* ========================================
+       MODERN TIMELINE WITH GLOWING NODES
+    ======================================== */
+    
+    .timeline-premium {
+        position: relative;
+        padding-left: 40px;
+    }
+    
+    .timeline-premium::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 10px;
+        bottom: 10px;
+        width: 2px;
+        background: linear-gradient(180deg, var(--blue-accent), var(--earth-brown), var(--gold-accent));
+        border-radius: 2px;
+    }
+    
+    .timeline-node {
+        position: relative;
+        margin-bottom: 48px;
+        padding-left: 40px;
+    }
+    
+    .timeline-node::before {
+        content: '';
+        position: absolute;
+        left: -31px;
+        top: 0;
+        width: 14px;
+        height: 14px;
+        background: var(--blue-accent);
+        border-radius: 50%;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 0 0 8px rgba(59, 130, 246, 0.1);
+        animation: glow-pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes glow-pulse {
+        0%, 100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 0 0 8px rgba(59, 130, 246, 0.1); }
+        50% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3), 0 0 0 12px rgba(59, 130, 246, 0.15); }
+    }
+    
+    .timeline-year-premium {
+        display: inline-block;
+        font-family: var(--font-serif);
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 6px 16px;
+        background: linear-gradient(135deg, var(--earth-brown), var(--blue-accent));
+        border-radius: 40px;
+        color: white;
+        margin-bottom: 12px;
+    }
+    
+    .timeline-title {
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    
+    /* ========================================
+       FROSTED GLASS TEAM CARDS
+    ======================================== */
+    
+    .team-grid-premium {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        margin-top: 60px;
+    }
+    
+    .team-card-premium {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border: var(--glass-border);
+        border-radius: var(--card-radius);
+        padding: 32px 24px;
+        text-align: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .team-card-premium:hover {
+        transform: translateY(-10px);
+        border-color: var(--blue-accent);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .team-avatar-premium {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid transparent;
+        background: linear-gradient(135deg, var(--earth-brown), var(--blue-accent)) border-box;
+        -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+    
+    .team-avatar-premium img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .team-name {
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    
+    .team-role {
+        font-size: 0.875rem;
+        color: var(--blue-accent);
+        margin-bottom: 16px;
+    }
+    
+    .social-icons-premium {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .team-card-premium:hover .social-icons-premium {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .social-icon-premium {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 50%;
+        color: var(--blue-accent);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .social-icon-premium:hover {
+        background: var(--blue-accent);
+        color: white;
+        transform: translateY(-3px);
+    }
+    
+    /* ========================================
+       CTA SECTION
+    ======================================== */
+    
+    .cta-premium {
+        background: linear-gradient(135deg, var(--earth-brown) 0%, var(--blue-accent) 100%);
+        border-radius: var(--card-radius);
+        padding: 64px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-premium::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* ========================================
+       RESPONSIVE
+    ======================================== */
+    
+    @media (max-width: 1200px) {
+        h1, .h1 { font-size: 3.5rem; }
+        h2, .h2 { font-size: 2.5rem; }
+        .team-grid-premium { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (max-width: 768px) {
+        h1, .h1 { font-size: 2.5rem; }
+        h2, .h2 { font-size: 2rem; }
+        .bento-grid { grid-template-columns: 1fr; }
+        .team-grid-premium { grid-template-columns: 1fr; }
+        .stats-container { flex-direction: column; align-items: center; }
+        .timeline-premium { padding-left: 20px; }
+        .cta-premium { padding: 40px 24px; }
+    }
+    
+    @media (max-width: 480px) {
+        h1, .h1 { font-size: 2rem; }
+        .btn-archive-premium { padding: 12px 24px; font-size: 0.875rem; }
+        .bento-card { padding: 24px; }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<!-- ===== Enhanced About Hero with Parallax ===== -->
-<section class="hero-serenity position-relative overflow-hidden">
-    <div class="hero-background">
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
-        </div>
-        <div class="particles" id="heroParticles"></div>
-    </div>
-
-    <div class="container-custom position-relative z-index-2">
-        <div class="row align-items-center min-vh-75 py-5">
-            <div class="col-lg-6 animate-slide-in-left">
-                <span class="badge bg-primary text-white mb-4 px-4 py-2 rounded-pill">
+<!-- ===== PREMIUM HERO SECTION ===== -->
+<section class="hero-premium">
+    <!-- Floating Orbs -->
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-7" data-aos="fade-right">
+                <span class="badge bg-primary text-white mb-4 px-4 py-2 rounded-pill" style="background: linear-gradient(135deg, var(--earth-brown), var(--blue-accent)) !important;">
                     <i class="fas fa-address-card me-2"></i>About Us
                 </span>
                 <h1 class="display-3 fw-bold mb-4">
-                    Preserving <span class="text-gradient">African</span><br>Knowledge & Culture
+                    Preserving <span class="text-gradient">African</span><br>
+                    Knowledge & Culture
                 </h1>
-                <p class="lead mb-5">
+                <p class="lead mb-4" style="max-width: 600px;">
                     MfalmeBits is a digital sanctuary dedicated to preserving, promoting, and providing access to African knowledge, cultural heritage, and creative works for generations to come.
                 </p>
-
-                <!-- Stats with Cards -->
-                <div class="d-flex flex-wrap gap-4">
-                    <div class="stat-item">
-                        <h3 class="display-4 fw-bold text-primary">10K+</h3>
-                        <p class="text-muted">Archive Entries</p>
+                
+                <!-- Modern Archive Button with Counter -->
+                <a href="{% url 'archive:index' %}" class="btn-archive-premium">
+                    <i class="fas fa-archive btn-icon-sparkle"></i>
+                    Explore Archive
+                    <span class="btn-counter">
+                        <i class="fas fa-database me-1"></i>10K+
+                    </span>
+                    <i class="fas fa-sparkle ms-2" style="font-size: 0.875rem;"></i>
+                </a>
+                
+                <!-- Premium Stats -->
+                <div class="stats-container">
+                    <div class="stat-card-premium">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Archive Entries</div>
                     </div>
-                    <div class="stat-item">
-                        <h3 class="display-4 fw-bold text-primary">5K+</h3>
-                        <p class="text-muted">Digital Products</p>
+                    <div class="stat-card-premium">
+                        <div class="stat-number">5K+</div>
+                        <div class="stat-label">Digital Products</div>
                     </div>
-                    <div class="stat-item">
-                        <h3 class="display-4 fw-bold text-primary">50K+</h3>
-                        <p class="text-muted">Community Members</p>
+                    <div class="stat-card-premium">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Community Members</div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-6 animate-slide-in-right">
-                <div class="hero-image-wrapper">
-                    <!-- Fixed image path with reliable placeholder -->
+            
+            <div class="col-lg-5 mt-5 mt-lg-0" data-aos="fade-left">
+                <div class="hero-image-wrapper position-relative">
                     <img src="{% static 'images/about-hero.svg' %}" 
                          alt="About MfalmeBits" 
-                         class="img-fluid rounded-4 shadow-lg"
-                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/8B4513/white?text=MfalmeBits';">
+                         class="img-fluid rounded-4"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x500/8B4513/white?text=MfalmeBits'"
+                         style="border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Wave Divider -->
-    <div class="wave-divider">
-        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-        </svg>
-    </div>
 </section>
 
-<!-- ===== Mission & Vision with Cards ===== -->
-<section class="section">
-    <div class="container-custom">
-        <div class="row g-4">
+<!-- ===== BENTO BOX MISSION & VISION ===== -->
+<section class="py-5" style="padding: 80px 0;">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-4 fw-bold mb-3">Our <span class="text-gradient">Foundation</span></h2>
+            <p class="lead text-muted" style="max-width: 700px; margin: 0 auto;">Guided by purpose, driven by passion for African heritage</p>
+        </div>
+        
+        <div class="bento-grid">
             <!-- Mission Card -->
-            <div class="col-md-6">
-                <div class="card-serenity h-100 hover-lift">
-                    <div class="icon-wrapper mb-4">
-                        <div class="icon-circle bg-primary text-white">
-                            <i class="fas fa-bullseye fa-2x"></i>
-                        </div>
-                    </div>
-                    <h2 class="h2 fw-bold mb-4">Our Mission</h2>
-                    <p class="text-muted mb-4 lead">To create a comprehensive digital platform that preserves, promotes, and provides access to African knowledge, cultural heritage, and creative works, ensuring they remain accessible for generations to come.</p>
-
-                    <ul class="list-unstyled mt-4">
-                        <li class="mb-3 d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
-                            <span>Preserve African cultural heritage</span>
-                        </li>
-                        <li class="mb-3 d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
-                            <span>Promote African knowledge and wisdom</span>
-                        </li>
-                        <li class="mb-3 d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
-                            <span>Provide accessible digital resources</span>
-                        </li>
-                    </ul>
+            <div class="bento-card" data-aos="fade-right">
+                <div class="card-icon-premium">
+                    <i class="fas fa-bullseye"></i>
                 </div>
+                <h3 class="h3 mb-3">Our Mission</h3>
+                <p class="text-muted mb-4">To create a comprehensive digital platform that preserves, promotes, and provides access to African knowledge, cultural heritage, and creative works.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-primary me-2" style="color: var(--blue-accent) !important;"></i>
+                        <span>Preserve African cultural heritage</span>
+                    </li>
+                    <li class="mb-2 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-primary me-2" style="color: var(--blue-accent) !important;"></i>
+                        <span>Promote African knowledge and wisdom</span>
+                    </li>
+                    <li class="mb-2 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-primary me-2" style="color: var(--blue-accent) !important;"></i>
+                        <span>Provide accessible digital resources</span>
+                    </li>
+                </ul>
             </div>
-
+            
             <!-- Vision Card -->
-            <div class="col-md-6">
-                <div class="card-serenity h-100 hover-lift">
-                    <div class="icon-wrapper mb-4">
-                        <div class="icon-circle bg-primary text-white">
-                            <i class="fas fa-eye fa-2x"></i>
-                        </div>
-                    </div>
-                    <h2 class="h2 fw-bold mb-4">Our Vision</h2>
-                    <p class="text-muted mb-4 lead">To become the leading digital destination for African knowledge and culture, connecting people across the globe with the richness and diversity of African heritage and contemporary creativity.</p>
-
-                    <ul class="list-unstyled mt-4">
-                        <li class="mb-3 d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
-                            <span>Global accessibility to African knowledge</span>
-                        </li>
-                        <li class="mb-3 d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
-                            <span>Empowering African creators and scholars</span>
-                        </li>
-                        <li class="mb-3 d-flex align-items-center">
-                            <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
-                            <span>Fostering cultural exchange and understanding</span>
-                        </li>
-                    </ul>
+            <div class="bento-card" data-aos="fade-left">
+                <div class="card-icon-premium">
+                    <i class="fas fa-eye"></i>
                 </div>
+                <h3 class="h3 mb-3">Our Vision</h3>
+                <p class="text-muted mb-4">To become the leading digital destination for African knowledge and culture, connecting people across the globe with the richness and diversity of African heritage.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-primary me-2" style="color: var(--blue-accent) !important;"></i>
+                        <span>Global accessibility to African knowledge</span>
+                    </li>
+                    <li class="mb-2 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-primary me-2" style="color: var(--blue-accent) !important;"></i>
+                        <span>Empowering African creators and scholars</span>
+                    </li>
+                    <li class="mb-2 d-flex align-items-center">
+                        <i class="fas fa-check-circle text-primary me-2" style="color: var(--blue-accent) !important;"></i>
+                        <span>Fostering cultural exchange</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ===== Our Story with Timeline ===== -->
-<section class="section bg-light" style="position: relative; overflow: hidden;">
-    <!-- Background Image -->
-    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.1;">
-        <img src="{% static 'images/apple-touch-icon.png' %}" 
-             alt="Background Pattern"
-             style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-    
-    <div class="container-custom" style="position: relative; z-index: 1;">
+<!-- ===== OUR STORY WITH MODERN TIMELINE ===== -->
+<section class="py-5" style="padding: 80px 0; background: rgba(139, 69, 19, 0.03);">
+    <div class="container">
         <div class="row align-items-center g-5">
-            <div class="col-lg-6">
-                <div class="story-content">
-                    <span class="badge bg-primary text-white mb-4 px-4 py-2 rounded-pill">
-                        <i class="fas fa-history me-2"></i>Our Journey
-                    </span>
-                    <h2 class="display-5 fw-bold mb-4">The <span class="text-gradient">MfalmeBits</span> Story</h2>
-                    <p class="lead mb-4">Founded in 2020, MfalmeBits began as a passion project to digitize and preserve African historical documents and cultural artifacts.</p>
-
-                    <div class="timeline-modern">
-                        <div class="timeline-item mb-4">
-                            <div class="timeline-year bg-primary text-white">2020</div>
-                            <div class="timeline-content">
-                                <h5 class="fw-bold">The Beginning</h5>
-                                <p class="text-muted">Started with a small collection of digitized manuscripts from personal archives.</p>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item mb-4">
-                            <div class="timeline-year bg-primary text-white">2022</div>
-                            <div class="timeline-content">
-                                <h5 class="fw-bold">Growth & Partnerships</h5>
-                                <p class="text-muted">Partnered with cultural institutions and universities across Africa.</p>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item mb-4">
-                            <div class="timeline-year bg-primary text-white">2024</div>
-                            <div class="timeline-content">
-                                <h5 class="fw-bold">Global Recognition</h5>
-                                <p class="text-muted">Serving a global community of researchers, students, and cultural enthusiasts.</p>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-year bg-primary text-white">Future</div>
-                            <div class="timeline-content">
-                                <h5 class="fw-bold">Continuing the Mission</h5>
-                                <p class="text-muted">Expanding our reach and impact for generations to come.</p>
-                            </div>
-                        </div>
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="badge bg-primary text-white mb-4 px-4 py-2 rounded-pill" style="background: linear-gradient(135deg, var(--earth-brown), var(--blue-accent)) !important;">
+                    <i class="fas fa-history me-2"></i>Our Journey
+                </span>
+                <h2 class="display-4 fw-bold mb-4">The <span class="text-gradient">MfalmeBits</span> Story</h2>
+                <p class="lead mb-4">Founded in 2020, MfalmeBits began as a passion project to digitize and preserve African historical documents and cultural artifacts.</p>
+                
+                <!-- Premium Timeline -->
+                <div class="timeline-premium">
+                    <div class="timeline-node">
+                        <span class="timeline-year-premium">2020</span>
+                        <h4 class="timeline-title">The Beginning</h4>
+                        <p class="text-muted">Started with a small collection of digitized manuscripts from personal archives.</p>
+                    </div>
+                    
+                    <div class="timeline-node">
+                        <span class="timeline-year-premium">2022</span>
+                        <h4 class="timeline-title">Growth & Partnerships</h4>
+                        <p class="text-muted">Partnered with cultural institutions and universities across Africa.</p>
+                    </div>
+                    
+                    <div class="timeline-node">
+                        <span class="timeline-year-premium">2024</span>
+                        <h4 class="timeline-title">Global Recognition</h4>
+                        <p class="text-muted">Serving a global community of researchers, students, and cultural enthusiasts.</p>
+                    </div>
+                    
+                    <div class="timeline-node">
+                        <span class="timeline-year-premium">Future</span>
+                        <h4 class="timeline-title">Continuing the Mission</h4>
+                        <p class="text-muted">Expanding our reach and impact for generations to come.</p>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-6">
-                <div class="story-image-wrapper position-relative">
-                    <!-- Fixed image path with reliable placeholder -->
+            
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="position-relative">
                     <img src="{% static 'images/our-story.jpg' %}" 
                          alt="Our Story" 
-                         class="img-fluid rounded-4 shadow-lg"
-                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/8B4513/white?text=Our+Story';">
-                    <div class="floating-card position-absolute bottom-0 end-0 bg-white p-3 rounded-4 shadow-lg">
-                        <i class="fas fa-book-open text-primary me-2"></i>
+                         class="img-fluid rounded-4"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x500/8B4513/white?text=Our+Story'"
+                         style="border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                    <div class="floating-card position-absolute bottom-0 end-0 bg-white p-3 rounded-4 shadow-lg" style="background: var(--glass-bg) !important; backdrop-filter: blur(10px); border-radius: 16px; margin: 20px;">
+                        <i class="fas fa-book-open text-primary me-2" style="color: var(--blue-accent) !important;"></i>
                         <span class="fw-bold">10K+ Items</span>
                     </div>
                 </div>
@@ -207,242 +766,124 @@
     </div>
 </section>
 
-<!-- ===== Team Section ===== -->
-<section class="section">
-    <div class="container-custom">
-        <div class="text-center mb-5">
-            <span class="badge bg-primary text-white mb-3 px-4 py-2 rounded-pill">
+<!-- ===== TEAM SECTION - FROSTED GLASS CARDS ===== -->
+<section class="py-5" style="padding: 80px 0;">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-primary text-white mb-3 px-4 py-2 rounded-pill" style="background: linear-gradient(135deg, var(--earth-brown), var(--blue-accent)) !important;">
                 <i class="fas fa-users me-2"></i>Our Team
             </span>
-            <h2 class="display-5 fw-bold mb-3">Meet the <span class="text-gradient">Visionaries</span></h2>
-            <p class="lead text-muted">Passionate individuals dedicated to preserving African knowledge</p>
+            <h2 class="display-4 fw-bold mb-3">Meet the <span class="text-gradient">Visionaries</span></h2>
+            <p class="lead text-muted" style="max-width: 600px; margin: 0 auto;">Passionate individuals dedicated to preserving African knowledge</p>
         </div>
-
-        <div class="row g-4">
+        
+        <div class="team-grid-premium">
             <!-- Team Member 1 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card-serenity text-center p-4 hover-lift">
-                    <div class="team-member-img mb-4">
-                        <!-- Fixed image path with reliable placeholder -->
-                        <img src="{% static 'images/team/team-1.jpg' %}" 
-                             alt="Dr. Kwame Asante" 
-                             class="rounded-circle"
-                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=KA';">
-                    </div>
-                    <h4 class="fw-bold mb-1">Dr. Kwame Asante</h4>
-                    <p class="text-primary mb-3">Founder & Director</p>
-                    <div class="social-links d-flex justify-content-center gap-2">
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
-                    </div>
+            <div class="team-card-premium" data-aos="fade-up" data-aos-delay="0">
+                <div class="team-avatar-premium">
+                    <img src="{% static 'images/team/team-1.jpg' %}" 
+                         alt="Dr. Kwame Asante"
+                         onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=KA'">
+                </div>
+                <h3 class="team-name">Dr. Kwame Asante</h3>
+                <p class="team-role">Founder & Director</p>
+                <div class="social-icons-premium">
+                    <a href="#" class="social-icon-premium"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
-
+            
             <!-- Team Member 2 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card-serenity text-center p-4 hover-lift">
-                    <div class="team-member-img mb-4">
-                        <img src="{% static 'images/team/team-2.jpg' %}" 
-                             alt="Fatima Diallo" 
-                             class="rounded-circle"
-                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=FD';">
-                    </div>
-                    <h4 class="fw-bold mb-1">Fatima Diallo</h4>
-                    <p class="text-primary mb-3">Head of Archive</p>
-                    <div class="social-links d-flex justify-content-center gap-2">
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
-                    </div>
+            <div class="team-card-premium" data-aos="fade-up" data-aos-delay="100">
+                <div class="team-avatar-premium">
+                    <img src="{% static 'images/team/team-2.jpg' %}" 
+                         alt="Fatima Diallo"
+                         onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=FD'">
+                </div>
+                <h3 class="team-name">Fatima Diallo</h3>
+                <p class="team-role">Head of Archive</p>
+                <div class="social-icons-premium">
+                    <a href="#" class="social-icon-premium"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
-
+            
             <!-- Team Member 3 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card-serenity text-center p-4 hover-lift">
-                    <div class="team-member-img mb-4">
-                        <img src="{% static 'images/team/team-3.jpg' %}" 
-                             alt="John Mwangi" 
-                             class="rounded-circle"
-                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=JM';">
-                    </div>
-                    <h4 class="fw-bold mb-1">John Mwangi</h4>
-                    <p class="text-primary mb-3">Technical Lead</p>
-                    <div class="social-links d-flex justify-content-center gap-2">
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-github"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
-                    </div>
+            <div class="team-card-premium" data-aos="fade-up" data-aos-delay="200">
+                <div class="team-avatar-premium">
+                    <img src="{% static 'images/team/team-3.jpg' %}" 
+                         alt="John Mwangi"
+                         onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=JM'">
+                </div>
+                <h3 class="team-name">John Mwangi</h3>
+                <p class="team-role">Technical Lead</p>
+                <div class="social-icons-premium">
+                    <a href="#" class="social-icon-premium"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
-
+            
             <!-- Team Member 4 -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card-serenity text-center p-4 hover-lift">
-                    <div class="team-member-img mb-4">
-                        <img src="{% static 'images/team/team-4.jpg' %}" 
-                             alt="Amara Okafor" 
-                             class="rounded-circle"
-                             onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=AO';">
-                    </div>
-                    <h4 class="fw-bold mb-1">Amara Okafor</h4>
-                    <p class="text-primary mb-3">Community Manager</p>
-                    <div class="social-links d-flex justify-content-center gap-2">
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle"><i class="fas fa-envelope"></i></a>
-                    </div>
+            <div class="team-card-premium" data-aos="fade-up" data-aos-delay="300">
+                <div class="team-avatar-premium">
+                    <img src="{% static 'images/team/team-4.jpg' %}" 
+                         alt="Amara Okafor"
+                         onerror="this.onerror=null; this.src='https://placehold.co/200x200/8B4513/white?text=AO'">
+                </div>
+                <h3 class="team-name">Amara Okafor</h3>
+                <p class="team-role">Community Manager</p>
+                <div class="social-icons-premium">
+                    <a href="#" class="social-icon-premium"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon-premium"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ===== CTA Section ===== -->
-<section class="section bg-primary text-white">
-    <div class="container-custom text-center">
-        <h2 class="display-5 fw-bold mb-4">Join Our Mission</h2>
-        <p class="lead mb-5">Be part of preserving and sharing African knowledge with the world.</p>
-        <div class="d-flex flex-wrap gap-3 justify-content-center">
-            <a href="{% url 'contact:index' %}" class="btn btn-light btn-lg px-5 py-3">
-                <i class="fas fa-handshake me-2"></i>Partner With Us
-            </a>
-            <a href="{% url 'archive:index' %}" class="btn btn-outline-light btn-lg px-5 py-3">
-                <i class="fas fa-archive me-2"></i>Explore Archive
-            </a>
+<!-- ===== PREMIUM CTA SECTION ===== -->
+<section class="py-5" style="padding: 80px 0;">
+    <div class="container">
+        <div class="cta-premium" data-aos="zoom-in">
+            <h2 class="display-4 fw-bold mb-4 text-white">Join Our Mission</h2>
+            <p class="lead mb-5 text-white" style="opacity: 0.95;">Be part of preserving and sharing African knowledge with the world.</p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="{% url 'contact:index' %}" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold" style="background: white; color: var(--earth-brown);">
+                    <i class="fas fa-handshake me-2"></i>Partner With Us
+                </a>
+                <a href="{% url 'archive:index' %}" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold">
+                    <i class="fas fa-archive me-2"></i>Explore Archive
+                </a>
+            </div>
         </div>
     </div>
 </section>
-
-<!-- Custom CSS -->
-<style>
-    /* Icon Circle */
-    .icon-circle {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--primary-brown);
-    }
-
-    /* Timeline Styles */
-    .timeline-item {
-        position: relative;
-        padding-left: 100px;
-        min-height: 80px;
-    }
-
-    .timeline-year {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 80px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 20px;
-        font-weight: 600;
-    }
-
-    .timeline-content {
-        padding-bottom: 1.5rem;
-    }
-
-    /* Team Member Image */
-    .team-member-img {
-        width: 150px;
-        height: 150px;
-        margin: 0 auto;
-        border-radius: 50%;
-        overflow: hidden;
-        border: 4px solid var(--primary-brown);
-    }
-
-    .team-member-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    /* Floating Card */
-    .floating-card {
-        animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .timeline-item {
-            padding-left: 0;
-        }
-
-        .timeline-year {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-    }
-</style>
 {% endblock %}
 
 {% block extra_js %}
-<!-- Remove main-enhanced.js reference - using existing JS files -->
 <script>
-    // Particles background
-    function createParticles() {
-        const container = document.getElementById('heroParticles');
-        if (!container) return;
-
-        for (let i = 0; i < 30; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-
-            const size = Math.random() * 5 + 2;
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            const delay = Math.random() * 5;
-            const duration = Math.random() * 10 + 10;
-
-            particle.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                left: ${posX}%;
-                top: ${posY}%;
-                background: rgba(139, 69, 19, 0.2);
-                border-radius: 50%;
-                pointer-events: none;
-                animation: floatParticle ${duration}s linear infinite;
-                animation-delay: -${delay}s;
-            `;
-
-            container.appendChild(particle);
-        }
+    // Initialize AOS animations if available
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        createParticles();
-    });
+    
+    // Add sparkle effect to archive button
+    const archiveBtn = document.querySelector('.btn-archive-premium');
+    if (archiveBtn) {
+        archiveBtn.addEventListener('click', function(e) {
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+        });
+    }
 </script>
-
-<style>
-    @keyframes floatParticle {
-        from { transform: translateY(0) rotate(0deg); }
-        to { transform: translateY(-100vh) rotate(360deg); }
-    }
-
-    .particle {
-        position: absolute;
-        background: rgba(139, 69, 19, 0.2);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-</style>
 {% endblock %}

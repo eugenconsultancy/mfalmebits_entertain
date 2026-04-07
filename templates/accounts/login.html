@@ -351,50 +351,50 @@
         </div>
       {% endif %}
       
-      <!-- USERNAME/EMAIL FIELD - FIXED: This was missing! -->
       <div class="field">
-        <label for="id_login">Username or Email</label>
-        <input type="text" name="login" id="id_login" 
-               value="{{ form.login.value|default:'' }}"
-               placeholder="Enter your username or email"
-               autocomplete="username" required>
-        <span class="icon" aria-hidden="true">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="12" cy="8" r="4"/>
-            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-          </svg>
-        </span>
-        {% if form.login.errors %}
-          <p class="err">{{ form.login.errors.0 }}</p>
-        {% endif %}
-      </div>
-      
-      <!-- PASSWORD FIELD -->
-      <div class="field" id="pw-field">
-        <label for="id_password">Password</label>
-        <input type="password" name="password" id="id_password" 
-               placeholder="Enter your password"
-               autocomplete="current-password" required>
-        <span class="icon" onclick="togglePassword()" role="button" aria-label="Toggle password visibility" style="cursor: pointer;">
-          <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-        </span>
-        {% if form.password.errors %}
-          <p class="err">{{ form.password.errors.0 }}</p>
-        {% endif %}
-      </div>
-      
-      <div class="row">
-        <label class="remember">
-          <input type="checkbox" name="remember" id="id_remember" {% if form.remember.value %}checked{% endif %}>
-          <span>Remember me</span>
-        </label>
-        <a href="{% url 'accounts:password_reset_request' %}" class="forgot">Forgot password?</a>
-      </div>
-      
-      <button type="submit" class="btn" id="login-btn">Log In →</button>
+  <label for="id_login">Username or Email</label>
+  <input type="text" name="login" id="id_login" 
+         value="{{ form.login.value|default:'' }}"
+         placeholder="Enter your username or email"
+         autocomplete="username" required>
+  <span class="icon" aria-hidden="true">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+    </svg>
+  </span>
+  {% if form.login.errors %}
+    <p class="err">{{ form.login.errors.0 }}</p>
+  {% endif %}
+</div>
+
+<div class="field" id="pw-field">
+  <label for="id_password">Password</label>
+  <input type="password" name="password" id="id_password" 
+         placeholder="Enter your password"
+         autocomplete="current-password" required>
+  <span class="icon" onclick="togglePassword()" role="button" aria-label="Toggle password visibility" style="cursor: pointer;">
+    <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  </span>
+  {% if form.password.errors %}
+    <p class="err">{{ form.password.errors.0 }}</p>
+  {% endif %}
+</div>
+
+  <div class="row">
+    <label class="remember" for="id_remember">
+      <input type="checkbox" name="remember" id="id_remember" 
+            autocomplete="off" 
+            {% if form.remember.value %}checked{% endif %}>
+      <span>Remember me</span>
+    </label>
+    <a href="{% url 'accounts:password_reset_request' %}" class="forgot">Forgot password?</a>
+  </div>
+
+  <button type="submit" class="btn" id="login-btn">Log In →</button>
       
       <!-- Hidden redirect field for next parameter -->
       {% if redirect_field_value %}

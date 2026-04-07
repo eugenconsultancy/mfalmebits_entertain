@@ -38,7 +38,7 @@ class NewsletterSubscribeForm(forms.Form):
             ('arts', 'Arts & Literature'),
             ('philosophy', 'Philosophy & Ideas'),
             ('science', 'Science & Innovation'),
-            ('contemporary', 'Contemporary Africa'),
+            ('contemporary_africa', 'Contemporary Africa'),
         ],
         required=False,
         widget=forms.CheckboxSelectMultiple(attrs={
@@ -133,7 +133,7 @@ class NewsletterPreferencesForm(forms.Form):
             ('arts', 'Arts & Literature'),
             ('philosophy', 'Philosophy & Ideas'),
             ('science', 'Science & Innovation'),
-            ('contemporary', 'Contemporary Africa'),
+            ('contemporary_africa', 'Contemporary Africa'),
         ],
         required=False,
         widget=forms.CheckboxSelectMultiple(attrs={

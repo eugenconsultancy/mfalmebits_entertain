@@ -63,7 +63,7 @@
 .brand-slide {
     display: flex; overflow: hidden; justify-content: center;
     flex-wrap: wrap; gap: 0;
-    line-height: 1;
+    line-height: 1.5;
 }
 
 .brand-char {
@@ -71,7 +71,7 @@
     font-family: 'Syne', sans-serif;
     font-size: clamp(3.6rem, 9vw, 8.5rem);
     font-weight: 800;
-    color: #ffffff;
+    color: #045f8a;
     letter-spacing: -.04em;
     opacity: 0;
     transform: translateY(110%) skewY(8deg);
@@ -106,7 +106,7 @@
     font-size: .75rem;
     letter-spacing: 5px;
     text-transform: uppercase;
-    color: rgba(255,255,255,.30);
+    color: rgba(163, 6, 6, 0.96);
     font-weight: 600;
     margin-top: .6rem;
     opacity: 0;
@@ -139,7 +139,7 @@
 
 /* ── Hero body text ──────────────────────────────────────── */
 .hero-body {
-    font-size: 1.15rem;
+    font-size: 1.35rem;
     color: rgba(255,255,255,.85);
     text-align: center;
     max-width: 620px; margin: 0 auto 2.6rem;
@@ -220,9 +220,9 @@
 ════════════════════════════════════════════════════════════ */
 .stats-strip {
     padding: 3.5rem 0;
-    border-top: 1px solid rgba(30, 58, 138, 0.15);
+    border-top: 1px solid rgba(150, 15, 184, 0.94);
     border-bottom: 1px solid rgba(30, 58, 138, 0.15);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgb(227, 239, 240);
     backdrop-filter: blur(8px);
 }
 
@@ -250,7 +250,7 @@
     font-size: 2.8rem;
     font-weight: 800;
     letter-spacing: -.05em;
-    color: #0f2b6d !important;
+    color: #b107a8 !important;
     line-height: 1;
     margin-bottom: .25rem;
 }
@@ -259,7 +259,7 @@
     font-weight: 700;
     letter-spacing: 1.2px;
     text-transform: uppercase;
-    color: #1e3a8a !important;
+    color: #031649 !important;
 }
 
 
@@ -271,10 +271,10 @@
 .sec-eyebrow {
     font-size: .74rem;
     font-weight: 800;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     text-transform: uppercase;
     color: #2563eb;
-    margin-bottom: .7rem;
+    margin-bottom: .9rem;
     display: flex;
     align-items: center;
     gap: .5rem;
@@ -282,8 +282,8 @@
 .sec-eyebrow::before {
     content: '';
     width: 24px;
-    height: 2px;
-    background: #2563eb;
+    height: 4px;
+    background: #92b2f7;
     border-radius: 1px;
 }
 
@@ -293,7 +293,7 @@
     font-weight: 800;
     letter-spacing: -.03em;
     color: #0f2b6d !important;
-    line-height: 1.1;
+    line-height: 1.8;
     margin-bottom: 1rem;
 }
 
@@ -307,7 +307,7 @@
 
 /* Feature cards - light background */
 .feature-card {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgb(238, 241, 241);
     border: 1px solid rgba(30, 58, 138, 0.15);
     border-radius: 22px;
     padding: 2.5rem 2rem;
@@ -328,7 +328,7 @@
     transition: transform .4s ease;
 }
 .feature-card:hover {
-    background: rgba(255, 255, 255, 0.98);
+    background: rgba(226, 207, 226, 0.98);
     border-color: rgba(30, 58, 138, 0.3);
     transform: translateY(-8px);
     box-shadow: 0 20px 52px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(30, 58, 138, 0.2);
@@ -361,8 +361,8 @@
 
 .feature-title {
     font-family: 'Syne', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 800;
+    font-size: 1.35rem;
+    font-weight: 900;
     letter-spacing: -.02em;
     color: #0f2b6d !important;
     margin-bottom: .6rem;
@@ -381,7 +381,7 @@
     gap: 5px;
     font-size: .8rem;
     font-weight: 700;
-    color: #2563eb;
+    color: #880808;
     text-decoration: none;
     margin-top: 1.2rem;
     opacity: 0;
@@ -412,7 +412,7 @@
     font-family: 'Syne', sans-serif;
     font-size: 1.5rem;
     font-weight: 800;
-    color: #0f2b6d !important;
+    color: #0f2b6de7 !important;
     margin-bottom: 0.75rem;
 }
 .app-card-desc {
@@ -439,8 +439,8 @@
 }
 
 .theme-card {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(30, 58, 138, 0.15);
+    background: rgb(239, 248, 241);
+    border: 1px solid rgb(1, 14, 49);
     border-radius: 22px;
     padding: 2.5rem 2rem;
     height: 100%;
@@ -450,8 +450,8 @@
     cursor: pointer;
 }
 .theme-card:hover {
-    background: rgba(255, 255, 255, 0.98);
-    border-color: rgba(30, 58, 138, 0.3);
+    background: rgba(217, 242, 248, 0.98);
+    border-color: rgba(173, 184, 214, 0.9);
     transform: translateY(-7px);
 }
 
@@ -475,7 +475,7 @@
 }
 .theme-card-title {
     font-family: 'Syne', sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 800;
     letter-spacing: -.02em;
     color: #0f2b6d !important;
@@ -547,7 +547,7 @@
     content: '';
     width: 20px;
     height: 2px;
-    background: #2563eb;
+    background: #d8e0f0;
     border-radius: 1px;
 }
 
@@ -700,7 +700,7 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    background: linear-gradient(135deg, #d4d8e4, #d4dae9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -751,7 +751,7 @@
 .cta-section .container { position: relative; z-index: 2; }
 
 .cta-glass {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgb(245, 241, 245);
     backdrop-filter: blur(30px) saturate(1.5);
     border: 1px solid rgba(30, 58, 138, 0.2);
     border-radius: 32px;
@@ -771,7 +771,7 @@
     margin-bottom: 1.2rem;
 }
 .cta-sub {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     color: #1e3a8a !important;
     max-width: 520px;
     margin: 0 auto 3rem;
@@ -1016,101 +1016,139 @@
 </section>
 
 
-<!-- ════════════════════════════════════════════════════════
-     APP CARDS — navigational portals
-════════════════════════════════════════════════════════ -->
-<section class="apps-section">
+<section class="apps-section" style="background: #fdfdfd; padding: 80px 0;">
     <div class="container">
         <div class="text-center mb-5 reveal">
-            <div class="sec-eyebrow"><span>Our Portals</span></div>
-            <h2 class="sec-heading">Discover, Collaborate, <span style="background:linear-gradient(120deg,#e0541e,#d4922a);-webkit-background-clip:text;background-clip:text;color:transparent;">Learn</span></h2>
+            <div class="sec-eyebrow"><span style="color: #e0541e; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Our Portals</span></div>
+            <h2 class="sec-heading" style="font-weight: 800; color: #1a1a1a; font-size: 2.5rem;">Discover, Collaborate, <span style="background:linear-gradient(120deg,#e0541e,#d4922a);-webkit-background-clip:text;background-clip:text;color:transparent;">Learn</span></h2>
         </div>
 
-        <div class="app-cards-grid--featured app-cards-grid reveal">
-            <a href="{% url 'blog:index' %}" class="app-card app-card--collab app-card--featured">
-                <div class="app-card-body">
-                    <div class="app-card-eyebrow"><i class="fas fa-newspaper me-1"></i> Knowledge Hub</div>
-                    <h3 class="app-card-title">The MfalmeBits Blog</h3>
-                    <p class="app-card-desc">In-depth analysis, curated essays, and live commentary on African affairs.</p>
-                    <span class="app-card-arrow"><i class="fas fa-arrow-right"></i></span>
-                </div>
-            </a>
-            <a href="{% url 'institutional:index' %}" class="app-card app-card--institution">
-                <div class="app-card-body">
-                    <div class="app-card-eyebrow"><i class="fas fa-building me-1"></i> Institutions</div>
-                    <h3 class="app-card-title">Institutional Licensing</h3>
-                    <p class="app-card-desc">Tailored plans for schools, universities and libraries.</p>
-                    <span class="app-card-arrow"><i class="fas fa-arrow-right"></i></span>
-                </div>
-            </a>
+        <section class="apps-section" style="padding: 80px 0; background: #fafafa;">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <div class="sec-eyebrow" style="letter-spacing: 3px; font-weight: 800; color: #e0541e; text-transform: uppercase; font-size: 0.8rem; margin-bottom: 10px;">Our Ecosystem</div>
+            <h2 class="sec-heading" style="font-weight: 900; color: #000; font-size: 2.8rem; letter-spacing: -1px;">Select a <span style="background:linear-gradient(120deg,#e0541e,#d4922a);-webkit-background-clip:text;background-clip:text;color:transparent;">Portal</span></h2>
         </div>
 
-        <div class="app-cards-grid app-cards-grid--2col mt-4 reveal">
-            <a href="{% url 'about:index' %}" class="app-card app-card--about">
-                <div class="app-card-body">
-                    <div class="app-card-eyebrow"><i class="fas fa-users me-1"></i> About Us</div>
-                    <h3 class="app-card-title">Our Story &amp; Mission</h3>
-                    <p class="app-card-desc">Meet the team building Africa's digital knowledge infrastructure.</p>
-                    <span class="app-card-arrow"><i class="fas fa-arrow-right"></i></span>
-                </div>
-            </a>
-            <a href="{% url 'contact:index' %}" class="app-card app-card--contact">
-                <div class="app-card-body">
-                    <div class="app-card-eyebrow"><i class="fas fa-envelope me-1"></i> Contact</div>
-                    <h3 class="app-card-title">Get in Touch</h3>
-                    <p class="app-card-desc">Partnerships, press, institutional enquiries and more.</p>
-                    <span class="app-card-arrow"><i class="fas fa-arrow-right"></i></span>
+        <div class="row row-cols-1 row-cols-md-2 g-4 reveal">
+            
+            <div class="col">
+                <a href="{% url 'blog:index' %}" class="app-card h-100" style="text-decoration: none; display: block; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; transition: all 0.4s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow: hidden;">
+                    <div class="app-card-body" style="padding: 45px;">
+                        <div style="width: 50px; height: 50px; background: rgba(224, 84, 30, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                            <i class="fas fa-pen-nib" style="color: #e0541e; font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 style="color: #000; font-weight: 900; font-size: 1.6rem; margin-bottom: 15px;">The MfalmeBits Blog</h3>
+                        <p style="color: #4a5568; line-height: 1.7; font-size: 1.05rem; margin-bottom: 30px;">Deep-dives into African digital sovereignty, curated essays, and contemporary commentary.</p>
+                        
+                        <span class="btn" style="background: #000; color: #fff; border-radius: 50px; font-weight: 800; padding: 12px 35px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
+                            Read Essays <i class="fas fa-arrow-right ms-2"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="{% url 'library:index' %}" class="app-card h-100" style="text-decoration: none; display: block; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; transition: all 0.4s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                    <div class="app-card-body" style="padding: 45px;">
+                        <div style="width: 50px; height: 50px; background: rgba(212, 146, 42, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                            <i class="fas fa-book-open" style="color: #d4922a; font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 style="color: #000; font-weight: 900; font-size: 1.6rem; margin-bottom: 15px;">Resource Library</h3>
+                        <p style="color: #4a5568; line-height: 1.7; font-size: 1.05rem; margin-bottom: 30px;">A comprehensive repository of intellectual property, research, and digital assets.</p>
+                        
+                        <span class="btn" style="background: transparent; color: #000; border: 2px solid #000; border-radius: 50px; font-weight: 800; padding: 10px 35px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">
+                            Enter Library <i class="fas fa-arrow-right ms-2"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="{% url 'collaboration:index' %}" class="app-card h-100" style="text-decoration: none; display: block; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; transition: all 0.4s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                    <div class="app-card-body" style="padding: 45px;">
+                        <div style="width: 50px; height: 50px; background: rgba(44, 62, 80, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                            <i class="fas fa-users" style="color: #2c3e50; font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 style="color: #000; font-weight: 900; font-size: 1.6rem; margin-bottom: 15px;">Community Hub</h3>
+                        <p style="color: #4a5568; line-height: 1.7; font-size: 1.05rem; margin-bottom: 30px;">Collaborate with innovators and researchers in our dedicated project spaces.</p>
+                        
+                        <span class="btn" style="background: #2c3e50; color: #fff; border-radius: 50px; font-weight: 800; padding: 12px 35px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; box-shadow: 0 10px 20px rgba(44, 62, 80, 0.2);">
+                            Join Space <i class="fas fa-plus ms-2"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="{% url 'institutional:index' %}" class="app-card h-100" style="text-decoration: none; display: block; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; transition: all 0.4s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                    <div class="app-card-body" style="padding: 45px;">
+                        <div style="width: 50px; height: 50px; background: rgba(0, 0, 0, 0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                            <i class="fas fa-university" style="color: #000; font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 style="color: #000; font-weight: 900; font-size: 1.6rem; margin-bottom: 15px;">Institutional Access</h3>
+                        <p style="color: #4a5568; line-height: 1.7; font-size: 1.05rem; margin-bottom: 30px;">Bulk licensing and tailored digital infrastructure for schools and organizations.</p>
+                        
+                        <span class="btn" style="background: transparent; color: #000; border: 2px solid #000; border-radius: 50px; font-weight: 800; padding: 10px 35px; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">
+                            Partnerships <i class="fas fa-handshake ms-2"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+            <a href="{% url 'institutional:index' %}" class="app-card" style="border: 2px solid #eee; background: #f9f9f9; transition: all 0.3s ease; border-radius: 16px; text-decoration: none; display: block;">
+                <div class="app-card-body" style="padding: 25px;">
+                    <div class="app-card-eyebrow" style="color: #2c3e50; font-weight: 600;"><i class="fas fa-university me-2"></i> Institutional</div>
+                    <h3 class="app-card-title" style="color: #111; font-weight: 800; margin: 10px 0;">Licensing & Access</h3>
+                    <p class="app-card-desc" style="color: #555;">Dedicated solutions for schools, libraries, and government bodies.</p>
+                    <span style="font-weight: 700; color: #111;">Learn More <i class="fas fa-chevron-right ms-1"></i></span>
                 </div>
             </a>
         </div>
     </div>
 </section>
 
-
-<!-- ════════════════════════════════════════════════════════
-     THEMES / CATEGORIES
-════════════════════════════════════════════════════════ -->
-<section class="themes-section">
+<section class="themes-section" style="background: #ffffff; padding: 80px 0;">
     <div class="container">
         <div class="text-center mb-5 reveal">
-            <div class="sec-eyebrow"><span>Browse Themes</span></div>
-            <h2 class="sec-heading">Knowledge by <span style="background:linear-gradient(120deg,#e0541e,#d4922a);-webkit-background-clip:text;background-clip:text;color:transparent;">Category</span></h2>
-            <p class="sec-sub">Navigate Africa's rich intellectual landscape through carefully curated thematic collections.</p>
+            <div class="sec-eyebrow"><span style="color: #e0541e; font-weight: 700;">Browse Themes</span></div>
+            <h2 class="sec-heading" style="font-weight: 800; color: #111;">Explore <span style="background:linear-gradient(120deg,#e0541e,#d4922a);-webkit-background-clip:text;background-clip:text;color:transparent;">Africa</span></h2>
+            <p class="sec-sub" style="color: #333; font-weight: 500; max-width: 700px; margin: 0 auto; font-size: 1.1rem;">Click a category to navigate our thematic collections.</p>
         </div>
 
         <div class="row g-4">
             {% if themes %}
                 {% for theme in themes %}
-                <div class="col-lg-4 col-md-6 reveal" style="transition-delay:{{ forloop.counter0|stringformat:'d' }}00ms">
-                    <div class="theme-card theme-{{ forloop.counter }}">
-                        <div class="theme-card-count">
-                            <span class="theme-dot" style="background:var(--terra-light);"></span>
-                            {{ theme.article_count|default:0 }} articles
+                <div class="col-lg-4 col-md-6 reveal">
+                    <div class="theme-card" style="background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 30px; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div class="theme-card-count" style="font-weight: 700; color: #e0541e; font-size: 0.9rem;">
+                            {{ theme.article_count|default:0 }} COLLECTION ITEMS
                         </div>
-                        <h3 class="theme-card-title">{{ theme.name }}</h3>
-                        <p class="theme-card-desc">{{ theme.description|truncatechars:100 }}</p>
-                        <a href="{{ theme.get_absolute_url }}" class="theme-card-link">
-                            Explore <i class="fas fa-arrow-right fa-xs"></i>
+                        <h3 class="theme-card-title" style="color: #000; font-weight: 900; font-size: 1.5rem; margin: 15px 0;">{{ theme.name }}</h3>
+                        <p class="theme-card-desc" style="color: #444; line-height: 1.5; margin-bottom: 20px;">{{ theme.description|truncatechars:100 }}</p>
+                        <a href="{{ theme.get_absolute_url }}" class="btn btn-dark w-100" style="font-weight: 700; letter-spacing: 1px;">
+                            EXPLORE CATEGORY
                         </a>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
-                {% for item in "123456"|make_list %}
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="theme-card theme-{{ forloop.counter }}">
-                        <div class="theme-card-count"><span class="theme-dot" style="background:var(--terra-light);"></span> — articles</div>
-                        <h3 class="theme-card-title">Theme {{ forloop.counter }}</h3>
-                        <p class="theme-card-desc">A curated collection of knowledge, perspectives, and narratives from across the African continent.</p>
-                        <a href="#" class="theme-card-link">Explore <i class="fas fa-arrow-right fa-xs"></i></a>
+                    <div class="theme-card" style="background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 30px;">
+                        <div class="theme-card-count" style="font-weight: 700; color: #e0541e;">24 ITEMS</div>
+                        <h3 class="theme-card-title" style="color: #000; font-weight: 900; font-size: 1.5rem; margin: 15px 0;">History & Heritage</h3>
+                        <p class="theme-card-desc" style="color: #444;">Ancient civilizations and pre-colonial narratives.</p>
+                        <a href="{% url 'archive:index' %}" class="btn btn-dark w-100" style="font-weight: 700;">EXPLORE HISTORY</a>
                     </div>
                 </div>
-                {% endfor %}
-            {% endif %}
+                {% endif %}
         </div>
     </div>
 </section>
-
 
 <!-- ════════════════════════════════════════════════════════
      FEATURED ESSAY
@@ -1234,7 +1272,7 @@
 
 
 <!-- ════════════════════════════════════════════════════════
-     CTA
+     CTA (with African pattern background)
 ════════════════════════════════════════════════════════ -->
 <section class="cta-section">
     <div class="container">

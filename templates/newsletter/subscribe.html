@@ -1,185 +1,651 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_title %}{{ seo_title }}{% endblock %}
-{% block seo_description %}{{ seo_description }}{% endblock %}
+{% block seo_title %}{{ seo_title|default:"Subscribe to Our Newsletter" }}{% endblock %}
+{% block seo_description %}{{ seo_description|default:"Join our community to receive the latest African knowledge, culture, and digital resources directly in your inbox." }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom Styles - No conflicts with base template */
+    .newsletter-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .newsletter-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+    
+    .newsletter-container {
+        max-width: 800px;
+        margin: -40px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .newsletter-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .dark .newsletter-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px;
+        text-align: center;
+        color: white;
+    }
+    
+    .card-header h2 {
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: white;
+    }
+    
+    .card-header p {
+        opacity: 0.9;
+        margin: 0;
+    }
+    
+    .card-body {
+        padding: 40px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #374151;
+        font-size: 14px;
+    }
+    
+    .dark .form-label {
+        color: #e2e8f0;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s;
+        background: white;
+    }
+    
+    .dark .form-control {
+        background: #0f172a;
+        border-color: #334155;
+        color: white;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .form-control.error {
+        border-color: #ef4444;
+    }
+    
+    .error-message {
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+    
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 10px;
+    }
+    
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        background: #f9fafb;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .dark .checkbox-item {
+        background: #0f172a;
+    }
+    
+    .checkbox-item:hover {
+        background: #f3f4f6;
+        transform: translateX(3px);
+    }
+    
+    .dark .checkbox-item:hover {
+        background: #1e293b;
+    }
+    
+    .checkbox-item input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+    
+    .checkbox-item label {
+        cursor: pointer;
+        margin: 0;
+        color: #374151;
+    }
+    
+    .dark .checkbox-item label {
+        color: #cbd5e1;
+    }
+    
+    select.form-control {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 20px;
+    }
+    
+    .btn-subscribe {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+    
+    .btn-subscribe:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-subscribe:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .benefits-section {
+        background: #f9fafb;
+        padding: 60px 0;
+    }
+    
+    .dark .benefits-section {
+        background: #0f172a;
+    }
+    
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .benefit-card {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        text-align: center;
+        transition: all 0.3s;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .dark .benefit-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+    }
+    
+    .benefit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .benefit-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+    
+    .benefit-icon i {
+        font-size: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    .benefit-card h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+        color: #111827;
+    }
+    
+    .dark .benefit-card h3 {
+        color: white;
+    }
+    
+    .benefit-card p {
+        color: #6b7280;
+        line-height: 1.6;
+    }
+    
+    .dark .benefit-card p {
+        color: #94a3b8;
+    }
+    /* Enhanced Button Styling */
+.btn-subscribe-enhanced {
+    position: relative;
+    padding: 14px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 220px;
+}
+
+.btn-subscribe-enhanced:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(118, 75, 162, 0.5);
+    letter-spacing: 1px;
+}
+
+.btn-subscribe-enhanced:active {
+    transform: translateY(1px);
+}
+
+    /* Shimmer/Glow effect on hover */
+    .btn-subscribe-enhanced::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: rotate(45deg);
+        transition: 0.5s;
+        pointer-events: none;
+    }
+
+    .btn-subscribe-enhanced:hover::after {
+        left: 120%;
+    }
+
+    /* Loading state styling */
+    .btn-subscribe-enhanced:disabled {
+        background: #4a4a4a;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .testimonial-section {
+        padding: 60px 20px;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .testimonial-text {
+        font-size: 20px;
+        font-style: italic;
+        color: #374151;
+        margin-bottom: 20px;
+    }
+    
+    .dark .testimonial-text {
+        color: #cbd5e1;
+    }
+    
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+    
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #253da5 0%, #6323a3 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .privacy-notice {
+        text-align: center;
+        padding: 20px;
+        background: #f3f4f6;
+        margin-top: 30px;
+        border-radius: 12px;
+    }
+    
+    .dark .privacy-notice {
+        background: #1e293b;
+    }
+    
+    .alert {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+    
+    .alert-error {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+    
+    @media (max-width: 640px) {
+        .row {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .checkbox-group {
+            grid-template-columns: 1fr;
+        }
+        
+        .benefits-grid {
+            grid-template-columns: 1fr;
+            padding: 0 15px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<!-- Header -->
-<section class="py-16 bg-gradient-to-b from-primary to-black text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Subscribe to Our Newsletter</h1>
-        <p class="text-xl max-w-2xl mx-auto">
+<!-- Hero Section -->
+<div class="newsletter-hero">
+    <div style="text-align: center; position: relative; z-index: 1;">
+        <h1 style="font-size: 48px; margin-bottom: 20px; color: white;">Subscribe to Our Newsletter</h1>
+        <p style="font-size: 18px; max-width: 600px; margin: 0 auto; opacity: 0.95;">
             Stay updated with the latest African knowledge, culture, and digital resources
         </p>
     </div>
-</section>
+</div>
 
-<!-- Subscription Form -->
-<section class="py-16">
-    <div class="container mx-auto px-4">
-        <div class="max-w-2xl mx-auto">
-            <div class="glass p-8">
-                <form method="post" class="space-y-6">
-                    {% csrf_token %}
-                    
-                    {% if form.non_field_errors %}
-                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
-                        {{ form.non_field_errors }}
-                    </div>
-                    {% endif %}
-                    
-                    <!-- Email -->
-                    <div>
-                        <label class="block mb-2">Email Address *</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Name -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-2">First Name</label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <label class="block mb-2">Last Name</label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Frequency -->
-                    <div>
-                        <label class="block mb-2">Email Frequency</label>
-                        {{ form.frequency }}
-                        {% if form.frequency.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.frequency.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Interests -->
-                    <div>
-                        <label class="block mb-2">I'm interested in:</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            {% for value, label in form.interests.field.choices %}
-                            <label class="flex items-center">
-                                <input type="checkbox" name="interests" value="{{ value }}" 
-                                       class="rounded mr-2"
-                                       {% if value in form.interests.value %}checked{% endif %}>
-                                {{ label }}
-                            </label>
-                            {% endfor %}
-                        </div>
-                        {% if form.interests.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.interests.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Submit -->
-                    <div class="text-center pt-4">
-                        <button type="submit" 
-                                class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold 
-                                       hover:bg-opacity-90 transition-colors magnetic">
-                            Subscribe
-                        </button>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Privacy Notice -->
-            <div class="mt-8 text-center text-gray-500 text-sm">
-                <p>
-                    We respect your privacy. Unsubscribe at any time.
-                    <a href="#" class="text-primary hover:underline">Privacy Policy</a>
-                </p>
-            </div>
+<!-- Subscription Form Container -->
+<div class="newsletter-container">
+    <div class="newsletter-card">
+        <div class="card-header">
+            <h2>Join Our Community</h2>
+            <p>Get exclusive content delivered to your inbox</p>
         </div>
-    </div>
-</section>
-
-<!-- Benefits -->
-<section class="py-16 bg-gray-50 dark:bg-gray-900">
-    <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Why Subscribe?</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-newspaper text-2xl text-primary"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Exclusive Content</h3>
-                <p class="text-gray-600 dark:text-gray-300">
-                    Get access to exclusive articles, interviews, and resources not available elsewhere.
-                </p>
-            </div>
+        <div class="card-body">
+            <!-- Display messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}success{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
             
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-calendar-alt text-2xl text-primary"></i>
+            <!-- Subscription Form -->
+            <form method="post" id="subscribeForm" action="{% url 'newsletter:subscribe' %}">
+                {% csrf_token %}
+                
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label class="form-label">EMAIL ADDRESS *</label>
+                    <input type="email" name="email" class="form-control" 
+                           placeholder="your@email.com" required
+                           value="{{ form.email.value|default:'' }}">
+                    {% if form.email.errors %}
+                        <div class="error-message">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                    <small style="color: #6b7280; font-size: 12px;">We'll never share your email with anyone else.</small>
                 </div>
-                <h3 class="text-xl font-bold mb-2">Weekly Updates</h3>
-                <p class="text-gray-600 dark:text-gray-300">
-                    Stay informed with the latest additions to our knowledge archive and digital library.
-                </p>
-            </div>
-            
-            <div class="text-center">
-                <div class="w-16 h-16 bg-primary bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-gem text-2xl text-primary"></i>
+                
+                <!-- Name Fields Row -->
+                <div class="row">
+                    <div class="form-group">
+                        <label class="form-label">FIRST NAME</label>
+                        <input type="text" name="first_name" class="form-control" 
+                               placeholder="Your first name"
+                               value="{{ form.first_name.value|default:'' }}">
+                        {% if form.first_name.errors %}
+                            <div class="error-message">{{ form.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">LAST NAME</label>
+                        <input type="text" name="last_name" class="form-control" 
+                               placeholder="Your last name"
+                               value="{{ form.last_name.value|default:'' }}">
+                        {% if form.last_name.errors %}
+                            <div class="error-message">{{ form.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold mb-2">Special Offers</h3>
-                <p class="text-gray-600 dark:text-gray-300">
-                    Be the first to know about special offers, discounts, and new collaborations.
-                </p>
-            </div>
+                
+                <!-- Frequency Field - Matches Subscriber model choices -->
+                <div class="form-group">
+                    <label class="form-label">EMAIL FREQUENCY</label>
+                    <select name="frequency" class="form-control">
+                        <option value="daily" {% if form.frequency.value == 'daily' %}selected{% endif %}>Daily</option>
+                        <option value="weekly" {% if form.frequency.value == 'weekly' %}selected{% endif %}>Weekly</option>
+                        <option value="monthly" {% if form.frequency.value == 'monthly' %}selected{% endif %}>Monthly</option>
+                    </select>
+                    {% if form.frequency.errors %}
+                        <div class="error-message">{{ form.frequency.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+    <label class="form-label" style="color: #000000 !important; font-weight: 600;">I'M INTERESTED IN:</label>
+    <div class="checkbox-group">
+        <label class="checkbox-item" for="interest_history" style="background: #193552; border: 1px solid #e5e7eb;">
+            <input type="checkbox" name="interests" id="interest_history" value="history" style="accent-color: #667eea;">
+            <span style="color: #000000 !important; font-weight: 500;">African History</span>
+        </label>
+
+        <label class="checkbox-item" for="interest_culture" style="background: #3b1139; border: 1px solid #e5e7eb;">
+            <input type="checkbox" name="interests" id="interest_culture" value="culture" style="accent-color: #667eea;">
+            <span style="color: #000000 !important; font-weight: 500;">Culture & Traditions</span>
+        </label>
+
+        <label class="checkbox-item" for="interest_arts" style="background: #0b502e; border: 1px solid #e5e7eb;">
+            <input type="checkbox" name="interests" id="interest_arts" value="arts" style="accent-color: #667eea;">
+            <span style="color: #000000 !important; font-weight: 500;">Arts & Literature</span>
+        </label>
+
+        <label class="checkbox-item" for="interest_philosophy" style="background: #10626d; border: 1px solid #e5e7eb;">
+            <input type="checkbox" name="interests" id="interest_philosophy" value="philosophy" style="accent-color: #667eea;">
+            <span style="color: #000000 !important; font-weight: 500;">Philosophy & Ideas</span>
+        </label>
+
+        <label class="checkbox-item" for="interest_science" style="background: #5c5e10; border: 1px solid #e5e7eb;">
+            <input type="checkbox" name="interests" id="interest_science" value="science" style="accent-color: #667eea;">
+            <span style="color: #000000 !important; font-weight: 500;">Science & Innovation</span>
+        </label>
+
+        <label class="checkbox-item" for="interest_contemporary" style="background: #643617; border: 1px solid #e5e7eb;">
+            <input type="checkbox" name="interests" id="interest_contemporary" value="contemporary_africa" style="accent-color: #667eea;">
+            <span style="color: #000000 !important; font-weight: 500;">Contemporary Africa</span>
+        </label>
+    </div>
+</div>
+                    {% if form.interests.errors %}
+                        <div class="error-message">{{ form.interests.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label class="checkbox-item d-flex align-items-start gap-2" style="background: none; padding-left: 0; cursor: pointer;">
+                        <input type="checkbox" name="consent" required style="margin-top: 5px;">
+                        <span class="text-white-50 small" style="color: rgba(37, 8, 8, 0.8) !important; line-height: 1.4;">
+                            I agree to receive newsletters and understand that I can unsubscribe at any time. 
+                            <a href="{% url 'home:privacy_policy' %}" class="text-primary-accent" style="color: #667eea; text-decoration: underline;">Privacy Policy</a>
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="d-flex justify-content-center mt-5 mb-3">
+                    <button type="submit" 
+                            class="btn-subscribe-enhanced" 
+                            id="submitBtn">
+                        <span class="btn-text">Subscribe Now</span>
+                        <i class="fas fa-paper-plane ms-2"></i>
+                        <div class="btn-glow"></div>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</section>
+</div>
+
+<!-- Benefits Section -->
+<div class="benefits-section">
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 style="font-size: 32px; margin-bottom: 15px; color: #000000 !important; font-weight: 700;">Why Join Our Community?</h2>
+        <p style="color: #000000 !important; max-width: 600px; margin: 0 auto; font-size: 16px;">Get exclusive access to premium content and stay ahead of the curve</p>
+    </div>
+    <div class="benefits-grid">
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <h3>Exclusive Content</h3>
+            <p>Get access to exclusive articles, interviews, and resources not available elsewhere.</p>
+        </div>
+        
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3>Weekly Updates</h3>
+            <p>Stay informed with the latest additions to our knowledge archive and digital library.</p>
+        </div>
+        
+        <div class="benefit-card">
+            <div class="benefit-icon">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h3>Special Offers</h3>
+            <p>Be the first to know about special offers, discounts, and new collaborations.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonial Section -->
+<div class="testimonial-section">
+    <i class="fas fa-quote-left" style="font-size: 40px; color: #667eea; opacity: 0.3; margin-bottom: 20px; display: block;"></i>
+    <p class="testimonial-text">
+        "This newsletter has become my go-to source for African knowledge and culture. Highly recommended!"
+    </p>
+    <div class="testimonial-author">
+        <div class="author-avatar">JM</div>
+        <div>
+            <strong style="color: #111827;">James Mwangi</strong>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">Subscriber since 2024</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Handle AJAX form submission
-document.querySelector('form').addEventListener('submit', function(e) {
-    e.preventDefault();
+document.getElementById('subscribeForm')?.addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Subscribing...';
     
-    const formData = new FormData(this);
+    // Form will submit normally - no AJAX to avoid CSRF issues
+    // The button will re-enable if there's an error (page will reload on success)
     
-    fetch(this.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+    // Re-enable after 3 seconds in case of network issues
+    setTimeout(() => {
+        if (submitBtn.disabled) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Subscribe Now';
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            this.reset();
-            // Optionally redirect
-            // window.location.href = '/newsletter/confirm/';
-        } else {
-            // Display errors
-            let errorMessage = 'Please fix the following errors:\n';
-            for (let field in data.errors) {
-                errorMessage += `- ${field}: ${data.errors[field].join(', ')}\n`;
-            }
-            alert(errorMessage);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
+    }, 5000);
 });
+
+// Live validation for email
+const emailInput = document.querySelector('input[name="email"]');
+if (emailInput) {
+    emailInput.addEventListener('input', function() {
+        const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        if (this.value && !emailRegex.test(this.value)) {
+            this.classList.add('error');
+        } else {
+            this.classList.remove('error');
+        }
+    });
+}
 </script>
 {% endblock %}

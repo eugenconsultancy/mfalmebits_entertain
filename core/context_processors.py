@@ -11,6 +11,8 @@ def seo_settings(request):
         'twitter_site': '@mfalmebits',
     }
 
+# def seo_settings(request):
+#     """Add SEO settings to"""
 def organization_schema(request):
     """Add organization schema to context"""
     return {

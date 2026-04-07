@@ -68,46 +68,46 @@
                 <div class="glass-card-2 p-4">
                     <h3 class="fw-bold mb-4">Payment Details</h3>
                     
-                    <!-- Stripe Elements Form -->
                     <form id="payment-form" class="payment-form">
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control glass-input" value="{{ user.email }}" readonly>
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Card Information</label>
-                                <div id="card-element" class="glass-input p-3">
-                                    <!-- Stripe Elements will be inserted here -->
-                                </div>
-                                <div id="card-errors" class="text-danger small mt-2" role="alert"></div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">First Name</label>
-                                <input type="text" class="form-control glass-input" value="{{ user.first_name }}" required>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" class="form-control glass-input" value="{{ user.last_name }}" required>
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Address (Optional)</label>
-                                <input type="text" class="form-control glass-input" placeholder="Street address">
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">City</label>
-                                <input type="text" class="form-control glass-input">
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">Postal Code</label>
-                                <input type="text" class="form-control glass-input">
-                            </div>
+    <div class="row g-4">
+        <div class="col-12">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control glass-input" value="{{ user.email }}" autocomplete="email" readonly>
+        </div>
+        
+        <div class="col-12">
+            <label class="form-label">Card Information</label>
+            <div id="card-element" class="glass-input p-3">
+                </div>
+            <div id="card-errors" class="text-danger small mt-2" role="alert"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-control glass-input" value="{{ user.first_name }}" autocomplete="given-name" required>
+        </div>
+        
+        <div class="col-md-6">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control glass-input" value="{{ user.last_name }}" autocomplete="family-name" required>
+        </div>
+        
+        <div class="col-12">
+            <label class="form-label">Address (Optional)</label>
+            <input type="text" class="form-control glass-input" placeholder="Street address" autocomplete="street-address">
+        </div>
+        
+        <div class="col-md-6">
+            <label class="form-label">City</label>
+            <input type="text" class="form-control glass-input" autocomplete="address-level2">
+        </div>
+        
+        <div class="col-md-6">
+            <label class="form-label">Postal Code</label>
+            <input type="text" class="form-control glass-input" autocomplete="postal-code">
+        </div>
+    </div>
+</form>
                             
                             <div class="col-12">
                                 <div class="form-check">

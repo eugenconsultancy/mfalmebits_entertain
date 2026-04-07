@@ -1,372 +1,423 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ seo_title }}{% endblock %}
-{% block description %}{{ seo_description }}{% endblock %}
-{% block keywords %}{{ seo_keywords }}{% endblock %}
+{% block seo_title %}Contact Us - MfalmeBits{% endblock %}
+{% block seo_description %}Get in touch with the MfalmeBits team. We'd love to hear from you!{% endblock %}
 
-{% block content %}
-<!-- Contact Hero Section -->
-<section class="contact-hero py-5 bg-primary text-white">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold mb-4">Get In Touch</h1>
-                <p class="lead mb-4">Have questions about our knowledge archive, digital library, or collaborations? We're here to help.</p>
-                <div class="quick-contact d-flex justify-content-center gap-4">
-                    <div class="quick-contact-item">
-                        <i class="fas fa-envelope fa-2x mb-2"></i>
-                        <p class="mb-0">{{ settings.contact_email|default:"contact@mfalmebits.com" }}</p>
-                    </div>
-                    <div class="quick-contact-item">
-                        <i class="fas fa-phone fa-2x mb-2"></i>
-                        <p class="mb-0">{{ settings.primary_phone|default:"+254 700 000 000" }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Contact Options -->
-<section class="contact-options py-5">
-    <div class="container">
-        <div class="row g-4">
-            <!-- General Inquiries -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm hover-lift">
-                    <div class="card-body text-center p-4">
-                        <div class="icon-box bg-primary text-white rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                            <i class="fas fa-comment-dots fa-2x"></i>
-                        </div>
-                        <h5 class="card-title h5 mb-3">General Inquiries</h5>
-                        <p class="card-text text-muted mb-4">Questions about MfalmeBits, our services, or general information.</p>
-                        <p class="mb-2"><i class="fas fa-envelope text-primary me-2"></i> {{ settings.contact_email|default:"contact@mfalmebits.com" }}</p>
-                        <p><i class="fas fa-clock text-primary me-2"></i> {{ settings.general_response_time|default:"Within 24 hours" }}</p>
-                        <a href="#contact-form" class="btn btn-outline-primary mt-3">Send Message</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Technical Support -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm hover-lift">
-                    <div class="card-body text-center p-4">
-                        <div class="icon-box bg-success text-white rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                            <i class="fas fa-headset fa-2x"></i>
-                        </div>
-                        <h5 class="card-title h5 mb-3">Technical Support</h5>
-                        <p class="card-text text-muted mb-4">Need help with technical issues, account problems, or bug reports.</p>
-                        <p class="mb-2"><i class="fas fa-envelope text-success me-2"></i> {{ settings.support_email|default:"support@mfalmebits.com" }}</p>
-                        <p><i class="fas fa-clock text-success me-2"></i> {{ settings.support_response_time|default:"Within 4 hours" }}</p>
-                        <a href="{% url 'contact:support' %}" class="btn btn-outline-success mt-3">Get Support</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Partnerships -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm hover-lift">
-                    <div class="card-body text-center p-4">
-                        <div class="icon-box bg-warning text-white rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                            <i class="fas fa-handshake fa-2x"></i>
-                        </div>
-                        <h5 class="card-title h5 mb-3">Partnerships</h5>
-                        <p class="card-text text-muted mb-4">Collaboration opportunities, institutional licensing, and strategic partnerships.</p>
-                        <p class="mb-2"><i class="fas fa-envelope text-warning me-2"></i> {{ settings.sales_email|default:"partners@mfalmebits.com" }}</p>
-                        <p><i class="fas fa-clock text-warning me-2"></i> {{ settings.general_response_time|default:"Within 24 hours" }}</p>
-                        <a href="#contact-form" class="btn btn-outline-warning mt-3">Contact Us</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Contact Form Section -->
-<section id="contact-form" class="contact-form-section py-5 bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="card border-0 shadow">
-                    <div class="card-body p-5">
-                        <h2 class="h3 mb-4 text-center">Send Us a Message</h2>
-
-                        <!-- Messages -->
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-
-                        <!-- Contact Form -->
-                        <form method="post" action="{% url 'contact:submit' %}" enctype="multipart/form-data" id="contactForm">
-                            {% csrf_token %}
-                            
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="{{ form.name.id_for_label }}" class="form-label">Full Name *</label>
-                                    {{ form.name }}
-                                    {% if form.name.errors %}
-                                        <div class="text-danger small">{{ form.name.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label for="{{ form.email.id_for_label }}" class="form-label">Email Address *</label>
-                                    {{ form.email }}
-                                    {% if form.email.errors %}
-                                        <div class="text-danger small">{{ form.email.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number (optional)</label>
-                                    {{ form.phone }}
-                                    {% if form.phone.errors %}
-                                        <div class="text-danger small">{{ form.phone.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label for="{{ form.subject_type.id_for_label }}" class="form-label">Subject Type *</label>
-                                    {{ form.subject_type }}
-                                </div>
-                                
-                                <div class="col-12">
-                                    <label for="{{ form.subject.id_for_label }}" class="form-label">Subject *</label>
-                                    {{ form.subject }}
-                                    {% if form.subject.errors %}
-                                        <div class="text-danger small">{{ form.subject.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-12">
-                                    <label for="{{ form.message.id_for_label }}" class="form-label">Message *</label>
-                                    {{ form.message }}
-                                    {% if form.message.errors %}
-                                        <div class="text-danger small">{{ form.message.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-12">
-                                    <label for="{{ form.attachment.id_for_label }}" class="form-label">Attachment (optional)</label>
-                                    {{ form.attachment }}
-                                    <div class="form-text">Max 10MB. Allowed: PDF, DOC, DOCX, JPG, PNG</div>
-                                    {% if form.attachment.errors %}
-                                        <div class="text-danger small">{{ form.attachment.errors.0 }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="col-12">
-                                    <div class="form-check">
-                                        {{ form.subscribe_newsletter }}
-                                        <label class="form-check-label" for="{{ form.subscribe_newsletter.id_for_label }}">
-                                            Subscribe to our newsletter for updates and news
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <!-- reCAPTCHA (if enabled) -->
-                                {% if settings.recaptcha_site_key %}
-                                <div class="col-12">
-                                    <div class="g-recaptcha" data-sitekey="{{ settings.recaptcha_site_key }}"></div>
-                                </div>
-                                {% endif %}
-                                
-                                <div class="col-12 text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-lg px-5">
-                                        <i class="fas fa-paper-plane me-2"></i>Send Message
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Office Locations -->
-{% if offices %}
-<section class="offices-section py-5">
-    <div class="container">
-        <h2 class="h3 mb-4 text-center">Our Offices</h2>
-        <div class="row g-4">
-            {% for office in offices %}
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title h6 mb-3">
-                            {% if office.is_headquarters %}
-                                <i class="fas fa-star text-warning me-2"></i>
-                            {% endif %}
-                            {{ office.name }}
-                        </h5>
-                        <p class="card-text text-muted small mb-2">
-                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                            {{ office.address }}<br>
-                            {{ office.city }}, {{ office.country }} {{ office.postal_code }}
-                        </p>
-                        <p class="card-text text-muted small mb-2">
-                            <i class="fas fa-phone text-primary me-2"></i>
-                            <a href="tel:{{ office.phone }}" class="text-decoration-none text-muted">{{ office.phone }}</a>
-                        </p>
-                        <p class="card-text text-muted small mb-3">
-                            <i class="fas fa-envelope text-primary me-2"></i>
-                            <a href="mailto:{{ office.email }}" class="text-decoration-none text-muted">{{ office.email }}</a>
-                        </p>
-                        {% if office.hours %}
-                        <p class="card-text text-muted small">
-                            <i class="fas fa-clock text-primary me-2"></i>
-                            {{ office.hours|linebreaksbr }}
-                        </p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        <div class="text-center mt-4">
-            <a href="{% url 'contact:offices' %}" class="btn btn-outline-primary">
-                View All Locations <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-    </div>
-</section>
-{% endif %}
-
-<!-- FAQ Preview -->
-{% if faqs %}
-<section class="faq-preview py-5 bg-light">
-    <div class="container">
-        <h2 class="h3 mb-4 text-center">Frequently Asked Questions</h2>
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="accordion" id="faqAccordion">
-                    {% for faq in faqs %}
-                    <div class="accordion-item border-0 mb-3 shadow-sm">
-                        <h3 class="accordion-header" id="heading{{ forloop.counter }}">
-                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" 
-                                    type="button" 
-                                    data-bs-toggle="collapse" 
-                                    data-bs-target="#collapse{{ forloop.counter }}">
-                                {{ faq.question }}
-                            </button>
-                        </h3>
-                        <div id="collapse{{ forloop.counter }}" 
-                             class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
-                             data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                {{ faq.answer|safe }}
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="text-center mt-4">
-                    <a href="{% url 'contact:faq' %}" class="btn btn-outline-primary">
-                        View All FAQs <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-{% endif %}
-
+{% block extra_css %}
 <style>
-    .hover-lift {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 1rem 2rem rgba(0,0,0,.1) !important;
-    }
-    .icon-box {
-        transition: transform 0.3s ease;
-    }
-    .icon-box:hover {
-        transform: scale(1.1);
-    }
     .contact-hero {
-        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
     }
-    .quick-contact-item {
-        background: rgba(34, 27, 27, 0.88);
-        padding: 1rem 2rem;
-        border-radius: 10px;
+    
+    .contact-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.1)' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+        opacity: 0.15;
     }
+    
+    .contact-hero h1 {
+        position: relative;
+        z-index: 1;
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: white;
+    }
+    
+    .contact-hero p {
+        position: relative;
+        z-index: 1;
+        font-size: 18px;
+        color: rgba(255,255,255,0.95);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .contact-container {
+        max-width: 1200px;
+        margin: -40px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .contact-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+    
+    .dark .contact-card {
+        background: #1e1e2e;
+    }
+    
+    .contact-info {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px;
+        color: white;
+        height: 100%;
+    }
+    
+    .contact-info h3 {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+    
+    .contact-info-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    
+    .contact-info-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .contact-info-icon i {
+        font-size: 20px;
+    }
+    
+    .contact-form-wrapper {
+        padding: 40px;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #2d3748;
+    }
+    
+    .dark .form-label {
+        color: #e2e8f0;
+    }
+    
+    .form-control, .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .form-control, .dark .form-select {
+        background: #2d2d3d;
+        border-color: #3d3d4d;
+        color: white;
+    }
+    
     .form-control:focus, .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+    
+    .btn-submit {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+    }
+    
+    .alert {
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+    }
+    
+    .alert-success {
+        background: #c6f6d5;
+        color: #22543d;
+        border-left: 4px solid #38a169;
+    }
+    
+    .alert-danger {
+        background: #fed7d7;
+        color: #742a2a;
+        border-left: 4px solid #e53e3e;
+    }
+    
+    /* Checkbox styling */
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+    
+    .checkbox-group label {
+        cursor: pointer;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .contact-hero h1 { font-size: 32px; }
+        .contact-info, .contact-form-wrapper { padding: 24px; }
     }
 </style>
+{% endblock %}
 
-<script>
-    // AJAX form submission
-    document.getElementById('contactForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const form = this;
-        const formData = new FormData(form);
-        const submitBtn = form.querySelector('button[type="submit"]');
-        
-        // Disable button and show loading
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
-        
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show success message
-                const alert = `
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ${data.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+{% block content %}
+<!-- Hero Section -->
+<div class="contact-hero">
+    <h1><i class="fas fa-envelope"></i> Contact Us</h1>
+    <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+</div>
+
+<div class="contact-container">
+    <div class="contact-card">
+        <div class="row g-0">
+            <div class="col-lg-4">
+                <div class="contact-info">
+                    <h3><i class="fas fa-info-circle me-2"></i>Get in Touch</h3>
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <strong>Visit Us</strong><br>
+                            Nairobi, Kenya
+                        </div>
                     </div>
-                `;
-                form.insertAdjacentHTML('beforebegin', alert);
-                form.reset();
-            } else {
-                // Show errors
-                let errorHtml = '<div class="alert alert-danger"><ul class="mb-0">';
-                for (let field in data.errors) {
-                    errorHtml += `<li>${data.errors[field].join(', ')}</li>`;
-                }
-                errorHtml += '</ul></div>';
-                form.insertAdjacentHTML('beforebegin', errorHtml);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            const alert = `
-                <div class="alert alert-danger" role="alert">
-                    An error occurred. Please try again.
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <strong>Email Us</strong><br>
+                            hello@mfalmebits.com
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <strong>Call Us</strong><br>
+                            +254 700 000 000
+                        </div>
+                    </div>
                 </div>
-            `;
-            form.insertAdjacentHTML('beforebegin', alert);
-        })
-        .finally(() => {
-            // Re-enable button
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send Message';
+            </div>
             
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            <div class="col-lg-8">
+                <div class="contact-form-wrapper">
+                    <h3 class="mb-4">Send us a Message</h3>
+                    
+                    <form method="post" id="contactForm" action="{% url 'contact:submit' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Your Name *</label>
+                                    <input type="text" name="name" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Email Address *</label>
+                                    <input type="email" name="email" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" name="phone" class="form-control" placeholder="Optional">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Subject Type *</label>
+                                    <select name="subject_type" class="form-select" required>
+                                        <option value="">Select subject type</option>
+                                        <option value="general">General Inquiry</option>
+                                        <option value="support">Technical Support</option>
+                                        <option value="sales">Sales Question</option>
+                                        <option value="partnership">Partnership Opportunity</option>
+                                        <option value="press">Press Inquiry</option>
+                                        <option value="feedback">Feedback</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Subject *</label>
+                            <input type="text" name="subject" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Message *</label>
+                            <textarea name="message" class="form-control" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Attachment</label>
+                            <input type="file" name="attachment" class="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small class="text-muted">Max 10MB. Allowed: PDF, DOC, DOCX, JPG, PNG</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="subscribe_newsletter" id="subscribeNewsletter">
+                                <label for="subscribeNewsletter">Subscribe to our newsletter for updates and exclusive content</label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        'use strict';
+        
+        const form = document.getElementById('contactForm');
+        if (!form) return;
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+            
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                // Remove any existing alerts
+                const existingAlerts = document.querySelectorAll('.alert');
+                existingAlerts.forEach(function(alert) {
+                    alert.remove();
+                });
+                
+                if (data.success) {
+                    // Show success message
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success';
+                    alertDiv.innerHTML = '<i class="fas fa-check-circle me-2"></i>' + (data.message || 'Message sent successfully! We\'ll get back to you soon.');
+                    form.insertAdjacentElement('beforebegin', alertDiv);
+                    form.reset();
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    // Auto remove after 5 seconds
+                    setTimeout(function() {
+                        alertDiv.remove();
+                    }, 5000);
+                } else {
+                    // Show error message
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger';
+                    
+                    if (data.errors) {
+                        let errorList = '<ul class="mb-0">';
+                        for (var field in data.errors) {
+                            if (data.errors.hasOwnProperty(field)) {
+                                if (Array.isArray(data.errors[field])) {
+                                    errorList += '<li><strong>' + field + ':</strong> ' + escapeHtml(data.errors[field].join(', ')) + '</li>';
+                                } else {
+                                    errorList += '<li><strong>' + field + ':</strong> ' + escapeHtml(data.errors[field]) + '</li>';
+                                }
+                            }
+                        }
+                        errorList += '</ul>';
+                        alertDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> Please correct the following errors:' + errorList;
+                    } else {
+                        alertDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>' + (data.message || 'An error occurred. Please try again.');
+                    }
+                    
+                    form.insertAdjacentElement('beforebegin', alertDiv);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Network error. Please check your connection and try again.';
+                form.insertAdjacentElement('beforebegin', alertDiv);
+            })
+            .finally(function() {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
         });
-    });
+        
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    })();
 </script>
 {% endblock %}

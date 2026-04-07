@@ -1,4 +1,3 @@
-# ====== FILE: ./apps/home/admin.py =====
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
@@ -60,8 +59,11 @@ class HomeSectionAdmin(admin.ModelAdmin):
     deactivate_sections.short_description = "Deactivate selected sections"
 
 
-from django.contrib import admin
-from django.utils.html import format_html
+@admin.register(HomeSection)
+class HomeSectionAdminRegistered(HomeSectionAdmin):
+    """Registered version of HomeSection admin"""
+    pass
+
 
 @admin.register(HeroSlide)
 class HeroSlideAdmin(admin.ModelAdmin):
@@ -70,9 +72,7 @@ class HeroSlideAdmin(admin.ModelAdmin):
     list_filter = ['is_active', 'button_style']
     search_fields = ['title', 'subtitle', 'description']
     list_editable = ['order', 'is_active']
-    
-    # 1. REMOVED 'created_at' from readonly_fields
-    readonly_fields = ['image_preview']
+    readonly_fields = ['image_preview', 'created_at']
     
     fieldsets = (
         ('Content', {
@@ -117,15 +117,15 @@ class HeroSlideAdmin(admin.ModelAdmin):
         self.message_user(request, f'{queryset.count()} slides duplicated successfully.')
     duplicate_slides.short_description = "Duplicate selected slides"
 
+
+@admin.register(FeaturedItem)
 class FeaturedItemAdmin(admin.ModelAdmin):
     """Admin configuration for FeaturedItem model"""
     list_display = ['title', 'item_type', 'order', 'is_active', 'image_preview', 'linked_content']
     list_filter = ['item_type', 'is_active']
     search_fields = ['title', 'description']
     list_editable = ['order', 'is_active']
-    
-    # FIX: Removed 'created_at' from readonly_fields
-    readonly_fields = ['image_preview', 'linked_content']
+    readonly_fields = ['image_preview', 'linked_content', 'created_at']
     
     fieldsets = (
         ('Basic Information', {
@@ -207,15 +207,14 @@ class FeaturedItemAdmin(admin.ModelAdmin):
     link_to_blog.short_description = "How to link Blog"
 
 
+@admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
     """Admin configuration for Testimonial model"""
     list_display = ['name', 'company', 'rating', 'order', 'is_active', 'avatar_preview']
     list_filter = ['rating', 'is_active']
     search_fields = ['name', 'company', 'content']
     list_editable = ['order', 'is_active']
-    
-    # FIX: Removed 'created_at' from readonly_fields
-    readonly_fields = ['avatar_preview']
+    readonly_fields = ['avatar_preview', 'created_at']
     
     fieldsets = (
         ('Author Information', {
@@ -267,9 +266,6 @@ class TestimonialAdmin(admin.ModelAdmin):
     set_3_star.short_description = "Set rating to 3 stars"
 
 
-from django.contrib import admin
-from django.utils.html import format_html
-
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):
     """Admin configuration for Partner model"""
@@ -277,9 +273,7 @@ class PartnerAdmin(admin.ModelAdmin):
     list_filter = ['is_active']
     search_fields = ['name', 'description']
     list_editable = ['order', 'is_active']
-    
-    # ADDED 'created_at' here to resolve the FieldError
-    readonly_fields = ['logo_preview', 'website_link']
+    readonly_fields = ['logo_preview', 'website_link', 'created_at']
     
     fieldsets = (
         ('Basic Information', {
@@ -331,12 +325,14 @@ class PartnerAdmin(admin.ModelAdmin):
         return response
     export_urls.short_description = "Export website URLs"
 
+
+@admin.register(CTASection)
 class CTASectionAdmin(admin.ModelAdmin):
     """Admin configuration for CTASection model"""
     list_display = ['title', 'button_text', 'is_active', 'has_secondary', 'created_at']
     list_filter = ['is_active', 'button_style']
     search_fields = ['title', 'subtitle', 'description']
-    readonly_fields = ['created_at']
+    readonly_fields = ['created_at', 'has_secondary']
     
     fieldsets = (
         ('Main Content', {
@@ -376,12 +372,3 @@ class CTASectionAdmin(admin.ModelAdmin):
             cta.save()
         self.message_user(request, f'{queryset.count()} CTAs duplicated.')
     duplicate_cta.short_description = "Duplicate selected CTAs"
-
-
-# # Register all models with their respective admin classes
-# admin.site.register(HomeSection, HomeSectionAdmin)
-# admin.site.register(HeroSlide, HeroSlideAdmin)
-# admin.site.register(FeaturedItem, FeaturedItemAdmin)
-# admin.site.register(Testimonial, TestimonialAdmin)
-# admin.site.register(Partner, PartnerAdmin)
-# admin.site.register(CTASection, CTASectionAdmin)

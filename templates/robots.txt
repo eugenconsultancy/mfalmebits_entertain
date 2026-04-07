@@ -1,8 +1,23 @@
 User-agent: *
+Allow: /
 Disallow: /admin/
-Disallow: /accounts/
-Disallow: /private/
+Disallow: /accounts/login/
+Disallow: /accounts/register/
+Disallow: /accounts/password-reset/
+Disallow: /accounts/dashboard/
+Disallow: /accounts/settings/
+Disallow: /accounts/saved/
+Disallow: /accounts/downloads/
+Disallow: /accounts/login-history/
+Disallow: /ckeditor5/
+Disallow: /__debug__/
+Disallow: /newsletter/unsubscribe/
+Disallow: /newsletter/preferences/
+Disallow: /newsletter/confirm/
+
+# Allow Google's crawlers specifically
+User-agent: Googlebot
 Allow: /
 
-# Sitemap
-Sitemap: {{ request.build_absolute_uri }}/sitemap.xml
+# Sitemap location
+Sitemap: {{ sitemap_url }}

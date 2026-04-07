@@ -1,82 +1,600 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_title %}{{ seo_title|default:"Unsubscribe from Newsletter - MfalmeBits" }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Unsubscribe Page Styles */
+    .unsubscribe-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 60px 20px;
+        text-align: center;
+    }
+    
+    .unsubscribe-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.1)' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+        opacity: 0.15;
+    }
+    
+    .unsubscribe-hero h1 {
+        position: relative;
+        z-index: 1;
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    .unsubscribe-hero p {
+        position: relative;
+        z-index: 1;
+        font-size: 18px;
+        color: rgba(255,255,255,0.95);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .unsubscribe-container {
+        max-width: 600px;
+        margin: -40px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .unsubscribe-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+    
+    .dark .unsubscribe-card {
+        background: #1e1e2e;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #fef5f5 0%, #fce8e8 100%);
+        padding: 32px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    
+    .dark .card-header {
+        background: linear-gradient(135deg, #2a1a1a 0%, #1e1515 100%);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .icon-wrapper {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(229, 62, 62, 0.3);
+    }
+    
+    .icon-wrapper i {
+        font-size: 36px;
+        color: white;
+    }
+    
+    .card-header h2 {
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        color: #1a1a2e;
+    }
+    
+    .dark .card-header h2 {
+        color: white;
+    }
+    
+    .card-header p {
+        color: #6c757d;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    
+    .dark .card-header p {
+        color: #a0aec0;
+    }
+    
+    .card-body {
+        padding: 32px;
+    }
+    
+    .form-group {
+        margin-bottom: 28px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 10px;
+        color: #2d3748;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    .dark .form-label {
+        color: #e2e8f0;
+    }
+    
+    .form-label i {
+        margin-right: 8px;
+        color: #e53e3e;
+        width: 20px;
+    }
+    
+    .input-wrapper {
+        position: relative;
+    }
+    
+    .input-wrapper i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+        font-size: 16px;
+        z-index: 1;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 14px 16px 14px 48px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #ffffff;
+        color: #1a1a2e;
+    }
+    
+    .dark .form-control {
+        background: #2d2d3d;
+        border-color: #3d3d4d;
+        color: white;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #e53e3e;
+        box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+    }
+    
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        cursor: pointer;
+    }
+    
+    textarea.form-control {
+        padding: 14px 16px;
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .textarea-wrapper i {
+        position: absolute;
+        left: 16px;
+        top: 18px;
+        transform: none;
+        color: #a0aec0;
+    }
+    
+    .textarea-wrapper textarea {
+        padding-left: 48px;
+    }
+    
+    .error-message {
+        color: #e53e3e;
+        font-size: 12px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .error-message i {
+        font-size: 12px;
+    }
+    
+    .help-text {
+        font-size: 12px;
+        color: #a0aec0;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .help-text i {
+        font-size: 10px;
+        color: #e53e3e;
+    }
+    
+    /* Button Styles */
+    .btn-unsubscribe {
+        width: 100%;
+        background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        color: white;
+        padding: 16px 24px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-unsubscribe::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-unsubscribe:hover::before {
+        left: 100%;
+    }
+    
+    .btn-unsubscribe:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(229, 62, 62, 0.4);
+    }
+    
+    .btn-unsubscribe:active {
+        transform: translateY(0);
+    }
+    
+    /* Alternative Options Section */
+    .alternative-section {
+        background: #f8f9fa;
+        border-radius: 16px;
+        padding: 24px;
+        margin-top: 24px;
+        text-align: center;
+    }
+    
+    .dark .alternative-section {
+        background: #2d2d3d;
+    }
+    
+    .alternative-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .dark .alternative-title {
+        color: #a0aec0;
+    }
+    
+    .btn-alternative {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background: white;
+        color: #667eea;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .btn-alternative {
+        background: #1e1e2e;
+        border-color: #3d3d4d;
+        color: #667eea;
+    }
+    
+    .btn-alternative:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+    
+    /* Back Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #a0aec0;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        margin-top: 24px;
+    }
+    
+    .back-link:hover {
+        color: #667eea;
+        transform: translateX(-4px);
+    }
+    
+    /* Alert Messages */
+    .alert {
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-error {
+        background: #fed7d7;
+        border-left: 4px solid #e53e3e;
+        color: #742a2a;
+    }
+    
+    .dark .alert-error {
+        background: rgba(229, 62, 62, 0.2);
+        color: #feb2b2;
+    }
+    
+    .alert-success {
+        background: #c6f6d5;
+        border-left: 4px solid #38a169;
+        color: #22543d;
+    }
+    
+    .dark .alert-success {
+        background: rgba(56, 161, 105, 0.2);
+        color: #9ae6b4;
+    }
+    
+    .alert i {
+        font-size: 20px;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .unsubscribe-hero h1 {
+            font-size: 32px;
+        }
+        
+        .card-header h2 {
+            font-size: 24px;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .btn-unsubscribe {
+            padding: 14px 20px;
+            font-size: 14px;
+        }
+        
+        .alternative-section {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<section class="min-h-screen flex items-center justify-center py-16">
-    <div class="container mx-auto px-4">
-        <div class="max-w-md mx-auto">
-            <div class="glass p-8">
-                <div class="text-center mb-8">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-envelope-open-text text-2xl text-red-500"></i>
+<!-- Modern Hero Section -->
+<div class="unsubscribe-hero">
+    <h1>
+        <i class="fas fa-user-minus"></i> Unsubscribe
+    </h1>
+    <p>We value your privacy and preferences</p>
+</div>
+
+<div class="unsubscribe-container">
+    <div class="unsubscribe-card animate-fade-in">
+        <div class="card-header">
+            <div class="icon-wrapper">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <h2>We're sorry to see you go</h2>
+            <p>Please confirm your details below to unsubscribe from our newsletter. You can always resubscribe later.</p>
+        </div>
+        
+        <div class="card-body">
+            <!-- Display messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
                     </div>
-                    <h1 class="text-3xl font-bold mb-2">Unsubscribe</h1>
-                    <p class="text-gray-600 dark:text-gray-300">
-                        We're sorry to see you go. Please confirm your email to unsubscribe.
-                    </p>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" id="unsubscribeForm">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{ form.non_field_errors.0 }}</span>
+                </div>
+                {% endif %}
+                
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> EMAIL ADDRESS
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" 
+                               name="{{ form.email.name }}" 
+                               id="{{ form.email.id_for_label }}"
+                               class="form-control" 
+                               placeholder="your@email.com"
+                               value="{{ form.email.value|default:'' }}"
+                               required>
+                    </div>
+                    {% if form.email.errors %}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ form.email.errors.0 }}
+                        </div>
+                    {% endif %}
+                    <div class="help-text">
+                        <i class="fas fa-info-circle"></i> Enter the email address you subscribed with
+                    </div>
                 </div>
                 
-                <form method="post" class="space-y-6">
-                    {% csrf_token %}
-                    
-                    {% if form.non_field_errors %}
-                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
-                        {{ form.non_field_errors }}
+                <!-- Reason Field -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-comment"></i> REASON FOR LEAVING
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-question-circle"></i>
+                        <select name="{{ form.reason.name }}" 
+                                id="id_reason" 
+                                class="form-control">
+                            {% for value, label in form.reason.field.choices %}
+                                <option value="{{ value }}" {% if form.reason.value == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
+                    {% if form.reason.errors %}
+                        <div class="error-message">{{ form.reason.errors.0 }}</div>
                     {% endif %}
-                    
-                    <div>
-                        <label class="block mb-2">Email Address</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div>
-                        <label class="block mb-2">Reason (optional)</label>
-                        {{ form.reason }}
-                        {% if form.reason.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.reason.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div id="other-reason-field" class="hidden">
-                        <label class="block mb-2">Please specify</label>
-                        {{ form.other_reason }}
-                        {% if form.other_reason.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.other_reason.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    {{ form.token }}
-                    
-                    <button type="submit" 
-                            class="w-full bg-red-500 text-white px-6 py-3 rounded-lg text-lg font-semibold 
-                                   hover:bg-red-600 transition-colors magnetic">
-                        Unsubscribe
-                    </button>
-                </form>
+                </div>
                 
-                <div class="mt-6 text-center">
-                    <a href="{% url 'newsletter:preferences' %}" class="text-primary hover:underline">
-                        Instead, update your preferences
-                    </a>
+                <!-- Other Reason Field (Hidden by default) -->
+                <div id="other-reason-field" class="form-group" style="display: none;">
+                    <label class="form-label">
+                        <i class="fas fa-pencil-alt"></i> PLEASE SPECIFY
+                    </label>
+                    <div class="textarea-wrapper">
+                        <i class="fas fa-pencil-alt"></i>
+                        <textarea name="{{ form.other_reason.name }}" 
+                                  id="{{ form.other_reason.id_for_label }}"
+                                  class="form-control" 
+                                  placeholder="Tell us how we can improve...">{{ form.other_reason.value|default:'' }}</textarea>
+                    </div>
+                    {% if form.other_reason.errors %}
+                        <div class="error-message">{{ form.other_reason.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                {{ form.token }}
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn-unsubscribe" id="submitBtn">
+                    <i class="fas fa-user-minus"></i>
+                    Confirm Unsubscribe
+                </button>
+            </form>
+            
+            <!-- Alternative Options -->
+            <div class="alternative-section">
+                <div class="alternative-title">
+                    <i class="fas fa-cog"></i>
+                    <span>Prefer to stay?</span>
+                </div>
+                <a href="{% url 'newsletter:preferences' %}" class="btn-alternative">
+                    <i class="fas fa-sliders-h"></i>
+                    Update Your Preferences Instead
+                </a>
+                <div class="help-text" style="margin-top: 16px; justify-content: center;">
+                    <i class="fas fa-heart" style="color: #e53e3e;"></i>
+                    Reduce frequency or change topics without fully unsubscribing
                 </div>
             </div>
         </div>
     </div>
-</section>
+    
+    <!-- Back Link -->
+    <div style="text-align: center;">
+        <a href="{% url 'home:home' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to MfalmeBits
+        </a>
+    </div>
+</div>
 
 <script>
-document.getElementById('id_reason').addEventListener('change', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    const reasonSelect = document.getElementById('id_reason');
     const otherField = document.getElementById('other-reason-field');
-    if (this.value === 'other') {
-        otherField.classList.remove('hidden');
-    } else {
-        otherField.classList.add('hidden');
+    
+    function toggleOtherField() {
+        if (reasonSelect && otherField) {
+            if (reasonSelect.value === 'other') {
+                otherField.style.display = 'block';
+                otherField.style.animation = 'fadeIn 0.3s ease-out';
+            } else {
+                otherField.style.display = 'none';
+            }
+        }
+    }
+    
+    if (reasonSelect) {
+        reasonSelect.addEventListener('change', toggleOtherField);
+        // Run on load to handle form validation errors
+        toggleOtherField();
+    }
+    
+    // Form submission confirmation
+    const form = document.getElementById('unsubscribeForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        });
     }
 });
 </script>

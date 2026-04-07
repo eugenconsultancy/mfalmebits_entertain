@@ -4,7 +4,7 @@
  * Version 2.1 - Fixed scrollY undefined error
  */
 
-(function() {
+(function () {
     'use strict';
 
     // ==========================================================================
@@ -31,7 +31,7 @@
      */
     function throttle(func, limit = 100) {
         let inThrottle;
-        return function(...args) {
+        return function (...args) {
             if (!inThrottle) {
                 func.apply(this, args);
                 inThrottle = true;
@@ -44,7 +44,7 @@
      * RequestAnimationFrame wrapper for smooth animations
      */
     function smoothAnimation(callback) {
-        return function(...args) {
+        return function (...args) {
             requestAnimationFrame(() => callback.apply(this, args));
         };
     }
@@ -71,10 +71,10 @@
     // Create a closure to maintain scroll position state
     const createNavbarScrollHandler = () => {
         let lastScrollY = 0;
-        
+
         return throttle(smoothAnimation(() => {
             const scrollY = window.scrollY || window.pageYOffset;
-            
+
             if (scrollY > 50) {
                 DOM.navbar?.classList.add('navbar-scrolled');
                 DOM.navbar?.style.setProperty('--scroll-opacity', Math.min(scrollY / 300, 1));
@@ -130,7 +130,7 @@
         const scrollY = window.scrollY || window.pageYOffset;
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight - windowHeight;
-        
+
         if (DOM.backToTopBtn) {
             if (scrollY > 300) {
                 DOM.backToTopBtn.classList.add('show');
@@ -156,19 +156,19 @@
             function animation(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                
+
                 // Easing function for smooth animation
-                const easeInOutCubic = progress < 0.5 
-                    ? 4 * progress * progress * progress 
+                const easeInOutCubic = progress < 0.5
+                    ? 4 * progress * progress * progress
                     : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-                
+
                 window.scrollTo(0, start * (1 - easeInOutCubic));
-                
+
                 if (progress < 1) {
                     requestAnimationFrame(animation);
                 }
             }
-            
+
             requestAnimationFrame(animation);
         });
     }
@@ -182,7 +182,7 @@
             e.stopPropagation();
             const isOpen = DOM.mobileMenu?.classList.toggle('show');
             DOM.mobileMenuBtn.classList.toggle('active');
-            
+
             // Prevent body scroll when menu is open
             if (isOpen) {
                 DOM.body.style.overflow = 'hidden';
@@ -205,8 +205,8 @@
 
     // Enhanced click outside handler with touch support
     document.addEventListener('click', (e) => {
-        if (DOM.mobileMenu?.classList.contains('show') && 
-            !DOM.mobileMenu.contains(e.target) && 
+        if (DOM.mobileMenu?.classList.contains('show') &&
+            !DOM.mobileMenu.contains(e.target) &&
             !DOM.mobileMenuBtn?.contains(e.target)) {
             closeMobileMenu();
         }
@@ -223,17 +223,17 @@
     // ==========================================================================
 
     document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
             if (!href || href === '#') return;
-            
+
             const target = document.querySelector(href);
-            
+
             if (target) {
                 e.preventDefault();
                 const navbarHeight = DOM.navbar?.offsetHeight || 0;
                 const targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight - 20;
-                
+
                 window.scrollTo({
                     top: targetPosition,
                     behavior: 'smooth'
@@ -241,7 +241,7 @@
 
                 // Update URL without jumping
                 history.pushState(null, '', href);
-                
+
                 // Close mobile menu if open
                 closeMobileMenu();
             }
@@ -255,7 +255,7 @@
     function setActiveNavLink() {
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
-        
+
         if (sections.length === 0) {
             // Fallback to path-based detection
             const currentPath = window.location.pathname;
@@ -406,14 +406,14 @@
             field.classList.add('error');
             field.classList.remove('success');
             field.closest('.form-group')?.classList.remove('focused');
-            
+
             let errorDiv = field.parentNode.querySelector('.error-message');
             if (!errorDiv) {
                 errorDiv = document.createElement('div');
                 errorDiv.className = 'error-message';
                 field.parentNode.appendChild(errorDiv);
             }
-            
+
             errorDiv.textContent = message;
             errorDiv.style.animation = 'shake 0.3s ease';
         }
@@ -433,7 +433,7 @@
 
         async handleSubmit(e) {
             e.preventDefault();
-            
+
             let isValid = true;
             this.inputs.forEach(input => {
                 if (!this.validateField(input)) {
@@ -505,14 +505,14 @@
             if (entry.isIntersecting) {
                 const img = entry.target;
                 const src = img.dataset.src;
-                
+
                 if (src) {
                     // Create temporary image to preload
                     const tempImg = new Image();
                     tempImg.onload = () => {
                         img.src = src;
                         img.classList.add('loaded');
-                        
+
                         // Animate fade-in
                         img.style.animation = 'fadeIn 0.5s ease';
                     };
@@ -521,7 +521,7 @@
                         console.error('Failed to load image:', src);
                     };
                     tempImg.src = src;
-                    
+
                     imageObserver.unobserve(img);
                 }
             }
@@ -535,11 +535,11 @@
         // Add blur effect while loading
         img.style.filter = 'blur(10px)';
         img.style.transition = 'filter 0.3s ease';
-        
+
         img.addEventListener('load', () => {
             img.style.filter = 'blur(0)';
         });
-        
+
         imageObserver.observe(img);
     });
 
@@ -548,26 +548,26 @@
     // ==========================================================================
 
     document.querySelectorAll('[data-copy]').forEach(btn => {
-        btn.addEventListener('click', async function(e) {
+        btn.addEventListener('click', async function (e) {
             e.preventDefault();
             const text = this.dataset.copy;
-            
+
             try {
                 await navigator.clipboard.writeText(text);
-                
+
                 // Ripple effect
                 createRipple(e, this);
-                
+
                 // Show success animation
                 const originalHTML = this.innerHTML;
                 this.innerHTML = '<i class="fas fa-check"></i> Copied!';
                 this.classList.add('success');
-                
+
                 setTimeout(() => {
                     this.innerHTML = originalHTML;
                     this.classList.remove('success');
                 }, 2000);
-                
+
                 if (typeof Toast !== 'undefined') {
                     new Toast('Copied to clipboard!', 'success', 1500);
                 }
@@ -587,20 +587,20 @@
     function createRipple(event, element) {
         const ripple = document.createElement('span');
         ripple.className = 'ripple';
-        
+
         const rect = element.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
         const x = event.clientX - rect.left - size / 2;
         const y = event.clientY - rect.top - size / 2;
-        
+
         ripple.style.width = ripple.style.height = `${size}px`;
         ripple.style.left = `${x}px`;
         ripple.style.top = `${y}px`;
-        
+
         element.style.position = 'relative';
         element.style.overflow = 'hidden';
         element.appendChild(ripple);
-        
+
         setTimeout(() => ripple.remove(), 600);
     }
 
@@ -623,7 +623,7 @@
             this.message = message;
             this.type = type;
             this.duration = duration;
-            
+
             Toast.queue.push(this);
             if (!Toast.isShowing) {
                 this.show();
@@ -632,7 +632,7 @@
 
         show() {
             Toast.isShowing = true;
-            
+
             const toast = document.createElement('div');
             toast.className = `toast toast-${this.type}`;
             toast.innerHTML = `
@@ -679,7 +679,7 @@
             setTimeout(() => {
                 toast.remove();
                 Toast.isShowing = false;
-                
+
                 // Show next toast in queue
                 Toast.queue.shift();
                 if (Toast.queue.length > 0) {
@@ -731,7 +731,7 @@
                 <i class="fas fa-moon"></i>
                 <i class="fas fa-sun"></i>
             `;
-            
+
             document.body.appendChild(toggle);
             DOM.themeToggle = toggle;
 
@@ -742,7 +742,7 @@
             this.theme = this.theme === 'light' ? 'dark' : 'light';
             this.applyTheme();
             localStorage.setItem('theme', this.theme);
-            
+
             if (typeof Toast !== 'undefined') {
                 new Toast(`${this.theme === 'dark' ? 'Dark' : 'Light'} mode activated`, 'info', 1500);
             }
@@ -841,7 +841,7 @@
         close() {
             this.modal.classList.remove('show');
             document.removeEventListener('keydown', this.handleKeydown);
-            
+
             setTimeout(() => {
                 this.modal.remove();
                 DOM.body.style.overflow = '';
@@ -929,7 +929,7 @@
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
-                
+
                 tab.classList.add('active');
                 if (contents[index]) contents[index].classList.add('active');
             });
@@ -971,15 +971,15 @@
         const tooltip = document.createElement('div');
         tooltip.className = 'tooltip';
         tooltip.textContent = element.dataset.tooltip;
-        
+
         const position = element.dataset.tooltipPosition || 'top';
         tooltip.classList.add(`tooltip-${position}`);
 
         element.addEventListener('mouseenter', () => {
             document.body.appendChild(tooltip);
             const rect = element.getBoundingClientRect();
-            
-            switch(position) {
+
+            switch (position) {
                 case 'top':
                     tooltip.style.left = `${rect.left + rect.width / 2}px`;
                     tooltip.style.top = `${rect.top - 10}px`;
@@ -997,7 +997,7 @@
                     tooltip.style.top = `${rect.top + rect.height / 2}px`;
                     break;
             }
-            
+
             requestAnimationFrame(() => tooltip.classList.add('show'));
         });
 
@@ -1011,7 +1011,7 @@
     // Loading Overlay
     // ==========================================================================
 
-    window.showLoading = function(message = 'Loading...') {
+    window.showLoading = function (message = 'Loading...') {
         const overlay = document.createElement('div');
         overlay.className = 'loading-overlay';
         overlay.id = 'globalLoadingOverlay';
@@ -1025,7 +1025,7 @@
         requestAnimationFrame(() => overlay.classList.add('show'));
     };
 
-    window.hideLoading = function() {
+    window.hideLoading = function () {
         const overlay = document.getElementById('globalLoadingOverlay');
         if (overlay) {
             overlay.classList.remove('show');
@@ -1034,34 +1034,22 @@
     };
 
     // ==========================================================================
-    // Keyboard Shortcuts
+    // 1. Keyboard Shortcuts Logic
     // ==========================================================================
-
     const shortcuts = {
         'ctrl+k': () => {
             const searchInput = document.querySelector('.search-input, [type="search"]');
-            searchInput?.focus();
+            if (searchInput) searchInput.focus();
         },
         'ctrl+/': () => {
             if (typeof Modal !== 'undefined') {
                 new Modal({
                     title: 'Keyboard Shortcuts',
-                    content: `
-                        <div class="shortcuts-list">
-                            <div class="shortcut-item">
-                                <kbd>Ctrl</kbd> + <kbd>K</kbd>
-                                <span>Focus Search</span>
-                            </div>
-                            <div class="shortcut-item">
-                                <kbd>Ctrl</kbd> + <kbd>/</kbd>
-                                <span>Show Shortcuts</span>
-                            </div>
-                            <div class="shortcut-item">
-                                <kbd>Esc</kbd>
-                                <span>Close Modal</span>
-                            </div>
-                        </div>
-                    `,
+                    content: '<div class="shortcuts-list">' +
+                        '<div class="shortcut-item"><kbd>Ctrl</kbd> + <kbd>K</kbd> <span>Focus Search</span></div>' +
+                        '<div class="shortcut-item"><kbd>Ctrl</kbd> + <kbd>/</kbd> <span>Show Shortcuts</span></div>' +
+                        '<div class="shortcut-item"><kbd>Esc</kbd> <span>Close Modal</span></div>' +
+                        '</div>',
                     size: 'small'
                 });
             }
@@ -1069,29 +1057,49 @@
     };
 
     document.addEventListener('keydown', (e) => {
-        const key = `${e.ctrlKey ? 'ctrl+' : ''}${e.key.toLowerCase()}`;
-        if (shortcuts[key]) {
-            e.preventDefault();
-            shortcuts[key]();
+        // 1. Safety Check: Ensure 'e' and 'e.key' exist to prevent toLowerCase() errors
+        if (!e || !e.key) return;
+
+        try {
+            // 2. Normalize key string (e.g., 'ctrl+k')
+            const keyName = e.key.toLowerCase();
+            const keyCombo = (e.ctrlKey ? 'ctrl+' : '') + keyName;
+
+            // 3. Execute shortcut if it exists
+            if (shortcuts && shortcuts[keyCombo]) {
+                // Check if user is typing in an input/textarea to avoid interrupting them
+                const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName) ||
+                    document.activeElement.isContentEditable;
+
+                // Only prevent default if it's a registered shortcut and NOT currently typing
+                // (Unless it's Ctrl+K, which we usually want to work everywhere)
+                if (!isTyping || keyCombo === 'ctrl+k') {
+                    e.preventDefault();
+                    shortcuts[keyCombo]();
+                }
+            }
+        } catch (err) {
+            // Soft fail to prevent the whole main.js from stopping
+            console.debug('Shortcut handler encountered an issue:', err);
         }
     });
 
     // ==========================================================================
-    // Performance Monitoring
+    // 2. Performance Monitoring (LCP)
     // ==========================================================================
-
     if ('PerformanceObserver' in window) {
         try {
             const perfObserver = new PerformanceObserver((list) => {
-                list.getEntries().forEach((entry) => {
+                const entries = list.getEntries();
+                entries.forEach((entry) => {
                     if (entry.entryType === 'largest-contentful-paint') {
-                        console.log('LCP:', entry.renderTime || entry.loadTime);
+                        console.log('LCP:', Math.round(entry.renderTime || entry.loadTime), 'ms');
                     }
                 });
             });
-            perfObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-        } catch (e) {
-            console.debug('PerformanceObserver not supported');
+            perfObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        } catch (err) {
+            console.debug('PerformanceObserver error:', err);
         }
     }
 

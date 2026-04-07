@@ -4,11 +4,6 @@ from .models import InstitutionalInquiry, LicensingPlan
 class InstitutionalInquiryForm(forms.ModelForm):
     """Form for institutional inquiries"""
     
-    plan_name = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={'readonly': 'readonly', 'class': 'bg-gray-100'})
-    )
-    
     class Meta:
         model = InstitutionalInquiry
         fields = [

@@ -1,786 +1,813 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ seo_title }}{% endblock %}
-{% block description %}{{ seo_description }}{% endblock %}
-{% block keywords %}{{ seo_keywords }}{% endblock %}
+{% block title %}{{ seo_title|default:"Contact Us - MfalmeBits" }}{% endblock %}
+{% block description %}{{ seo_description|default:"Get in touch with the MfalmeBits team" }}{% endblock %}
+{% block keywords %}{{ seo_keywords|default:"contact, support, help, MfalmeBits" }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ========================================
+       PREMIUM WEB 3.0 DESIGN SYSTEM
+       Modern Cultural Premium - Light & Clean
+    ======================================== */
+    
+    :root {
+        /* New Color Palette - Light & Clean */
+        --bg-primary: #FDFBF7;
+        --bg-secondary: #F5F2EB;
+        --bg-glass: rgba(253, 251, 247, 0.72);
+        --bg-card: #FFFFFF;
+        
+        /* Text Colors - Rich Brown Hierarchy */
+        --text-dark: #2C1810;
+        --text-medium: #5C3D2E;
+        --text-light: #8B6B5A;
+        --text-muted: #A89080;
+        
+        /* Accent Colors - Used Sparingly */
+        --accent-orange: #E85D04;
+        --accent-orange-light: #F48C06;
+        --accent-orange-glow: rgba(232, 93, 4, 0.15);
+        
+        /* Glassmorphism */
+        --glass-bg: rgba(253, 251, 247, 0.85);
+        --glass-border: rgba(139, 69, 19, 0.08);
+        --glass-blur: blur(12px);
+        
+        /* Shadows */
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
+        --shadow-glow: 0 0 0 3px rgba(232, 93, 4, 0.12);
+        
+        /* Typography */
+        --ff-serif: 'Cormorant Garamond', Georgia, serif;
+        --ff-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+        
+        /* Spacing */
+        --section-spacing: 100px;
+        --card-radius: 20px;
+    }
+    
+    /* Base Styles */
+    .contact-page {
+        background: var(--bg-primary);
+    }
+    
+    /* Hero Section - Modern Clean */
+    .hero-premium {
+        padding: 80px 0 60px;
+        background: var(--bg-primary);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-premium::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 80%;
+        height: 80%;
+        background: radial-gradient(circle, rgba(232, 93, 4, 0.03) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    
+    .hero-title {
+        font-family: var(--ff-serif);
+        font-size: clamp(3rem, 8vw, 5.5rem);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+    }
+    
+    .hero-title .text-brown {
+        color: var(--text-dark);
+        font-weight: 700;
+    }
+    
+    .hero-title .text-orange {
+        color: var(--accent-orange);
+        font-weight: 700;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .hero-title .text-orange::after {
+        content: '';
+        position: absolute;
+        bottom: 8px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-orange), transparent);
+        opacity: 0.3;
+    }
+    
+    .hero-description {
+        color: var(--text-light);
+        font-size: 1.125rem;
+        line-height: 1.6;
+        max-width: 600px;
+    }
+    
+    /* Premium Buttons */
+    .btn-primary-premium {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 32px;
+        background: var(--text-dark);
+        color: white;
+        border: none;
+        border-radius: 48px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-primary-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-primary-premium:hover {
+        background: var(--accent-orange);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(44, 24, 16, 0.2);
+    }
+    
+    .btn-primary-premium:hover::before {
+        left: 100%;
+    }
+    
+    .btn-secondary-premium {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 32px;
+        background: transparent;
+        color: var(--accent-orange);
+        border: 2px solid var(--accent-orange);
+        border-radius: 48px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        text-decoration: none;
+    }
+    
+    .btn-secondary-premium:hover {
+        background: var(--accent-orange);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(232, 93, 4, 0.2);
+    }
+    
+    /* Glassmorphic Form Container */
+    .form-glass-premium {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border-radius: var(--card-radius);
+        border: 1px solid var(--glass-border);
+        padding: 40px;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .form-title {
+        font-family: var(--ff-serif);
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+    
+    .form-subtitle {
+        color: var(--text-light);
+        margin-bottom: 32px;
+    }
+    
+    /* Premium Input Fields */
+    .input-premium {
+        width: 100%;
+        padding: 16px 18px;
+        background: white;
+        border: 1px solid #E8E0D8;
+        border-radius: 14px;
+        font-size: 1rem;
+        color: var(--text-dark);
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    .input-premium:focus {
+        border-color: var(--accent-orange);
+        box-shadow: var(--shadow-glow);
+    }
+    
+    .input-premium::placeholder {
+        color: var(--text-muted);
+    }
+    
+    select.input-premium {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C3D2E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 18px center;
+    }
+    
+    textarea.input-premium {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .form-label-premium {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-medium);
+    }
+    
+    /* Contact Info Cards - Solid Beige */
+    .info-card-solid {
+        background: var(--bg-secondary);
+        border-radius: 18px;
+        padding: 24px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(139, 69, 19, 0.05);
+    }
+    
+    .info-card-solid:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .info-icon-premium {
+        width: 48px;
+        height: 48px;
+        background: white;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-orange);
+        font-size: 1.25rem;
+        margin-bottom: 16px;
+    }
+    
+    .info-title {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+    
+    .info-detail {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 0.95rem;
+        display: block;
+        margin-bottom: 4px;
+        transition: color 0.2s;
+    }
+    
+    .info-detail:hover {
+        color: var(--accent-orange);
+    }
+    
+    .info-subdetail {
+        color: var(--text-light);
+        font-size: 0.85rem;
+    }
+    
+    /* Glass Container for Social Icons */
+    .social-glass-premium {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        border-radius: 60px;
+        padding: 12px 24px;
+        display: inline-flex;
+        gap: 20px;
+        border: 1px solid var(--glass-border);
+    }
+    
+    .social-icon-premium {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-medium);
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .social-icon-premium:hover {
+        background: var(--accent-orange);
+        color: white;
+        transform: translateY(-3px);
+    }
+    
+    /* Map Section */
+    .map-premium {
+        width: 100%;
+        height: 450px;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .map-premium iframe {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .map-overlay-premium {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
+        max-width: 320px;
+    }
+    
+    /* Accordion FAQ Styles */
+    .faq-accordion {
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid #E8E0D8;
+    }
+    
+    .faq-item-premium {
+        border-bottom: 1px solid #F0EBE5;
+    }
+    
+    .faq-item-premium:last-child {
+        border-bottom: none;
+    }
+    
+    .faq-question-premium {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        background: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .faq-question-premium:hover {
+        background: #FDFBF7;
+    }
+    
+    .faq-question-text {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        text-align: left;
+    }
+    
+    .faq-icon-premium {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: #F5F2EB;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-orange);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .faq-question-premium.active .faq-icon-premium {
+        background: var(--accent-orange);
+        color: white;
+        transform: rotate(45deg);
+    }
+    
+    .faq-answer-premium {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0 24px;
+    }
+    
+    .faq-answer-premium.active {
+        max-height: 200px;
+        padding: 0 24px 20px 24px;
+    }
+    
+    .faq-answer-premium p {
+        color: var(--text-light);
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    /* Footer Styles */
+    .footer-premium {
+        background: white;
+        border-top: 1px solid #E8E0D8;
+        padding: 48px 0 32px;
+        margin-top: 60px;
+    }
+    
+    .footer-text {
+        color: var(--text-light);
+        font-size: 0.85rem;
+    }
+    
+    .footer-link {
+        color: var(--text-medium);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .footer-link:hover {
+        color: var(--accent-orange);
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .map-overlay-premium {
+            position: relative;
+            bottom: auto;
+            right: auto;
+            margin-top: 20px;
+        }
+        
+        .social-glass-premium {
+            border-radius: 30px;
+            gap: 12px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .form-glass-premium {
+            padding: 24px;
+        }
+        
+        .hero-premium {
+            padding: 60px 0 40px;
+        }
+        
+        .btn-primary-premium, .btn-secondary-premium {
+            padding: 12px 24px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<!-- ===== Enhanced Contact Hero with Parallax ===== -->
-<section class="contact-hero position-relative overflow-hidden">
-    <!-- Animated Background -->
-    <div class="hero-bg">
-        <div class="particles" id="heroParticles"></div>
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
-        </div>
-    </div>
-    
-    <div class="container position-relative z-index-2">
-        <div class="row min-vh-50 align-items-center py-5">
-            <div class="col-lg-8 mx-auto text-center">
-                <span class="badge glass-badge animate-fade-in-up mb-4">
-                    <i class="fas fa-headset me-2"></i>Get In Touch
-                </span>
-                <h1 class="display-3 fw-bold text-white mb-4 animate-slide-in-left">
-                    Let's Start a <span class="text-gradient">Conversation</span>
-                </h1>
-                <p class="lead text-white-50 mb-5 animate-slide-in-right">
-                    We'd love to hear from you! Whether you have a question, feedback, or collaboration idea, our team is ready to help.
-                </p>
-                <div class="hero-cta animate-fade-in-up">
-                    <a href="#contact-form" class="btn btn-primary btn-lg me-3">
-                        <i class="fas fa-paper-plane me-2"></i>Send Message
-                    </a>
-                    <a href="#contact-info" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-info-circle me-2"></i>Learn More
-                    </a>
+<div class="contact-page">
+    <!-- ===== HERO SECTION - Premium Clean ===== -->
+    <section class="hero-premium">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 text-center text-lg-start">
+                    <span class="badge bg-transparent text-muted mb-3" style="font-size: 0.75rem; letter-spacing: 2px;">
+                        <i class="fas fa-headset me-2" style="color: var(--accent-orange);"></i>GET IN TOUCH
+                    </span>
+                    <h1 class="hero-title">
+                        <span class="text-brown">Let's Start a<br></span>
+                        <span class="text-orange">Conversation</span>
+                    </h1>
+                    <p class="hero-description mt-4">
+                        We'd love to hear from you! Whether you have a question, feedback, or collaboration idea, 
+                        our team is ready to help.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center justify-content-lg-start mt-4">
+                        <a href="#contact-form" class="btn-primary-premium">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </a>
+                        <a href="#contact-info" class="btn-secondary-premium">
+                            <i class="fas fa-info-circle"></i> Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="text-center">
+                        <img src="{% static 'images/contact-hero.svg' %}" alt="Contact" style="max-width: 100%;" onerror="this.style.display='none'">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Wave Divider -->
-    <div class="wave-divider">
-        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-        </svg>
-    </div>
-</section>
+    </section>
 
-<!-- ===== Contact Form & Info ===== -->
-<section class="contact-content py-5" id="contact-form">
-    <div class="container">
-        <div class="row g-5">
-            <!-- Contact Form -->
-            <div class="col-lg-7">
-                <div class="glass-card-2 p-5" data-tilt>
-                    <div class="section-header mb-5">
-                        <h2 class="display-6 fw-bold mb-3">
-                            <span class="gradient-text">Send Us</span> a Message
-                        </h2>
-                        <p class="text-muted">Fill out the form below and we'll get back to you within 24 hours.</p>
-                    </div>
-                    
-                    <form method="post" action="{% url 'contact:submit' %}" class="contact-form">
-                        {% csrf_token %}
+    <!-- ===== CONTACT FORM & INFO - Split Layout ===== -->
+    <section class="py-5" id="contact-form">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Form Column - Glassmorphic -->
+                <div class="col-lg-7">
+                    <div class="form-glass-premium">
+                        <h2 class="form-title">Send Us <span style="color: var(--accent-orange);">a Message</span></h2>
+                        <p class="form-subtitle">Fill out the form below and we'll get back to you within 24 hours.</p>
                         
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control glass-input" id="name" name="name" placeholder="Your Name" required>
-                                    <label for="name"><i class="fas fa-user me-2 text-primary"></i>Your Name *</label>
-                                </div>
-                            </div>
+                        <form method="post" action="{% url 'contact:submit' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
                             
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control glass-input" id="email" name="email" placeholder="Email Address" required>
-                                    <label for="email"><i class="fas fa-envelope me-2 text-primary"></i>Email Address *</label>
+                            <div class="row g-4">
+                                <!-- Name -->
+                                <div class="col-md-6">
+                                    <label class="form-label-premium">Full Name *</label>
+                                    <input type="text" name="name" class="input-premium" placeholder="Your name" required>
                                 </div>
-                            </div>
-                            
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control glass-input" id="subject" name="subject" placeholder="Subject" required>
-                                    <label for="subject"><i class="fas fa-heading me-2 text-primary"></i>Subject *</label>
+                                
+                                <!-- Email -->
+                                <div class="col-md-6">
+                                    <label class="form-label-premium">Email Address *</label>
+                                    <input type="email" name="email" class="input-premium" placeholder="your@email.com" required>
                                 </div>
-                            </div>
-                            
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <textarea class="form-control glass-input" id="message" name="message" placeholder="Your Message" style="height: 150px" required></textarea>
-                                    <label for="message"><i class="fas fa-comment me-2 text-primary"></i>Message *</label>
+                                
+                                <!-- Phone -->
+                                <div class="col-md-6">
+                                    <label class="form-label-premium">Phone Number</label>
+                                    <input type="tel" name="phone" class="input-premium" placeholder="+254 700 000 000">
                                 </div>
-                            </div>
-                            
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="privacy" required>
-                                    <label class="form-check-label" for="privacy">
-                                        I agree to the <a href="{% url 'home:privacy_policy' %}" class="text-primary">Privacy Policy</a> and consent to having my data processed.
+                                
+                                <!-- Subject Type -->
+                                <div class="col-md-6">
+                                    <label class="form-label-premium">Subject Type *</label>
+                                    <select name="subject_type" class="input-premium" required>
+                                        <option value="">Select subject type</option>
+                                        <option value="general">General Inquiry</option>
+                                        <option value="support">Technical Support</option>
+                                        <option value="sales">Sales Question</option>
+                                        <option value="partnership">Partnership Opportunity</option>
+                                        <option value="press">Press Inquiry</option>
+                                        <option value="feedback">Feedback</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Subject -->
+                                <div class="col-12">
+                                    <label class="form-label-premium">Subject *</label>
+                                    <input type="text" name="subject" class="input-premium" placeholder="What is this regarding?" required>
+                                </div>
+                                
+                                <!-- Message -->
+                                <div class="col-12">
+                                    <label class="form-label-premium">Message *</label>
+                                    <textarea name="message" class="input-premium" placeholder="Your message..." required></textarea>
+                                </div>
+                                
+                                <!-- Attachment -->
+                                <div class="col-12">
+                                    <label class="form-label-premium">Attachment (Optional)</label>
+                                    <input type="file" name="attachment" class="input-premium" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">Max 10MB. Allowed: PDF, DOC, DOCX, JPG, PNG</small>
+                                </div>
+                                
+                                <!-- Newsletter -->
+                                <div class="col-12">
+                                    <label class="d-flex align-items-center gap-3" style="cursor: pointer;">
+                                        <input type="checkbox" name="subscribe_newsletter" style="width: 18px; height: 18px; accent-color: var(--accent-orange);">
+                                        <span style="color: var(--text-medium);">Subscribe to our newsletter for updates and exclusive content</span>
                                     </label>
                                 </div>
+                                
+                                <!-- Privacy -->
+                                <div class="col-12">
+                                    <label class="d-flex align-items-center gap-3" style="cursor: pointer;">
+                                        <input type="checkbox" id="privacy" required style="width: 18px; height: 18px; accent-color: var(--accent-orange);">
+                                        <span style="color: var(--text-medium);">
+                                            I agree to the <a href="{% url 'home:privacy_policy' %}" style="color: var(--accent-orange);">Privacy Policy</a> and consent to having my data processed. *
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <!-- Submit -->
+                                <div class="col-12">
+                                    <button type="submit" class="btn-primary-premium w-100 justify-content-center">
+                                        <i class="fas fa-paper-plane"></i> Send Message
+                                    </button>
+                                </div>
                             </div>
-                            
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-gradient btn-lg w-100">
-                                    <i class="fas fa-paper-plane me-2"></i>Send Message
-                                    <span class="btn-overlay"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Contact Information -->
-            <div class="col-lg-5" id="contact-info">
-                <div class="contact-info-wrapper">
-                    <h2 class="display-6 fw-bold mb-4">
-                        <span class="gradient-text">Contact</span> Information
+                
+                <!-- Contact Info Column - Solid Cards -->
+                <div class="col-lg-5" id="contact-info">
+                    <h2 class="form-title" style="font-size: 1.75rem; margin-bottom: 24px;">
+                        Contact <span style="color: var(--accent-orange);">Information</span>
                     </h2>
                     
-                    <div class="info-grid">
+                    <div class="row g-4">
                         <!-- Visit Us -->
-                        <div class="info-card glass-card-3 p-4 mb-4 hover-lift">
-                            <div class="d-flex align-items-start">
-                                <div class="info-icon-wrapper me-4">
-                                    <div class="info-icon">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </div>
+                        <div class="col-md-6 col-lg-12">
+                            <div class="info-card-solid">
+                                <div class="info-icon-premium">
+                                    <i class="fas fa-map-marker-alt"></i>
                                 </div>
-                                <div>
-                                    <h3 class="h5 fw-bold mb-2">Visit Us</h3>
-                                    <p class="text-muted mb-0">Nairobi, Kenya<br>East Africa</p>
-                                </div>
+                                <h3 class="info-title">Visit Us</h3>
+                                <div class="info-detail">Nairobi, Kenya</div>
+                                <div class="info-subdetail">East Africa</div>
                             </div>
                         </div>
                         
                         <!-- Call Us -->
-                        <div class="info-card glass-card-3 p-4 mb-4 hover-lift">
-                            <div class="d-flex align-items-start">
-                                <div class="info-icon-wrapper me-4">
-                                    <div class="info-icon">
-                                        <i class="fas fa-phone-alt"></i>
-                                    </div>
+                        <div class="col-md-6 col-lg-12">
+                            <div class="info-card-solid">
+                                <div class="info-icon-premium">
+                                    <i class="fas fa-phone-alt"></i>
                                 </div>
-                                <div>
-                                    <h3 class="h5 fw-bold mb-2">Call Us</h3>
-                                    <p class="mb-1">
-                                        <a href="tel:+254700000000" class="text-decoration-none contact-link">
-                                            <i class="fas fa-phone me-2 text-primary"></i>+254 700 000 000
-                                        </a>
-                                    </p>
-                                    <p class="mb-0">
-                                        <a href="tel:+254711111111" class="text-decoration-none contact-link">
-                                            <i class="fas fa-phone me-2 text-primary"></i>+254 711 111 111
-                                        </a>
-                                    </p>
-                                </div>
+                                <h3 class="info-title">Call Us</h3>
+                                <a href="tel:+254700000000" class="info-detail">+254 700 000 000</a>
+                                <a href="tel:+254711111111" class="info-detail">+254 711 111 111</a>
                             </div>
                         </div>
                         
                         <!-- Email Us -->
-                        <div class="info-card glass-card-3 p-4 mb-4 hover-lift">
-                            <div class="d-flex align-items-start">
-                                <div class="info-icon-wrapper me-4">
-                                    <div class="info-icon">
-                                        <i class="fas fa-envelope"></i>
-                                    </div>
+                        <div class="col-md-6 col-lg-12">
+                            <div class="info-card-solid">
+                                <div class="info-icon-premium">
+                                    <i class="fas fa-envelope"></i>
                                 </div>
-                                <div>
-                                    <h3 class="h5 fw-bold mb-2">Email Us</h3>
-                                    <p class="mb-1">
-                                        <a href="mailto:info@mfalmebits.com" class="text-decoration-none contact-link">
-                                            <i class="fas fa-envelope me-2 text-primary"></i>info@mfalmebits.com
-                                        </a>
-                                    </p>
-                                    <p class="mb-0">
-                                        <a href="mailto:support@mfalmebits.com" class="text-decoration-none contact-link">
-                                            <i class="fas fa-envelope me-2 text-primary"></i>support@mfalmebits.com
-                                        </a>
-                                    </p>
-                                </div>
+                                <h3 class="info-title">Email Us</h3>
+                                <a href="mailto:info@mfalmebits.com" class="info-detail">info@mfalmebits.com</a>
+                                <a href="mailto:support@mfalmebits.com" class="info-detail">support@mfalmebits.com</a>
                             </div>
                         </div>
                         
                         <!-- Business Hours -->
-                        <div class="info-card glass-card-3 p-4 hover-lift">
-                            <div class="d-flex align-items-start">
-                                <div class="info-icon-wrapper me-4">
-                                    <div class="info-icon">
-                                        <i class="fas fa-clock"></i>
-                                    </div>
+                        <div class="col-md-6 col-lg-12">
+                            <div class="info-card-solid">
+                                <div class="info-icon-premium">
+                                    <i class="fas fa-clock"></i>
                                 </div>
-                                <div>
-                                    <h3 class="h5 fw-bold mb-2">Business Hours</h3>
-                                    <p class="text-muted mb-1">Monday - Friday: 9:00 AM - 6:00 PM</p>
-                                    <p class="text-muted mb-0">Saturday: 10:00 AM - 4:00 PM</p>
-                                </div>
+                                <h3 class="info-title">Business Hours</h3>
+                                <div class="info-detail">Monday - Friday: 9:00 AM - 6:00 PM</div>
+                                <div class="info-subdetail">Saturday: 10:00 AM - 4:00 PM</div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Social Media -->
-                    <div class="social-section glass-card-2 p-4 mt-4">
-                        <h3 class="h5 fw-bold mb-3">Connect With Us</h3>
-                        <div class="social-links-modern">
-                            <a href="#" class="social-link-modern facebook" target="_blank" rel="noopener">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" class="social-link-modern twitter" target="_blank" rel="noopener">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="social-link-modern instagram" target="_blank" rel="noopener">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="#" class="social-link-modern linkedin" target="_blank" rel="noopener">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                            <a href="#" class="social-link-modern youtube" target="_blank" rel="noopener">
-                                <i class="fab fa-youtube"></i>
-                            </a>
+                    <!-- Social Icons - Glass Container -->
+                    <div class="mt-4 text-center">
+                        <div class="social-glass-premium">
+                            <a href="#" class="social-icon-premium" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-icon-premium" target="_blank"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-icon-premium" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-icon-premium" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="social-icon-premium" target="_blank"><i class="fab fa-youtube"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ===== Map Section with Modern Overlay ===== -->
-<section class="map-section position-relative">
-    <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255282.358328203!2d36.68257999781715!3d-1.3023056989699767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172d84d49a7%3A0xf7cf0254b297924c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
-                width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-    </div>
-    <div class="map-overlay">
-        <div class="container">
-            <div class="row justify-content-end">
-                <div class="col-lg-4">
-                    <div class="glass-card-3 p-4">
-                        <h4 class="fw-bold mb-3">Visit Our Office</h4>
-                        <p class="text-muted mb-3">
-                            <i class="fas fa-map-pin me-2 text-primary"></i>Nairobi, Kenya
-                        </p>
-                        <a href="https://maps.google.com" target="_blank" class="btn btn-gradient btn-sm">
-                            <i class="fas fa-directions me-2"></i>Get Directions
+    <!-- ===== MAP SECTION ===== -->
+    <section class="container my-5 position-relative">
+        <div class="map-premium">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255282.358328203!2d36.68257999781715!3d-1.3023056989699767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172d84d49a7%3A0xf7cf0254b297924c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-overlay-premium">
+            <div class="info-card-solid" style="background: white; box-shadow: var(--shadow-md);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="info-icon-premium" style="margin-bottom: 0;">
+                        <i class="fas fa-map-pin"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-1" style="color: var(--text-dark);">Visit Our Office</h4>
+                        <p class="mb-2" style="color: var(--text-light);">Nairobi, Kenya</p>
+                        <a href="https://maps.google.com" target="_blank" class="btn-secondary-premium" style="padding: 8px 20px; font-size: 0.85rem;">
+                            <i class="fas fa-directions"></i> Get Directions
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ===== FAQ Preview ===== -->
-<section class="faq-section py-5 bg-soft">
-    <div class="container">
-        <div class="row justify-content-center text-center mb-5">
+    <!-- ===== FAQ ACCORDION SECTION ===== -->
+    <section class="container my-5">
+        <div class="text-center mb-5">
+            <span class="badge bg-transparent text-muted mb-3" style="font-size: 0.75rem; letter-spacing: 2px;">
+                <i class="fas fa-question-circle me-2" style="color: var(--accent-orange);"></i>FAQ
+            </span>
+            <h2 class="form-title">Frequently Asked <span style="color: var(--accent-orange);">Questions</span></h2>
+            <p class="text-muted">Find quick answers to common questions</p>
+        </div>
+        
+        <div class="row justify-content-center">
             <div class="col-lg-8">
-                <span class="badge glass-badge mb-3">
-                    <i class="fas fa-question-circle me-2"></i>FAQ
-                </span>
-                <h2 class="display-6 fw-bold mb-3">Frequently Asked <span class="gradient-text">Questions</span></h2>
-                <p class="text-muted">Find quick answers to common questions. For more details, visit our FAQ page.</p>
-            </div>
-        </div>
-        
-        <div class="row g-4 mb-5">
-            <div class="col-md-6">
-                <div class="faq-item glass-card-2 p-4 hover-lift">
-                    <div class="d-flex">
-                        <div class="faq-icon me-3">
-                            <i class="fas fa-question-circle fa-2x text-primary"></i>
+                <div class="faq-accordion">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item-premium">
+                        <button class="faq-question-premium" onclick="toggleFAQ(this)">
+                            <span class="faq-question-text">How quickly do you respond to inquiries?</span>
+                            <span class="faq-icon-premium">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer-premium">
+                            <p>We typically respond within 24-48 hours during business days. For urgent matters, please call our support line.</p>
                         </div>
-                        <div>
-                            <h5 class="fw-bold mb-2">How quickly do you respond?</h5>
-                            <p class="text-muted mb-0">We typically respond within 24-48 hours during business days.</p>
+                    </div>
+                    
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item-premium">
+                        <button class="faq-question-premium" onclick="toggleFAQ(this)">
+                            <span class="faq-question-text">Do you work with international clients?</span>
+                            <span class="faq-icon-premium">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer-premium">
+                            <p>Yes! We collaborate with partners and clients worldwide. Our team is experienced in working across different time zones and cultural contexts.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item-premium">
+                        <button class="faq-question-premium" onclick="toggleFAQ(this)">
+                            <span class="faq-question-text">Can I submit content for the archive?</span>
+                            <span class="faq-icon-premium">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer-premium">
+                            <p>Absolutely! We welcome submissions from researchers, historians, and cultural practitioners. Visit our Collaboration page to learn more about the submission process.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ Item 4 -->
+                    <div class="faq-item-premium">
+                        <button class="faq-question-premium" onclick="toggleFAQ(this)">
+                            <span class="faq-question-text">What are your institutional licensing options?</span>
+                            <span class="faq-icon-premium">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer-premium">
+                            <p>We offer flexible licensing plans for universities, research institutions, and organizations. Visit our Institutional page or request a quote for personalized options.</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="faq-item glass-card-2 p-4 hover-lift">
-                    <div class="d-flex">
-                        <div class="faq-icon me-3">
-                            <i class="fas fa-globe fa-2x text-primary"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold mb-2">Do you work internationally?</h5>
-                            <p class="text-muted mb-0">Yes! We collaborate with partners and clients worldwide.</p>
-                        </div>
-                    </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{% url 'home:faq' %}" class="btn-secondary-premium">
+                        View All FAQs <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
                 </div>
             </div>
         </div>
-        
-        <div class="text-center">
-            <a href="{% url 'home:faq' %}" class="btn btn-outline-gradient btn-lg">
-                <i class="fas fa-question-circle me-2"></i>View All FAQs
-                <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- ===== Enhanced CSS Styles ===== -->
-<style>
-    :root {
-        --primary: #8B4513;
-        --primary-light: #c97c5d;
-        --primary-dark: #6B3410;
-        --gradient-1: linear-gradient(135deg, #8B4513, #c97c5d);
-        --gradient-2: linear-gradient(135deg, #667eea, #764ba2);
-        --gradient-3: linear-gradient(135deg, #f093fb, #f5576c);
-    }
-
-    /* Hero Section */
-    .contact-hero {
-        position: relative;
-        min-height: 600px;
-        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
-        overflow: hidden;
-    }
-
-    .hero-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
-    .floating-shapes {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-
-    .shape {
-        position: absolute;
-        background: rgba(139, 69, 19, 0.1);
-        border-radius: 50%;
-        filter: blur(60px);
-        animation: floatShape 20s infinite;
-    }
-
-    .shape-1 {
-        width: 300px;
-        height: 300px;
-        top: -150px;
-        left: -150px;
-        background: rgba(139, 69, 19, 0.2);
-        animation-delay: 0s;
-    }
-
-    .shape-2 {
-        width: 400px;
-        height: 400px;
-        bottom: -200px;
-        right: -200px;
-        background: rgba(201, 124, 93, 0.15);
-        animation-delay: 5s;
-    }
-
-    .shape-3 {
-        width: 200px;
-        height: 200px;
-        top: 50%;
-        left: 30%;
-        background: rgba(102, 126, 234, 0.1);
-        animation-delay: 2s;
-    }
-
-    .shape-4 {
-        width: 350px;
-        height: 350px;
-        bottom: 20%;
-        right: 20%;
-        background: rgba(116, 75, 162, 0.1);
-        animation-delay: 3s;
-    }
-
-    @keyframes floatShape {
-        0%, 100% { transform: translate(0, 0) rotate(0deg); }
-        33% { transform: translate(30px, -30px) rotate(120deg); }
-        66% { transform: translate(-20px, 20px) rotate(240deg); }
-    }
-
-    .glass-badge {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        color: white;
-        font-weight: 500;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        display: inline-block;
-    }
-
-    .text-gradient {
-        background: linear-gradient(135deg, #fff, var(--primary-light));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-
-    .wave-divider {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        overflow: hidden;
-        line-height: 0;
-    }
-
-    .wave-divider svg {
-        position: relative;
-        display: block;
-        width: calc(100% + 1.3px);
-        height: 80px;
-    }
-
-    .wave-divider .shape-fill {
-        fill: #FFFFFF;
-    }
-
-    /* Form Styling */
-    .glass-input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 2px solid rgba(0, 0, 0, 0.05);
-        backdrop-filter: blur(5px);
-        transition: all 0.3s ease;
-        height: 60px;
-    }
-
-    .glass-input:focus {
-        background: white;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
-        transform: translateY(-2px);
-    }
-
-    textarea.glass-input {
-        height: auto;
-    }
-
-    .form-floating label {
-        padding-left: 1rem;
-        color: #6c757d;
-    }
-
-    .form-floating .form-control:focus ~ label,
-    .form-floating .form-control:not(:placeholder-shown) ~ label {
-        color: var(--primary);
-        font-weight: 500;
-        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
-    }
-
-    /* Gradient Button */
-    .btn-gradient {
-        background: var(--gradient-1);
-        color: white;
-        border: none;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        z-index: 1;
-        padding: 1rem 2rem;
-        font-weight: 600;
-        border-radius: 50px;
-    }
-
-    .btn-gradient::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: -1;
-    }
-
-    .btn-gradient:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
-    }
-
-    .btn-gradient:hover::before {
-        opacity: 1;
-    }
-
-    .btn-outline-gradient {
-        background: transparent;
-        border: 2px solid var(--primary);
-        color: var(--primary);
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        z-index: 1;
-        padding: 1rem 2rem;
-        font-weight: 600;
-        border-radius: 50px;
-    }
-
-    .btn-outline-gradient::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--gradient-1);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: -1;
-    }
-
-    .btn-outline-gradient:hover {
-        color: white;
-        border-color: transparent;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
-    }
-
-    .btn-outline-gradient:hover::before {
-        opacity: 1;
-    }
-
-    /* Info Cards */
-    .info-icon-wrapper {
-        width: 60px;
-        height: 60px;
-    }
-
-    .info-icon {
-        width: 60px;
-        height: 60px;
-        background: var(--gradient-1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .info-card:hover .info-icon {
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    .contact-link {
-        color: var(--text-secondary);
-        transition: color 0.3s ease;
-    }
-
-    .contact-link:hover {
-        color: var(--primary);
-    }
-
-    /* Social Links Modern */
-    .social-links-modern {
-        display: flex;
-        gap: 1rem;
-    }
-
-    .social-link-modern {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .social-link-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: currentColor;
-        opacity: 0.1;
-        transition: opacity 0.3s ease;
-    }
-
-    .social-link-modern:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .social-link-modern:hover::before {
-        opacity: 0.2;
-    }
-
-    .social-link-modern.facebook { background: #1877f2; }
-    .social-link-modern.twitter { background: #1da1f2; }
-    .social-link-modern.instagram { background: linear-gradient(45deg, #f09433, #d62976, #962fbf); }
-    .social-link-modern.linkedin { background: #0077b5; }
-    .social-link-modern.youtube { background: #ff0000; }
-
-    /* Map Section */
-    .map-section {
-        position: relative;
-        height: 500px;
-    }
-
-    .map-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-
-    .map-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-        display: flex;
-        align-items: center;
-        padding: 2rem;
-    }
-
-    /* FAQ Section */
-    .faq-section {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    }
-
-    .faq-item {
-        cursor: pointer;
-    }
-
-    .faq-icon {
-        transition: transform 0.3s ease;
-    }
-
-    .faq-item:hover .faq-icon {
-        transform: rotate(5deg) scale(1.1);
-    }
-
-    /* Animations */
-    @keyframes slideInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .animate-slide-in-left {
-        animation: slideInLeft 1s ease forwards;
-    }
-
-    .animate-slide-in-right {
-        animation: slideInRight 1s ease forwards;
-    }
-
-    .animate-fade-in-up {
-        animation: fadeInUp 1s ease forwards;
-    }
-
-    .delay-1 { animation-delay: 0.2s; }
-    .delay-2 { animation-delay: 0.4s; }
-    .delay-3 { animation-delay: 0.6s; }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .contact-hero {
-            min-height: 500px;
-        }
-
-        .map-section {
-            height: 400px;
-        }
-
-        .map-overlay {
-            align-items: flex-end;
-            padding: 1rem;
-        }
-
-        .social-links-modern {
-            flex-wrap: wrap;
-        }
-    }
-
-    /* Particles */
-    .particles {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    .particle {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-</style>
+    </section>
+</div>
 
 <script>
-    // Particles Background
-    document.addEventListener('DOMContentLoaded', function() {
-        const particlesContainer = document.getElementById('heroParticles');
-        if (particlesContainer) {
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                const size = Math.random() * 5 + 2;
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                const delay = Math.random() * 5;
-                const duration = Math.random() * 10 + 10;
-                
-                particle.style.cssText = `
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: ${posX}%;
-                    top: ${posY}%;
-                    animation-delay: ${delay}s;
-                    animation-duration: ${duration}s;
-                    opacity: ${Math.random() * 0.3 + 0.1};
-                    background: rgba(255, 255, 255, ${Math.random() * 0.3});
-                    box-shadow: 0 0 ${size * 2}px rgba(255, 255, 255, 0.3);
-                    animation: floatParticle ${duration}s linear infinite;
-                `;
-                
-                particlesContainer.appendChild(particle);
+    function toggleFAQ(button) {
+        const item = button.closest('.faq-item-premium');
+        const answer = item.querySelector('.faq-answer-premium');
+        const icon = button.querySelector('.faq-icon-premium i');
+        
+        // Close other FAQs
+        document.querySelectorAll('.faq-item-premium').forEach(otherItem => {
+            if (otherItem !== item) {
+                otherItem.querySelector('.faq-question-premium').classList.remove('active');
+                otherItem.querySelector('.faq-answer-premium').classList.remove('active');
+                const otherIcon = otherItem.querySelector('.faq-icon-premium i');
+                if (otherIcon) {
+                    otherIcon.className = 'fas fa-plus';
+                }
+            }
+        });
+        
+        // Toggle current
+        button.classList.toggle('active');
+        answer.classList.toggle('active');
+        
+        if (icon) {
+            if (answer.classList.contains('active')) {
+                icon.className = 'fas fa-minus';
+            } else {
+                icon.className = 'fas fa-plus';
             }
         }
-    });
-
-    @keyframes floatParticle {
-        from { transform: translateY(0) rotate(0deg); }
-        to { transform: translateY(-100vh) rotate(360deg); }
     }
 </script>
 {% endblock %}

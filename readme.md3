@@ -1,0 +1,46 @@
+C:\Users\GATARA-BJTU\mfalme_entertain\utils . I WANT TO INTEGRATE A PAYMENT METHOD; 
+MPESA DARAJA API. 
+ALSO THE ABOVE FILES LACKS CONTENT TO SPECIFIC FILES LIKE:C:\Users\GATARA-BJTU\mfalme_entertain\utils\payments.py
+C:\Users\GATARA-BJTU\mfalme_entertain\utils\search.py
+C:\Users\GATARA-BJTU\mfalme_entertain\utils\seo_monitor.py
+C:\Users\GATARA-BJTU\mfalme_entertain\utils\storage.py
+
+i also commented out robots in the base settings.py due to icompatibility with
+python 2. suggest how i should overcome that.
+
+also in the base.py, i :
+# ─────────────────────────────────────────────────────────────────────
+# DATABASE
+# ─────────────────────────────────────────────────────────────────────
+# Note: This is overridden in render.py for production
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+analyze the project and idenitfy gaps for best pratcies and where
+issues might arise after hosting deployment.
+
+also i have overidden the below, so guide me on how to set correctly for deployment:
+# Note: These are overridden in render.py for production
+# Keeping base.py values for development only
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+also in the base.py settings, i have .
+
+update the asgi and wsgi for production deployment 
+
+also check if the settings file points to the correct path location for admin css , js 
+and also the genral static Files
+confirm the settings files and update where neccesary for deployment and hosting.
+
+also idenitfy sny misconfiguration errors throughout the project
+also check for best pratices where not adhered and outline where and why throughout the files

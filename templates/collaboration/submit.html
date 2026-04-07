@@ -3,17 +3,472 @@
 
 {% block seo_title %}Submit Collaboration Idea | MfalmeBits{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* ========================================
+       PREMIUM WEB 3.0 DESIGN SYSTEM
+       Collaboration Submit Page - Modern & Clean
+    ======================================== */
+    
+    :root {
+        /* Light & Clean Color Palette */
+        --bg-primary: #FDFBF7;
+        --bg-secondary: #F5F2EB;
+        --bg-glass: rgba(253, 251, 247, 0.85);
+        --bg-card: #FFFFFF;
+        
+        /* Text Colors */
+        --text-dark: #2C1810;
+        --text-medium: #5C3D2E;
+        --text-light: #8B6B5A;
+        --text-muted: #A89080;
+        
+        /* Accent Colors */
+        --accent-orange: #E85D04;
+        --accent-orange-light: #F48C06;
+        --accent-orange-glow: rgba(232, 93, 4, 0.15);
+        
+        /* Glassmorphism */
+        --glass-bg: rgba(253, 251, 247, 0.88);
+        --glass-border: rgba(139, 69, 19, 0.08);
+        --glass-blur: blur(16px);
+        
+        /* Shadows */
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.08);
+        --shadow-glow: 0 0 0 4px rgba(232, 93, 4, 0.12);
+        
+        /* Typography */
+        --ff-serif: 'Cormorant Garamond', Georgia, serif;
+        --ff-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+        
+        /* Border Radius */
+        --radius-sm: 12px;
+        --radius-md: 18px;
+        --radius-lg: 24px;
+        --radius-xl: 32px;
+    }
+    
+    /* Hero Section */
+    .submission-hero {
+        background: linear-gradient(135deg, #FDFBF7 0%, #F5F2EB 100%);
+        padding: 80px 0 60px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .submission-hero::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -20%;
+        width: 60%;
+        height: 80%;
+        background: radial-gradient(circle, rgba(232, 93, 4, 0.04) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    
+    .submission-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -20%;
+        left: -10%;
+        width: 50%;
+        height: 60%;
+        background: radial-gradient(circle, rgba(139, 69, 19, 0.03) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 20px;
+        background: rgba(232, 93, 4, 0.08);
+        border-radius: 60px;
+        color: var(--accent-orange);
+        font-size: 0.8rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+        backdrop-filter: blur(4px);
+    }
+    
+    .hero-title {
+        font-family: var(--ff-serif);
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 24px 0 16px;
+        line-height: 1.2;
+    }
+    
+    .hero-title span {
+        color: var(--accent-orange);
+        position: relative;
+        display: inline-block;
+    }
+    
+    .hero-title span::after {
+        content: '';
+        position: absolute;
+        bottom: 4px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-orange), transparent);
+        opacity: 0.3;
+    }
+    
+    .hero-description {
+        color: var(--text-light);
+        font-size: 1.125rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    /* Glass Card Container */
+    .form-glass-premium {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--glass-border);
+        padding: 48px;
+        box-shadow: var(--shadow-lg);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .form-glass-premium:hover {
+        box-shadow: var(--shadow-lg), 0 0 0 1px rgba(232, 93, 4, 0.1);
+    }
+    
+    /* Section Headers */
+    .section-header-premium {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(232, 93, 4, 0.1);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-orange);
+        font-size: 1.1rem;
+    }
+    
+    .section-title {
+        font-family: var(--ff-serif);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+    }
+    
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent-orange) 0%, transparent 100%);
+        width: 60px;
+        margin-top: 8px;
+    }
+    
+    /* Form Labels */
+    .form-label-premium {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-medium);
+    }
+    
+    .form-label-premium i {
+        margin-right: 6px;
+        color: var(--accent-orange);
+        font-size: 0.8rem;
+    }
+    
+    /* Input Fields */
+    .input-premium {
+        width: 100%;
+        padding: 14px 18px;
+        background: white;
+        border: 1.5px solid #E8E0D8;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        color: var(--text-dark);
+        transition: all 0.3s ease;
+        outline: none;
+        font-family: var(--ff-sans);
+    }
+    
+    .input-premium:focus {
+        border-color: var(--accent-orange);
+        box-shadow: var(--shadow-glow);
+    }
+    
+    .input-premium::placeholder {
+        color: var(--text-muted);
+    }
+    
+    select.input-premium {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C3D2E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 18px center;
+        cursor: pointer;
+    }
+    
+    textarea.input-premium {
+        resize: vertical;
+        min-height: 140px;
+    }
+    
+    /* File Upload Area */
+    .file-upload-premium {
+        position: relative;
+        background: white;
+        border: 2px dashed #E8E0D8;
+        border-radius: var(--radius-md);
+        padding: 32px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .file-upload-premium:hover {
+        border-color: var(--accent-orange);
+        background: rgba(232, 93, 4, 0.02);
+        transform: translateY(-2px);
+    }
+    
+    .file-upload-premium input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+    
+    .upload-icon {
+        width: 56px;
+        height: 56px;
+        background: rgba(232, 93, 4, 0.08);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .file-upload-premium:hover .upload-icon {
+        background: var(--accent-orange);
+        transform: scale(1.05);
+    }
+    
+    .file-upload-premium:hover .upload-icon i {
+        color: white;
+    }
+    
+    .upload-icon i {
+        font-size: 1.5rem;
+        color: var(--accent-orange);
+        transition: all 0.3s ease;
+    }
+    
+    .upload-title {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 4px;
+    }
+    
+    .upload-hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+    
+    /* Checkbox Styling */
+    .checkbox-premium {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+    }
+    
+    .checkbox-premium input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--accent-orange);
+        cursor: pointer;
+    }
+    
+    .checkbox-premium span {
+        color: var(--text-medium);
+        font-size: 0.9rem;
+    }
+    
+    .checkbox-premium a {
+        color: var(--accent-orange);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .checkbox-premium a:hover {
+        text-decoration: underline;
+    }
+    
+    /* Submit Button */
+    .btn-submit-premium {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 16px 32px;
+        background: var(--text-dark);
+        color: white;
+        border: none;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-submit-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-submit-premium:hover {
+        background: var(--accent-orange);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(232, 93, 4, 0.3);
+    }
+    
+    .btn-submit-premium:hover::before {
+        left: 100%;
+    }
+    
+    .btn-submit-premium:active {
+        transform: translateY(0);
+    }
+    
+    /* Security Note */
+    .security-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 24px;
+        padding: 12px;
+        background: rgba(232, 93, 4, 0.05);
+        border-radius: 60px;
+        color: var(--text-light);
+        font-size: 0.8rem;
+    }
+    
+    .security-note i {
+        color: var(--accent-orange);
+    }
+    
+    /* Error Messages */
+    .error-message {
+        color: #dc2626;
+        font-size: 0.75rem;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .error-message i {
+        font-size: 0.7rem;
+    }
+    
+    /* Help Text */
+    .help-text {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 6px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-glass-premium {
+            padding: 28px;
+        }
+        
+        .submission-hero {
+            padding: 60px 0 40px;
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+        }
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-up {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Submission Hero -->
-<section class="submission-hero py-5 position-relative overflow-hidden">
+<!-- Hero Section -->
+<section class="submission-hero">
     <div class="container position-relative z-index-2">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <span class="badge glass-badge mb-4">
-                    <i class="fas fa-pen-fancy me-2"></i>Get Started
-                </span>
-                <h1 class="display-4 fw-bold text-white mb-4">Share Your <span class="text-gradient">Idea</span></h1>
-                <p class="lead text-white-50">Tell us about your collaboration concept. Our team will review and reach out within 5-7 business days.</p>
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <div class="hero-badge animate-fade-up">
+                    <i class="fas fa-pen-fancy"></i>
+                    <span>Get Started</span>
+                </div>
+                <h1 class="hero-title animate-fade-up delay-1">
+                    Share Your <span>Idea</span>
+                </h1>
+                <p class="hero-description animate-fade-up delay-2">
+                    Tell us about your collaboration concept. Our team will review and reach out within 5-7 business days.
+                </p>
             </div>
         </div>
     </div>
@@ -23,111 +478,183 @@
 <section class="submission-form py-5">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="glass-card-2 p-5">
+            <div class="col-lg-9">
+                <div class="form-glass-premium animate-fade-up delay-3">
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
                         
-                        <div class="row g-4">
-                            <!-- Personal Information -->
+                        <div class="row g-5">
+                            <!-- Personal Information Section -->
                             <div class="col-12">
-                                <h3 class="h5 fw-bold mb-3">Personal Information</h3>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">First Name *</label>
-                                {{ form.first_name }}
-                                {% if form.first_name.errors %}
-                                <div class="text-danger small mt-1">{{ form.first_name.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">Last Name *</label>
-                                {{ form.last_name }}
-                                {% if form.last_name.errors %}
-                                <div class="text-danger small mt-1">{{ form.last_name.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">Email Address *</label>
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                <div class="text-danger small mt-1">{{ form.email.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <label class="form-label">Creator Type *</label>
-                                {{ form.creator_type }}
-                                {% if form.creator_type.errors %}
-                                <div class="text-danger small mt-1">{{ form.creator_type.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <!-- Project Details -->
-                            <div class="col-12 mt-4">
-                                <h3 class="h5 fw-bold mb-3">Project Details</h3>
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Portfolio Link *</label>
-                                {{ form.portfolio_link }}
-                                {% if form.portfolio_link.errors %}
-                                <div class="text-danger small mt-1">{{ form.portfolio_link.errors }}</div>
-                                {% endif %}
-                                <div class="form-text text-muted">Link to your portfolio, website, or work samples</div>
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Project Idea *</label>
-                                {{ form.project_idea }}
-                                {% if form.project_idea.errors %}
-                                <div class="text-danger small mt-1">{{ form.project_idea.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <!-- File Upload -->
-                            <div class="col-12">
-                                <label class="form-label">Work Samples *</label>
-                                <div class="file-upload-area">
-                                    {{ form.samples }}
-                                    {% if form.samples.errors %}
-                                    <div class="text-danger small mt-1">{{ form.samples.errors }}</div>
-                                    {% endif %}
-                                    <div class="upload-hint text-center">
-                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
-                                        <p class="small text-muted mb-0">Drag & drop or click to upload</p>
-                                        <p class="small text-muted">Accepted formats: PDF, DOC, DOCX, JPG, PNG, ZIP (max 10MB)</p>
+                                <div class="section-header-premium">
+                                    <div class="section-icon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="section-title">Personal Information</h3>
+                                        <div class="section-divider"></div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Terms -->
-                            <div class="col-12">
-                                <div class="form-check">
-                                    {{ form.terms_accepted }}
-                                    <label class="form-check-label" for="{{ form.terms_accepted.id_for_label }}">
-                                        I agree to the <a href="{% url 'home:terms_of_service' %}" target="_blank">Terms of Service</a> and <a href="{% url 'home:privacy_policy' %}" target="_blank">Privacy Policy</a> *
-                                    </label>
+                            <div class="col-md-6">
+                                <label class="form-label-premium">
+                                    <i class="fas fa-user"></i> First Name *
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.first_name.errors.0 }}
                                 </div>
-                                {% if form.terms_accepted.errors %}
-                                <div class="text-danger small mt-1">{{ form.terms_accepted.errors }}</div>
                                 {% endif %}
                             </div>
                             
-                            <!-- Submit -->
-                            <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-gradient btn-lg w-100">
-                                    <i class="fas fa-paper-plane me-2"></i>Submit Idea
+                            <div class="col-md-6">
+                                <label class="form-label-premium">
+                                    <i class="fas fa-user"></i> Last Name *
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.last_name.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-premium">
+                                    <i class="fas fa-envelope"></i> Email Address *
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.email.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-premium">
+                                    <i class="fas fa-briefcase"></i> Creator Type *
+                                </label>
+                                {{ form.creator_type }}
+                                {% if form.creator_type.errors %}
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.creator_type.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Project Details Section -->
+                            <div class="col-12 mt-2">
+                                <div class="section-header-premium">
+                                    <div class="section-icon">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="section-title">Project Details</h3>
+                                        <div class="section-divider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-premium">
+                                    <i class="fas fa-link"></i> Portfolio Link *
+                                </label>
+                                {{ form.portfolio_link }}
+                                {% if form.portfolio_link.errors %}
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.portfolio_link.errors.0 }}
+                                </div>
+                                {% endif %}
+                                <div class="help-text">
+                                    <i class="fas fa-info-circle"></i> Link to your portfolio, website, or work samples
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label-premium">
+                                    <i class="fas fa-brain"></i> Project Idea *
+                                </label>
+                                {{ form.project_idea }}
+                                {% if form.project_idea.errors %}
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.project_idea.errors.0 }}
+                                </div>
+                                {% endif %}
+                                <div class="help-text">
+                                    <i class="fas fa-info-circle"></i> Describe your collaboration idea, concept, or proposed project
+                                </div>
+                            </div>
+                            
+                            <!-- File Upload Section -->
+                            <div class="col-12 mt-2">
+                                <div class="section-header-premium">
+                                    <div class="section-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="section-title">Work Samples</h3>
+                                        <div class="section-divider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="file-upload-premium" id="fileUploadArea">
+                                    {{ form.samples }}
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div class="upload-title">Drop your files here or click to browse</div>
+                                    <div class="upload-hint">PDF, DOC, DOCX, JPG, PNG, ZIP (max 10MB)</div>
+                                </div>
+                                {% if form.samples.errors %}
+                                <div class="error-message mt-2">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.samples.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Terms Section -->
+                            <div class="col-12 mt-2">
+                                <label class="checkbox-premium">
+                                    {{ form.terms_accepted }}
+                                    <span>
+                                        I agree to the <a href="{% url 'home:terms_of_service' %}" target="_blank">Terms of Service</a> 
+                                        and <a href="{% url 'home:privacy_policy' %}" target="_blank">Privacy Policy</a> *
+                                    </span>
+                                </label>
+                                {% if form.terms_accepted.errors %}
+                                <div class="error-message mt-1">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.terms_accepted.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="btn-submit-premium">
+                                    <i class="fas fa-paper-plane"></i> Submit Idea
+                                    <i class="fas fa-arrow-right"></i>
                                 </button>
                             </div>
                             
-                            <div class="col-12 text-center">
-                                <p class="small text-muted">
-                                    <i class="fas fa-lock me-1"></i>Your information is secure and will only be used for collaboration purposes.
-                                </p>
+                            <!-- Security Note -->
+                            <div class="col-12">
+                                <div class="security-note">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Your information is secure and will only be used for collaboration purposes.</span>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -137,105 +664,50 @@
     </div>
 </section>
 
-<style>
-    .submission-hero {
-        background: linear-gradient(135deg, #0a0c0f 0%, #1a1e24 100%);
-        min-height: 300px;
-    }
-
-    .form-label {
-        color: var(--text-light);
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-control, .form-select {
-        background: var(--dark-soft);
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus, .form-select:focus {
-        background: var(--dark-soft);
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
-        outline: none;
-        color: white;
-    }
-
-    .form-control::placeholder {
-        color: var(--text-muted);
-    }
-
-    .file-upload-area {
-        position: relative;
-        padding: 2rem;
-        border: 2px dashed rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        background: var(--dark-soft);
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .file-upload-area:hover {
-        border-color: var(--primary);
-        background: rgba(139, 69, 19, 0.1);
-    }
-
-    .file-upload-area input[type="file"] {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .upload-hint {
-        color: var(--text-muted);
-    }
-
-    .form-check-input {
-        background: var(--dark-soft);
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        cursor: pointer;
-    }
-
-    .form-check-input:checked {
-        background-color: var(--primary);
-        border-color: var(--primary);
-    }
-
-    .form-check-label {
-        color: var(--text-muted);
-    }
-
-    .form-check-label a {
-        color: var(--primary-light);
-        text-decoration: none;
-    }
-
-    .form-check-label a:hover {
-        text-decoration: underline;
-    }
-
-    .btn-gradient {
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        color: white;
-        border: none;
-        padding: 1rem;
-        border-radius: 50px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .btn-gradient:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
-    }
-</style>
+<script>
+    // File upload area enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.querySelector('#id_samples');
+        const uploadArea = document.querySelector('#fileUploadArea');
+        
+        if (fileInput && uploadArea) {
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    const uploadTitle = uploadArea.querySelector('.upload-title');
+                    if (uploadTitle) {
+                        uploadTitle.innerHTML = '<i class="fas fa-check-circle" style="color: var(--accent-orange);"></i> ' + fileName;
+                        uploadTitle.style.color = 'var(--text-dark)';
+                    }
+                } else {
+                    const uploadTitle = uploadArea.querySelector('.upload-title');
+                    if (uploadTitle) {
+                        uploadTitle.innerHTML = 'Drop your files here or click to browse';
+                        uploadTitle.style.color = '';
+                    }
+                }
+            });
+        }
+    });
+    
+    // Form validation
+    (function() {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
 {% endblock %}

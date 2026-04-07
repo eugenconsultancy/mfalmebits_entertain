@@ -30,7 +30,7 @@
                 <form action="{% url 'newsletter:subscribe' %}" method="post" class="newsletter-form-minimal">
                     {% csrf_token %}
                     <div class="input-group-minimal">
-                        <input type="email" name="email" placeholder="Email for updates" required>
+                        <input type="email" name="email" placeholder="Email for updates" required autocomplete="email">
                         <button type="submit" aria-label="Subscribe">
                             <i class="fas fa-paper-plane"></i>
                         </button>

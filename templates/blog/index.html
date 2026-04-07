@@ -661,7 +661,7 @@
               <div class="bi-nl-sub">Weekly insights on African knowledge and culture — direct to your inbox.</div>
               <form method="post" action="{% url 'blog:newsletter_subscribe' %}" id="nl-form">
                 {% csrf_token %}
-                <input type="email" name="email" class="bi-nl-input" placeholder="your@email.com" required>
+                <input type="email" name="email" class="bi-nl-input" placeholder="your@email.com" required autocomplete="email">
                 <button type="submit" class="bi-nl-btn">
                   <i class="fas fa-paper-plane"></i> Subscribe
                 </button>

@@ -102,8 +102,8 @@ class ContactSubmitView(FormView):
     def send_admin_notification(self, message):
         """Send email notification to admin"""
         try:
-            settings = ContactSettings.objects.first()
-            admin_email = settings.contact_email if settings else 'contact@mfalmebits.com'
+            settings_obj = ContactSettings.objects.first()
+            admin_email = settings_obj.contact_email if settings_obj else settings.DEFAULT_FROM_EMAIL
             
             subject = f'New Contact Form Submission: {message.get_subject_type_display()}'
             body = f"""
@@ -133,11 +133,11 @@ class ContactSubmitView(FormView):
     def send_auto_reply(self, message):
         """Send auto-reply to the user"""
         try:
-            settings = ContactSettings.objects.first()
+            settings_obj = ContactSettings.objects.first()
             
-            if settings and settings.enable_auto_reply:
-                subject = settings.auto_reply_subject
-                body = settings.auto_reply_message
+            if settings_obj and settings_obj.enable_auto_reply:
+                subject = settings_obj.auto_reply_subject
+                body = settings_obj.auto_reply_message
             else:
                 subject = 'Thank you for contacting MfalmeBits'
                 body = f"""
@@ -166,8 +166,8 @@ class ContactSubmitView(FormView):
     
     def should_send_auto_reply(self):
         """Check if auto-reply should be sent"""
-        settings = ContactSettings.objects.first()
-        return settings and settings.enable_auto_reply
+        settings_obj = ContactSettings.objects.first()
+        return settings_obj and settings_obj.enable_auto_reply
     
     def handle_newsletter_subscription(self, email):
         """Handle newsletter subscription"""
@@ -304,7 +304,8 @@ class SupportTicketView(CreateView):
     def send_notifications(self, ticket):
         """Send notifications for new ticket"""
         try:
-            settings = ContactSettings.objects.first()
+            settings_obj = ContactSettings.objects.first()
+            support_email = settings_obj.support_email if settings_obj else settings.DEFAULT_FROM_EMAIL
             
             # Notify support team
             subject = f'New Support Ticket: {ticket.ticket_id}'
@@ -329,7 +330,7 @@ class SupportTicketView(CreateView):
                 subject,
                 body,
                 settings.DEFAULT_FROM_EMAIL,
-                [settings.support_email],
+                [support_email],
                 fail_silently=True,
             )
             

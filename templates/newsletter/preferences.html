@@ -1,98 +1,616 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block seo_title %}{{ seo_title }}{% endblock %}
+{% block seo_title %}{{ seo_title|default:"Newsletter Preferences - MfalmeBits" }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Newsletter Preferences Styles */
+    .preferences-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        overflow: hidden;
+        padding: 60px 20px;
+        text-align: center;
+    }
+    
+    .preferences-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.1)' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+        background-size: cover;
+        opacity: 0.15;
+    }
+    
+    .preferences-hero h1 {
+        position: relative;
+        z-index: 1;
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: white;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    .preferences-hero p {
+        position: relative;
+        z-index: 1;
+        font-size: 18px;
+        color: rgba(255,255,255,0.95);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .preferences-container {
+        max-width: 800px;
+        margin: -40px auto 60px;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .preferences-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+    
+    .dark .preferences-card {
+        background: #1e1e2e;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 28px 32px;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    
+    .dark .card-header {
+        background: linear-gradient(135deg, #2a2a3e 0%, #1e1e2e 100%);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .card-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #1a1a2e;
+    }
+    
+    .dark .card-header h2 {
+        color: white;
+    }
+    
+    .card-header p {
+        color: #6c757d;
+        font-size: 14px;
+    }
+    
+    .dark .card-header p {
+        color: #a0aec0;
+    }
+    
+    .card-body {
+        padding: 32px;
+    }
+    
+    .form-group {
+        margin-bottom: 28px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 10px;
+        color: #2d3748;
+        letter-spacing: 0.5px;
+    }
+    
+    .dark .form-label {
+        color: #e2e8f0;
+    }
+    
+    .form-label i {
+        margin-right: 8px;
+        color: #667eea;
+        width: 20px;
+    }
+    
+    /* WHITE BACKGROUND WITH DARK TEXT FOR ALL INPUTS */
+    .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #ffffff !important;
+        color: #1a1a2e !important;
+        font-weight: 500;
+    }
+    
+    .dark .form-control {
+        background: #ffffff !important;
+        color: #1a1a2e !important;
+        border-color: #cbd5e0;
+    }
+    
+    /* Select dropdown styling */
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        cursor: pointer;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: #ffffff !important;
+    }
+    
+    /* Email field specific styling - readonly but still white background */
+    .form-control[readonly] {
+        background: #f8f9fa !important;
+        color: #4a5568 !important;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+    }
+    
+    .dark .form-control[readonly] {
+        background: #f8f9fa !important;
+        color: #4a5568 !important;
+    }
+    
+    .help-text {
+        font-size: 12px;
+        color: #a0aec0;
+        margin-top: 8px;
+    }
+    
+    .help-text i {
+        margin-right: 4px;
+        font-size: 10px;
+    }
+    
+    .error-message {
+        color: #e53e3e;
+        font-size: 13px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .error-message i {
+        font-size: 12px;
+    }
+    
+    .interests-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 12px;
+    }
+    
+    .interest-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: #ffffff;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .interest-item {
+        background: #ffffff;
+        border-color: #cbd5e0;
+    }
+    
+    .interest-item:hover {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+    }
+    
+    .interest-item.selected {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+    }
+    
+    .interest-item input {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+    
+    .interest-item label {
+        flex: 1;
+        cursor: pointer;
+        font-weight: 500;
+        color: #1a1a2e;
+    }
+    
+    .dark .interest-item label {
+        color: #1a1a2e;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 16px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .dark .action-buttons {
+        border-top-color: #3d3d4d;
+    }
+    
+    .btn-primary {
+        flex: 1;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+    
+    .btn-danger {
+        flex: 1;
+        background: white;
+        color: #e53e3e;
+        padding: 14px 24px;
+        border: 2px solid #e53e3e;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+    
+    .dark .btn-danger {
+        background: #1e1e2e;
+    }
+    
+    .btn-danger:hover {
+        background: #e53e3e;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(229, 62, 62, 0.3);
+    }
+    
+    .alert {
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .alert-success {
+        background: #c6f6d5;
+        border-left: 4px solid #38a169;
+        color: #22543d;
+    }
+    
+    .dark .alert-success {
+        background: rgba(56, 161, 105, 0.2);
+        color: #9ae6b4;
+    }
+    
+    .alert-error {
+        background: #fed7d7;
+        border-left: 4px solid #e53e3e;
+        color: #742a2a;
+    }
+    
+    .dark .alert-error {
+        background: rgba(229, 62, 62, 0.2);
+        color: #feb2b2;
+    }
+    
+    .alert i {
+        font-size: 20px;
+    }
+    
+    .info-badge {
+        background: #edf2f7;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .dark .info-badge {
+        background: #2d2d3d;
+    }
+    
+    .info-badge i {
+        font-size: 20px;
+        color: #667eea;
+    }
+    
+    .info-badge-content {
+        flex: 1;
+    }
+    
+    .info-badge-title {
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #2d3748;
+    }
+    
+    .dark .info-badge-title {
+        color: white;
+    }
+    
+    .info-badge-text {
+        font-size: 13px;
+        color: #718096;
+    }
+    
+    @media (max-width: 640px) {
+        .preferences-hero h1 {
+            font-size: 32px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .interests-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-primary, .btn-danger {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<section class="py-16">
-    <div class="container mx-auto px-4">
-        <div class="max-w-2xl mx-auto">
-            <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold mb-4">Newsletter Preferences</h1>
-                <p class="text-xl text-gray-600 dark:text-gray-300">
-                    Manage your subscription settings
-                </p>
-            </div>
+<!-- Modern Hero Section -->
+<div class="preferences-hero">
+    <h1>
+        <i class="fas fa-sliders-h"></i> Newsletter Preferences
+    </h1>
+    <p>Customize how you receive updates from MfalmeBits</p>
+</div>
+
+<div class="preferences-container">
+    <div class="preferences-card">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-user-edit"></i> Manage Your Subscription
+            </h2>
+            <p>Update your profile and content preferences</p>
+        </div>
+        
+        <div class="card-body">
+            <!-- Display messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
             
-            <div class="glass p-8">
-                <form method="post" class="space-y-6">
-                    {% csrf_token %}
-                    
-                    {% if form.non_field_errors %}
-                    <div class="bg-red-100 text-red-700 p-4 rounded-lg">
-                        {{ form.non_field_errors }}
-                    </div>
+            <form method="post" id="preferencesForm">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{ form.non_field_errors.0 }}</span>
+                </div>
+                {% endif %}
+                
+                <!-- Email Field (Read Only - Pre-populated from backend) -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> EMAIL ADDRESS
+                    </label>
+                    <input type="email" 
+                           name="email" 
+                           id="id_email" 
+                           class="form-control" 
+                           value="{{ form.email.value|default:'' }}" 
+                           readonly
+                           required>
+                    {% if form.email.errors %}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ form.email.errors.0 }}
+                        </div>
                     {% endif %}
-                    
-                    <div>
-                        <label class="block mb-2">Email Address</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
-                        {% endif %}
-                        <p class="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                    <div class="help-text">
+                        <i class="fas fa-info-circle"></i> Email address cannot be changed. Contact support to update your email.
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+                
+                <!-- Name Fields Row -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user"></i> PERSONAL INFORMATION
+                    </label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div>
-                            <label class="block mb-2">First Name</label>
-                            {{ form.first_name }}
+                            <input type="text" 
+                                   name="first_name" 
+                                   id="id_first_name" 
+                                   class="form-control" 
+                                   value="{{ form.first_name.value|default:'' }}"
+                                   placeholder="First name">
                             {% if form.first_name.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
+                                <div class="error-message">{{ form.first_name.errors.0 }}</div>
                             {% endif %}
+                            <div class="help-text">First Name</div>
                         </div>
                         <div>
-                            <label class="block mb-2">Last Name</label>
-                            {{ form.last_name }}
+                            <input type="text" 
+                                   name="last_name" 
+                                   id="id_last_name" 
+                                   class="form-control" 
+                                   value="{{ form.last_name.value|default:'' }}"
+                                   placeholder="Last name">
                             {% if form.last_name.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
+                                <div class="error-message">{{ form.last_name.errors.0 }}</div>
                             {% endif %}
+                            <div class="help-text">Last Name</div>
                         </div>
                     </div>
-                    
-                    <div>
-                        <label class="block mb-2">Email Frequency</label>
-                        {{ form.frequency }}
-                        {% if form.frequency.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.frequency.errors.0 }}</p>
-                        {% endif %}
+                </div>
+                
+                <!-- Frequency Field -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-clock"></i> EMAIL FREQUENCY
+                    </label>
+                    <select name="frequency" id="id_frequency" class="form-control">
+                        <option value="daily" {% if form.frequency.value == 'daily' %}selected{% endif %}>Daily - Get updates every day</option>
+                        <option value="weekly" {% if form.frequency.value == 'weekly' %}selected{% endif %}>Weekly - Best for digest format</option>
+                        <option value="monthly" {% if form.frequency.value == 'monthly' %}selected{% endif %}>Monthly - Less frequent updates</option>
+                    </select>
+                    {% if form.frequency.errors %}
+                        <div class="error-message">{{ form.frequency.errors.0 }}</div>
+                    {% endif %}
+                    <div class="help-text">
+                        <i class="fas fa-lightbulb"></i> Choose how often you want to receive updates
                     </div>
-                    
-                    <div>
-                        <label class="block mb-2">I'm interested in:</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            {% for value, label in form.interests.field.choices %}
-                            <label class="flex items-center">
-                                <input type="checkbox" name="interests" value="{{ value }}" 
-                                       class="rounded mr-2"
-                                       {% if value in form.interests.value %}checked{% endif %}>
-                                {{ label }}
-                            </label>
-                            {% endfor %}
-                        </div>
-                        {% if form.interests.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.interests.errors.0 }}</p>
-                        {% endif %}
+                </div>
+                
+                <!-- Interests Field -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-heart"></i> CONTENT PREFERENCES
+                    </label>
+                    <div class="interests-grid">
+                        {% for value, label in form.interests.field.choices %}
+                            <div class="interest-item" onclick="toggleCheckbox(this, 'interest_{{ value }}')">
+                                <input type="checkbox" 
+                                    name="interests" 
+                                    id="interest_{{ value }}" 
+                                    value="{{ value }}" 
+                                    {% if value in form.interests.value %}checked{% endif %}
+                                    autocomplete="off">
+                                <label for="interest_{{ value }}">{{ label }}</label>
+                            </div>
+                        {% endfor %}
                     </div>
-                    
-                    {{ form.token }}
-                    
-                    <div class="pt-4 flex gap-4">
-                        <button type="submit" 
-                                class="flex-1 bg-primary text-white px-6 py-3 rounded-lg font-semibold 
-                                       hover:bg-opacity-90 transition-colors magnetic">
-                            Update Preferences
-                        </button>
-                        
-                        <a href="{% url 'newsletter:unsubscribe' %}?email={{ form.email.value }}" 
-                           class="flex-1 bg-red-500 text-white px-6 py-3 rounded-lg font-semibold 
-                                  hover:bg-red-600 transition-colors text-center magnetic">
-                            Unsubscribe
-                        </a>
+                    {% if form.interests.errors %}
+                        <div class="error-message">{{ form.interests.errors.0 }}</div>
+                    {% endif %}
+                    <div class="help-text">
+                        <i class="fas fa-tag"></i> Select topics that interest you most
                     </div>
-                </form>
-            </div>
+                </div>
+                
+                <!-- Info Badge -->
+                <div class="info-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="info-badge-content">
+                        <div class="info-badge-title">Your Privacy Matters</div>
+                        <div class="info-badge-text">We never share your information with third parties. You can unsubscribe at any time.</div>
+                    </div>
+                </div>
+                
+                {{ form.token }}
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Update Preferences
+                    </button>
+                    
+                    <a href="{% url 'newsletter:unsubscribe' %}?email={{ form.email.value }}" 
+                       class="btn-danger"
+                       onclick="return confirm('Are you sure you want to unsubscribe? You will no longer receive our newsletters.');">
+                        <i class="fas fa-times-circle"></i> Unsubscribe
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
-</section>
+</div>
+
+<script>
+    // Toggle checkbox when clicking on interest item
+    function toggleCheckbox(element, checkboxId) {
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            if (checkbox.checked) {
+                element.classList.add('selected');
+            } else {
+                element.classList.remove('selected');
+            }
+        }
+    }
+    
+    // Initialize interest item styles on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const interestItems = document.querySelectorAll('.interest-item');
+        interestItems.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            if (checkbox && checkbox.checked) {
+                item.classList.add('selected');
+            }
+        });
+    });
+    
+    // Form validation before submit
+    document.getElementById('preferencesForm')?.addEventListener('submit', function(e) {
+        const checkboxes = document.querySelectorAll('input[name="interests"]:checked');
+        if (checkboxes.length === 0) {
+            if (!confirm('You haven\'t selected any interests. Would you like to continue anyway?')) {
+                e.preventDefault();
+            }
+        }
+    });
+</script>
 {% endblock %}
