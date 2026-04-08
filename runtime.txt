@@ -1,1 +1,2 @@
 python-3.11.9
+MPESA_CALLBACK_URL=https://mydomain.com/mpesa-express-simulate/

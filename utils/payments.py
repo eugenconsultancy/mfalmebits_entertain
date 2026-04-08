@@ -42,50 +42,103 @@ def _base_url() -> str:
     return _PRODUCTION_BASE if env == "production" else _SANDBOX_BASE
 
 
+# ─────────────────────────────────────────────────────────────────────
+# 1. PHONE SANITIZATION — STRICT FOR PRODUCTION
+# ─────────────────────────────────────────────────────────────────────
 def _sanitize_phone(phone: str) -> str:
     """
     Normalise a Kenyan phone number to the 2547XXXXXXXX format required
     by the Daraja API.
 
+    Strict rules for production:
+        - Removes all non-digit characters
+        - Converts 07... to 2547...
+        - Converts 01... to 2541...
+        - Ensures format starts with 254
+        - Validates exactly 12 digits (254 + 9 digits)
+
     Accepts:  0712345678 | +254712345678 | 254712345678 | 712345678
     Returns:  254712345678
     Raises:   ValueError on unrecognisable formats.
     """
-    phone = re.sub(r"[\s\-\(\)]", "", str(phone))
-
-    if phone.startswith("+"):
-        phone = phone[1:]
-
-    if phone.startswith("0"):
-        phone = "254" + phone[1:]
-
-    if phone.startswith("7") and len(phone) == 9:
-        phone = "254" + phone
-
-    if not re.fullmatch(r"2547\d{8}", phone):
+    # Remove all non-digit characters
+    clean_phone = re.sub(r'\D', '', str(phone))
+    
+    # Remove leading '0' (e.g., 0712345678 -> 712345678)
+    if clean_phone.startswith('0'):
+        clean_phone = '254' + clean_phone[1:]
+    
+    # Remove leading '+' if present (already handled by regex)
+    # Ensure it starts with 254
+    if not clean_phone.startswith('254'):
+        # Handle 7XXXXXX format (7 followed by 8 digits)
+        if clean_phone.startswith('7') and len(clean_phone) == 9:
+            clean_phone = '254' + clean_phone
+        # Handle 1XXXXXX format (1 followed by 8 digits for landline)
+        elif clean_phone.startswith('1') and len(clean_phone) == 9:
+            clean_phone = '254' + clean_phone
+        else:
+            clean_phone = '254' + clean_phone
+    
+    # Final validation: must be exactly 12 digits (254 + 9 digits)
+    if not re.fullmatch(r"254[17]\d{8}", clean_phone):
         raise ValueError(
             f"Invalid Kenyan phone number: '{phone}'. "
-            "Expected format: 254712345678"
+            "Expected format: 254712345678 (12 digits starting with 2547 or 2541)"
         )
+    
+    return clean_phone
 
-    return phone
+
+# ─────────────────────────────────────────────────────────────────────
+# 2. DYNAMIC CALLBACK URL LOGIC — AUTOMATIC DOMAIN HANDLING
+# ─────────────────────────────────────────────────────────────────────
+def _get_callback_url() -> str:
+    """
+    Determine the correct callback URL based on environment.
+    
+    - If in sandbox with ngrok, returns the configured ngrok URL.
+    - If in production, automatically enforces HTTPS and uses production domain.
+    - Falls back to settings.MPESA_CALLBACK_URL.
+    """
+    callback_url = getattr(settings, "MPESA_CALLBACK_URL", "")
+    environment = getattr(settings, "MPESA_ENVIRONMENT", "sandbox").lower()
+    
+    # If using ngrok in production (should not happen), force production URL
+    if "ngrok" in callback_url and environment == "production":
+        logger.warning(
+            "ngrok URL detected in production environment. "
+            "Overriding with production domain: https://mfalmebits.africa/payments/callback/"
+        )
+        return "https://mfalmebits.africa/api/mpesa/callback/"
+    
+    # Ensure HTTPS in production
+    if environment == "production" and callback_url and not callback_url.startswith("https://"):
+        logger.warning(
+            f"Callback URL {callback_url} is not HTTPS. "
+            "Enforcing HTTPS for production."
+        )
+        callback_url = callback_url.replace("http://", "https://")
+    
+    return callback_url
 
 
-# ── 1. Access Token ──────────────────────────────────────────────────
-
-def get_access_token() -> str:
+# ─────────────────────────────────────────────────────────────────────
+# 3. ACCESS TOKEN WITH RETRY AND TIMEOUT
+# ─────────────────────────────────────────────────────────────────────
+def get_access_token(retry_count: int = 2) -> str | None:
     """
     Generate a Bearer access token from Safaricom's OAuth endpoint.
+    Tokens are valid for 3 600 seconds (1 hour).
 
-    Tokens are valid for 3 600 seconds (1 hour).  In production you
-    should cache this value (e.g. in Django's cache framework) and only
-    refresh it when expired.
+    Args:
+        retry_count: Number of retry attempts on failure.
 
     Returns:
-        str: The raw access_token string.
+        str: The raw access_token string, or None on failure.
 
     Raises:
-        RuntimeError: When the API request fails or credentials are wrong.
+        RuntimeError: When configuration is missing.
     """
     consumer_key = getattr(settings, "MPESA_CONSUMER_KEY", "")
     consumer_secret = getattr(settings, "MPESA_CONSUMER_SECRET", "")
@@ -101,34 +154,47 @@ def get_access_token() -> str:
         f"{consumer_key}:{consumer_secret}".encode()
     ).decode("utf-8")
 
-    try:
-        response = requests.get(
-            url,
-            headers={"Authorization": f"Basic {credentials}"},
-            timeout=15,
-        )
-        response.raise_for_status()
-        data = response.json()
+    for attempt in range(retry_count + 1):
+        try:
+            response = requests.get(
+                url,
+                headers={"Authorization": f"Basic {credentials}"},
+                timeout=15,  # Timeout for VPS stability
+            )
+            response.raise_for_status()
+            data = response.json()
 
-        token = data.get("access_token")
-        if not token:
-            raise RuntimeError(f"Unexpected OAuth response: {data}")
+            token = data.get("access_token")
+            if not token:
+                logger.error(f"Unexpected OAuth response: {data}")
+                continue
 
-        logger.info("M-Pesa access token obtained successfully.")
-        return token
+            logger.info("M-Pesa access token obtained successfully.")
+            return token
 
-    except requests.exceptions.Timeout:
-        raise RuntimeError("M-Pesa OAuth endpoint timed out.")
-    except requests.exceptions.ConnectionError as exc:
-        raise RuntimeError(f"Could not reach M-Pesa API: {exc}")
-    except requests.exceptions.HTTPError as exc:
-        raise RuntimeError(
-            f"M-Pesa OAuth failed [{response.status_code}]: "
-            f"{response.text}"
-        ) from exc
+        except requests.exceptions.Timeout:
+            logger.warning(f"M-Pesa OAuth endpoint timed out (attempt {attempt + 1}/{retry_count + 1})")
+            if attempt == retry_count:
+                logger.error("M-Pesa OAuth endpoint timed out after all retries.")
+                return None
+        except requests.exceptions.ConnectionError as exc:
+            logger.warning(f"Could not reach M-Pesa API (attempt {attempt + 1}/{retry_count + 1}): {exc}")
+            if attempt == retry_count:
+                logger.error("M-Pesa OAuth connection failed after all retries.")
+                return None
+        except requests.exceptions.HTTPError as exc:
+            logger.error(
+                f"M-Pesa OAuth failed [{response.status_code}]: {response.text}"
+            )
+            return None
+        except Exception as exc:
+            logger.exception(f"Unexpected M-Pesa OAuth error: {exc}")
+            return None
+
+    return None
 
 
-def _get_cached_token() -> str:
+def _get_cached_token() -> str | None:
     """
     Wrapper that caches the access token in Django's cache backend for
     55 minutes (token TTL is 60 min; we refresh 5 min early).
@@ -138,12 +204,16 @@ def _get_cached_token() -> str:
     token = cache.get("mpesa_access_token")
     if not token:
         token = get_access_token()
-        cache.set("mpesa_access_token", token, timeout=55 * 60)  # 55 min
+        if token:
+            cache.set("mpesa_access_token", token, timeout=55 * 60)  # 55 min
+        else:
+            logger.error("Failed to obtain M-Pesa access token")
     return token
 
 
-# ── 2. Password / Timestamp ──────────────────────────────────────────
-
+# ─────────────────────────────────────────────────────────────────────
+# 4. PASSWORD / TIMESTAMP GENERATION
+# ─────────────────────────────────────────────────────────────────────
 def _generate_password() -> tuple[str, str]:
     """
     Generate the Base64-encoded password and timestamp required by the
@@ -169,8 +239,9 @@ def _generate_password() -> tuple[str, str]:
     return password, timestamp
 
 
-# ── 3. STK Push (Express Checkout) ──────────────────────────────────
-
+# ─────────────────────────────────────────────────────────────────────
+# 5. STK PUSH (EXPRESS CHECKOUT)
+# ─────────────────────────────────────────────────────────────────────
 def initiate_stk_push(
     phone_number: str,
     amount: int | float,
@@ -203,24 +274,39 @@ def initiate_stk_push(
         ValueError: For invalid phone numbers.
         RuntimeError: For missing configuration.
     """
-    phone = _sanitize_phone(phone_number)
+    try:
+        phone = _sanitize_phone(phone_number)
+    except ValueError as e:
+        return {"success": False, "error": str(e), "status_code": 400}
+
     amount = int(amount)  # M-Pesa requires whole KES amounts
 
     shortcode = str(getattr(settings, "MPESA_SHORTCODE", ""))
-    _callback = callback_url or getattr(settings, "MPESA_CALLBACK_URL", "")
+    _callback = callback_url or _get_callback_url()
 
     if not _callback:
         raise RuntimeError(
             "MPESA_CALLBACK_URL must be set in settings or passed explicitly."
         )
-    if not _callback.startswith("https://"):
+    
+    # Ensure HTTPS for production callback
+    environment = getattr(settings, "MPESA_ENVIRONMENT", "sandbox").lower()
+    if environment == "production" and not _callback.startswith("https://"):
         raise RuntimeError(
-            "MPESA_CALLBACK_URL must be a public HTTPS URL. "
+            f"MPESA_CALLBACK_URL must be a public HTTPS URL in production. "
             f"Got: {_callback!r}"
         )
 
-    password, timestamp = _generate_password()
+    # Get access token with retry
     token = _get_cached_token()
+    if not token:
+        return {
+            "success": False,
+            "error": "Unable to obtain M-Pesa access token. Please try again later.",
+            "status_code": 503,
+        }
+
+    password, timestamp = _generate_password()
 
     payload = {
         "BusinessShortCode": shortcode,
@@ -272,17 +358,18 @@ def initiate_stk_push(
 
     except requests.exceptions.Timeout:
         logger.error("STK Push timed out for phone %s", phone)
-        return {"success": False, "error": "Request timed out.", "status_code": 504}
+        return {"success": False, "error": "Request timed out. Please try again.", "status_code": 504}
     except requests.exceptions.ConnectionError as exc:
         logger.error("STK Push connection error: %s", exc)
         return {"success": False, "error": "Could not reach M-Pesa API.", "status_code": 503}
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.exception("Unexpected STK Push error: %s", exc)
         return {"success": False, "error": str(exc), "status_code": 500}
 
 
-# ── 4. STK Query (check transaction status) ─────────────────────────
-
+# ─────────────────────────────────────────────────────────────────────
+# 6. STK QUERY (CHECK TRANSACTION STATUS)
+# ─────────────────────────────────────────────────────────────────────
 def query_stk_push(checkout_request_id: str) -> dict:
     """
     Query the status of a previously initiated STK Push transaction.
@@ -296,8 +383,17 @@ def query_stk_push(checkout_request_id: str) -> dict:
         dict with ResultCode (str), ResultDesc (str), and success (bool).
     """
     shortcode = str(getattr(settings, "MPESA_SHORTCODE", ""))
-    password, timestamp = _generate_password()
+    
+    # Get access token with retry
     token = _get_cached_token()
+    if not token:
+        return {
+            "success": False,
+            "ResultCode": "-1",
+            "ResultDesc": "Unable to obtain M-Pesa access token",
+        }
+    
+    password, timestamp = _generate_password()
 
     payload = {
         "BusinessShortCode": shortcode,
@@ -327,13 +423,14 @@ def query_stk_push(checkout_request_id: str) -> dict:
             "ResultDesc": data.get("ResultDesc", ""),
             "raw": data,
         }
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.exception("STK Query failed: %s", exc)
         return {"success": False, "ResultCode": "-1", "ResultDesc": str(exc)}
 
 
-# ── 5. Callback Handler (call from your Django view) ─────────────────
-
+# ─────────────────────────────────────────────────────────────────────
+# 7. CALLBACK HANDLER (PARSE SAFARICOM RESPONSE)
+# ─────────────────────────────────────────────────────────────────────
 def parse_callback(request_body: dict) -> dict:
     """
     Parse the JSON body posted by Safaricom to your MPESA_CALLBACK_URL.
@@ -382,9 +479,24 @@ def parse_callback(request_body: dict) -> dict:
             }
 
         # Payment succeeded — extract metadata items
+        callback_metadata = stk_callback.get("CallbackMetadata")
+        if not callback_metadata:
+            logger.warning("Payment succeeded but no CallbackMetadata received")
+            return {
+                "success": True,
+                "result_code": result_code,
+                "result_desc": result_desc,
+                "checkout_request_id": checkout_request_id,
+                "merchant_request_id": merchant_request_id,
+                "amount": None,
+                "phone": None,
+                "receipt_number": None,
+                "transaction_date": None,
+            }
+
         items = {
             item["Name"]: item.get("Value")
-            for item in stk_callback["CallbackMetadata"]["Item"]
+            for item in callback_metadata.get("Item", [])
         }
 
         amount = items.get("Amount")
@@ -416,7 +528,7 @@ def parse_callback(request_body: dict) -> dict:
             "result_code": -1,
             "result_desc": f"Malformed callback: missing key {exc}",
         }
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.exception("Unexpected error parsing M-Pesa callback: %s", exc)
         return {
             "success": False,

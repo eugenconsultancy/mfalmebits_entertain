@@ -1,73 +1,109 @@
-# Django Core
+# ============================================================================
+# DJANGO CORE & SERVER
+# ============================================================================
 Django==4.2.7
 gunicorn==21.2.0
 python-decouple==3.8
 python-dotenv==1.0.0
+setproctitle==1.3.3           # For Gunicorn process identification in htop
 
-# Database
-psycopg2-binary==2.9.9
+# ============================================================================
+# DATABASE - Production-ready drivers
+# ============================================================================
+psycopg2==2.9.9                # Changed from binary for production stability
 dj-database-url==2.1.0
 
-# Authentication
+# ============================================================================
+# AUTHENTICATION
+# ============================================================================
 django-allauth==0.57.0
 
-# SEO & Metadata
+# ============================================================================
+# SEO & METADATA
+# ============================================================================
 django-taggit==4.0.0
 unidecode==1.3.7
 
-# Content Management
+# ============================================================================
+# CONTENT MANAGEMENT
+# ============================================================================
 django-ckeditor==6.7.0
 django-ckeditor-5==0.2.11
 django-crispy-forms==2.1
 crispy-bootstrap5==0.7
 Pillow==10.1.0
+defusedxml==0.7.1             # Security enhancement for image processing
 
-# Payments
+# ============================================================================
+# PAYMENTS
+# ============================================================================
 stripe==7.5.0
 paypalrestsdk==1.13.2
 
-# File Storage
+# ============================================================================
+# FILE STORAGE (AWS S3)
+# ============================================================================
 django-storages==1.14
 boto3==1.34.0
 
-# Search
+# ============================================================================
+# SEARCH
+# ============================================================================
 django-elasticsearch-dsl==7.3
 elasticsearch==7.17.9
 
-# Background Tasks
+# ============================================================================
+# BACKGROUND TASKS (Celery + Redis)
+# ============================================================================
 celery==5.3.4
 redis==5.0.1
+hiredis==2.3.2                 # Faster Redis parsing for production
 django-celery-beat==2.5.0
 django-celery-results==2.5.1
+flower==2.0.1                  # Celery task monitoring dashboard
 
-# Email/Newsletter
+# ============================================================================
+# EMAIL & NEWSLETTER
+# ============================================================================
 django-anymail==10.2
 feedparser==6.0.11
 
-# Performance & Caching
+# ============================================================================
+# PERFORMANCE & CACHING
+# ============================================================================
 django-compressor==4.4
 whitenoise==6.6.0
 django-cacheops==7.0.2
 
-# Admin & Dashboard
+# ============================================================================
+# ADMIN & DASHBOARD
+# ============================================================================
 django-jazzmin==2.6.0
 django-admin-tools==0.9.0
 django-import-export==4.3.0
 
 # Required by django-import-export for Excel file support
-openpyxl==3.1.5  # ADDED - Required for import_export
+openpyxl==3.1.5
 
-# Development Tools
-django-debug-toolbar==4.2
-django-extensions==3.2.3
-ipython==8.17.2
+# ============================================================================
+# DEVELOPMENT TOOLS (Optional - comment out in production)
+# ============================================================================
+# django-debug-toolbar==4.2
+# django-extensions==3.2.3
+# ipython==8.17.2
 
-# Monitoring & Analytics
+# ============================================================================
+# MONITORING & ANALYTICS
+# ============================================================================
 sentry-sdk==1.39.0
 
+# ============================================================================
 # API
+# ============================================================================
 djangorestframework==3.14.0
 django-cors-headers==4.3.1
 
-# Utilities
+# ============================================================================
+# UTILITIES
+# ============================================================================
 requests==2.31.0

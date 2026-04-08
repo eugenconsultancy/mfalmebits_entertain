@@ -312,7 +312,26 @@ Since you are based in **Nairobi (Africa/Nairobi)**, ensure your server time mat
 
 
 
+from django.conf import settings
+from utils.payments import initiate_stk_push
 
+# Manually setting the missing values in this shell session
+setattr(settings, "MPESA_SHORTCODE", "174379")
+setattr(settings, "MPESA_PASSKEY", "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919")
+setattr(settings, "MPESA_CONSUMER_KEY", "SLo75LeNxPkH0yTpaD0yWWgYPVzwqmZH3A3ySz8iniveVJwm")
+setattr(settings, "MPESA_CONSUMER_SECRET", "XR1PO2l2QDGHhwLl06hweAhADW8dVfSIfPdXreZao8Sndr60DVAyStnbkVquPkca")
+setattr(settings, "MPESA_ENVIRONMENT", "sandbox")
+
+# The trigger
+result = initiate_stk_push(
+    phone_number="254715721250",
+    amount=1,
+    account_ref="MFALME001",
+    description="Final Test",
+    callback_url="https://granitic-imbricately-dede.ngrok-free.dev/mpesa-express-simulate/"
+)
+
+print(result)
 
 
 

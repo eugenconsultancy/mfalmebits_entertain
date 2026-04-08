@@ -3,44 +3,45 @@ core/settings/base.py
 ─────────────────────────────────────────────────────────────────────
 Shared base settings for MfalmeBits — inherited by all environments.
 
-Changes from original:
-  • Removed `robots` from THIRD_PARTY_APPS (Python 2-incompatible)
-  • Removed `debug_toolbar` and `django_extensions` from base
-    (added back only in development.py)
-  • No hardcoded SECRET_KEY fallback — forces explicit env var
-  • DATABASES has no default (must be overridden per environment)
-  • EMAIL_BACKEND defaults to console — must be overridden in production
-  • Added INTERNAL_IPS for debug_toolbar safety
-  • Added CONTACT_EMAIL and other app-specific constants
+Updated for VPS Deployment (mfalmebits.africa):
+  • Fixed BASE_DIR logic for core/settings/base.py placement
+  • Added WhiteNoise for static file serving under Nginx
+  • Added secure production settings with SSL support
+  • Added database fallback with dj-database-url
+  • Added M-Pesa & Email integration settings
+  • Added CSRF_TRUSTED_ORIGINS for HTTPS
 """
 
 from pathlib import Path
 import os
 from decouple import config
+import dj_database_url
 
 # ─────────────────────────────────────────────────────────────────────
-# BASE DIR
+# BASE DIR — Fixed for core/settings/base.py placement
 # ─────────────────────────────────────────────────────────────────────
+# With settings in core/settings/base.py, we need to go up three levels:
+# core/settings/base.py → core/settings/ → core/ → project root
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # ─────────────────────────────────────────────────────────────────────
-# SECURITY  — Never hard-code these values
+# SECURITY — No hardcoded values, all from environment
 # ─────────────────────────────────────────────────────────────────────
-# In production, SECRET_KEY must come from the environment.
-# A weak fallback is provided only so `manage.py check` works locally
-# without a .env file — it will fail Render's pre-deploy check if left
-# unchanged (the render.py settings require a non-default value).
-SECRET_KEY = config(
-    "DJANGO_SECRET_KEY",
-    default="REPLACE-ME-with-a-50-char-random-string-from-get_random_secret_key()",
-)
+SECRET_KEY = config("DJANGO_SECRET_KEY", default="")
 
-DEBUG = config("DJANGO_DEBUG", default=True, cast=bool)
+# DEBUG must be explicitly set to True in development
+DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     "DJANGO_ALLOWED_HOSTS",
-    default="localhost,127.0.0.1",
+    default="localhost,127.0.0.1,37.59.191.158,https://mfalmebits.africa,https://www.mfalmebits.africa"
 ).split(",")
+
+# ─────────────────────────────────────────────────────────────────────
+# CSRF TRUSTED ORIGINS — Required for HTTPS and M-Pesa/Stripe
+# ─────────────────────────────────────────────────────────────────────
+CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host not in ['localhost', '127.0.0.1']]
+CSRF_TRUSTED_ORIGINS.extend([f"http://{host}" for host in ALLOWED_HOSTS])
 
 # ─────────────────────────────────────────────────────────────────────
 # INSTALLED APPS
@@ -63,7 +64,6 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "taggit",
-    # ❌ "robots" — removed: Python 2-only; use template view in urls.py instead
     "django_ckeditor_5",
     "crispy_forms",
     "crispy_bootstrap5",
@@ -72,11 +72,11 @@ THIRD_PARTY_APPS = [
     "django_celery_results",
     "compressor",
     "cacheops",
-    # debug_toolbar and django_extensions added in development.py only
     "rest_framework",
     "corsheaders",
     "storages",
     "import_export",
+    "whitenoise.runserver_nostatic",   # For WhiteNoise with runserver
 ]
 
 LOCAL_APPS = [
@@ -97,11 +97,11 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 SITE_ID = 1
 
 # ─────────────────────────────────────────────────────────────────────
-# MIDDLEWARE
+# MIDDLEWARE — WhiteNoise added early for static files
 # ─────────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware", # For static files under Nginx
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -139,13 +139,16 @@ WSGI_APPLICATION = "core.wsgi.application"
 ASGI_APPLICATION = "core.asgi.application"
 
 # ─────────────────────────────────────────────────────────────────────
-# DATABASE  — No default; must be declared in child settings files
+# DATABASE — Supports both SQLite (local) and PostgreSQL (VPS)
 # ─────────────────────────────────────────────────────────────────────
+# Use dj-database-url for easy switching between SQLite and PostgreSQL
+# Default to SQLite for local development, override with DATABASE_URL on VPS
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR}/db.sqlite3",
+        conn_max_age=600,
+        ssl_require=False
+    )
 }
 
 # ─────────────────────────────────────────────────────────────────────
@@ -167,11 +170,14 @@ USE_I18N = True
 USE_TZ = True
 
 # ─────────────────────────────────────────────────────────────────────
-# STATIC & MEDIA
+# STATIC & MEDIA — Absolute paths for Nginx
 # ─────────────────────────────────────────────────────────────────────
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles"      # Nginx serves from here
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"              # User-uploaded files
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -179,15 +185,10 @@ STATICFILES_FINDERS = [
     "compressor.finders.CompressorFinder",
 ]
 
-# Use CompressedManifestStaticFilesStorage in base so that even local
-# development gets content-hashed filenames.  Override in development.py
-# if you prefer faster (non-hashed) reloads.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-# For WhiteNoise to work correctly on a VPS, add this:
+# WhiteNoise configuration for static file serving under Nginx
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
-
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+WHITENOISE_USE_FINDERS = True
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = False
@@ -221,40 +222,95 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SESSION_REMEMBER = True
 
 # ─────────────────────────────────────────────────────────────────────
-# EMAIL — always console in base; override in production settings
+# EMAIL — Console in base; override in production with SMTP
 # ─────────────────────────────────────────────────────────────────────
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND",
+    default="django.core.mail.backends.console.EmailBackend"
+)
+EMAIL_HOST = config("EMAIL_HOST", default="")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL", default="MfalmeBits <noreply@mfalmebits.com>"
+    "DEFAULT_FROM_EMAIL",
+    default="MfalmeBits <noreply@mfalmebits.africa>"
 )
 
 # ─────────────────────────────────────────────────────────────────────
-# CACHE — local memory in base; override with Redis in production
+# CACHE — Local memory in base; override with Redis in production
 # ─────────────────────────────────────────────────────────────────────
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "mfalmebits-dev",
+        "LOCATION": "mfalmebits-cache",
     }
 }
 
 # ─────────────────────────────────────────────────────────────────────
-# DEBUG TOOLBAR — only localhost; override in development.py
+# SECURE PRODUCTION SETTINGS (Conditional)
+# ─────────────────────────────────────────────────────────────────────
+if not DEBUG:
+    # HTTPS Settings for VPS with SSL
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = "DENY"
+    
+    # CSRF settings for HTTPS
+    CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host not in ['localhost', '127.0.0.1']]
+    CSRF_TRUSTED_ORIGINS.extend([f"https://www.{host}" for host in ALLOWED_HOSTS if host not in ['localhost', '127.0.0.1']])
+
+# ─────────────────────────────────────────────────────────────────────
+# DEBUG TOOLBAR — Only localhost
 # ─────────────────────────────────────────────────────────────────────
 INTERNAL_IPS = ["127.0.0.1", "::1"]
 
 # ─────────────────────────────────────────────────────────────────────
-# STRIPE
+# CORS SETTINGS
+# ─────────────────────────────────────────────────────────────────────
+CORS_ALLOWED_ORIGINS = [
+    "https://mfalmebits.africa",
+    "https://www.mfalmebits.africa",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+# ─────────────────────────────────────────────────────────────────────
+# STRIPE PAYMENT INTEGRATION
 # ─────────────────────────────────────────────────────────────────────
 STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY", default="")
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default="")
+STRIPE_WEBHOOK_SECRET = config("STRIPE_WEBHOOK_SECRET", default="")
+
+# ─────────────────────────────────────────────────────────────────────
+# M-PESA DARAJA INTEGRATION (Safaricom API)
+# ─────────────────────────────────────────────────────────────────────
+MPESA_ENVIRONMENT = config("MPESA_ENVIRONMENT", default="sandbox")  # sandbox or production
+MPESA_CONSUMER_KEY = config("MPESA_CONSUMER_KEY", default="")
+MPESA_CONSUMER_SECRET = config("MPESA_CONSUMER_SECRET", default="")
+MPESA_SHORTCODE = config("MPESA_SHORTCODE", default="174379")
+MPESA_PASSKEY = config("MPESA_PASSKEY", default="")
+MPESA_CALLBACK_URL = config("MPESA_CALLBACK_URL", default="")
+MPESA_INITIATOR_NAME = config("MPESA_INITIATOR_NAME", default="")
+MPESA_SECURITY_CREDENTIAL = config("MPESA_SECURITY_CREDENTIAL", default="")
 
 # ─────────────────────────────────────────────────────────────────────
 # APP-SPECIFIC EMAIL ADDRESSES
 # ─────────────────────────────────────────────────────────────────────
-COLLABORATION_EMAIL = config("COLLABORATION_EMAIL", default="")
-INSTITUTIONAL_EMAIL = config("INSTITUTIONAL_EMAIL", default="")
-COMMENT_NOTIFICATION_EMAIL = config("COMMENT_NOTIFICATION_EMAIL", default="")
+CONTACT_EMAIL = config("CONTACT_EMAIL", default="contact@mfalmebits.africa")
+SUPPORT_EMAIL = config("SUPPORT_EMAIL", default="support@mfalmebits.africa")
+COLLABORATION_EMAIL = config("COLLABORATION_EMAIL", default="collab@mfalmebits.africa")
+INSTITUTIONAL_EMAIL = config("INSTITUTIONAL_EMAIL", default="institutional@mfalmebits.africa")
+COMMENT_NOTIFICATION_EMAIL = config("COMMENT_NOTIFICATION_EMAIL", default="notifications@mfalmebits.africa")
 
 # ─────────────────────────────────────────────────────────────────────
 # LOGGING
@@ -267,10 +323,19 @@ LOGGING = {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
             "style": "{",
         },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "logs" / "django.log",
             "formatter": "verbose",
         },
     },
@@ -278,10 +343,27 @@ LOGGING = {
         "handlers": ["console"],
         "level": "INFO",
     },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "apps": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": False,
+        },
+    },
 }
 
+# Create logs directory if it doesn't exist
+LOGS_DIR = BASE_DIR / "logs"
+if not LOGS_DIR.exists():
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
 # ─────────────────────────────────────────────────────────────────────
-# CKEDITOR 5
+# CKEDITOR 5 CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────
 CKEDITOR_5_UPLOAD_FILE_VIEW_NAME = "ckeditor_5_upload_file"
 CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
@@ -334,10 +416,9 @@ CKEDITOR_5_CONFIGS = {
 
 CKEDITOR_5_CUSTOM_CSS = "admin/css/mfalmebits_admin.css"
 
-# ═════════════════════════════════════════════════════════════════════
-# JAZZMIN — Shared across all environments
-# ═════════════════════════════════════════════════════════════════════
-
+# ─────────────────────────────────────────────────────────────────────
+# JAZZMIN ADMIN THEME — Shared across all environments
+# ─────────────────────────────────────────────────────────────────────
 JAZZMIN_SETTINGS = {
     "site_title": "MfalmeBits Admin",
     "site_header": "MfalmeBits",
@@ -425,4 +506,34 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success",
     },
     "actions_sticky_top": True,
+}
+
+# ─────────────────────────────────────────────────────────────────────
+# CELERY CONFIGURATION (for background tasks)
+# ─────────────────────────────────────────────────────────────────────
+CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+
+# ─────────────────────────────────────────────────────────────────────
+# SESSION & SECURITY
+# ─────────────────────────────────────────────────────────────────────
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+
+# ─────────────────────────────────────────────────────────────────────
+# DJANGO-CACHOPS (for query caching)
+# ─────────────────────────────────────────────────────────────────────
+CACHEOPS_REDIS = config("CACHEOPS_REDIS", default="redis://localhost:6379/1")
+CACHEOPS_DEFAULTS = {"timeout": 60 * 15}  # 15 minutes
+CACHEOPS = {
+    "auth.user": {"ops": "get", "timeout": 60 * 10},
+    "blog.post": {"ops": "all", "timeout": 60 * 30},
+    "archive.archiverentry": {"ops": "all", "timeout": 60 * 60},
+    "library.digitalproduct": {"ops": "all", "timeout": 60 * 30},
 }
